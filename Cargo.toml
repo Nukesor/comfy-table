@@ -1,0 +1,21 @@
+[package]
+name = "comfy-table"
+description = "A easy to use, automatically wrapping and highly configurable commandline table builder library."
+version = "0.1.0"
+authors = ["Arne Beer <contact@arne.beer>"]
+homepage = "https://github.com/nukesor/comfy-table"
+repository = "https://github.com/nukesor/comfy-table"
+documentation = "https://docs.rs/comfy-table/"
+license = "MIT"
+keywords = ["shell", "commandline", "table", "unicode"]
+readme = "README.md"
+edition = "2018"
+
+[badges]
+travis-ci = { repository = "nukesor/comfy-table", branch = "master" }
+maintenance = { status = "actively-developed" }
+
+[dependencies]
+termion = "^1.5"
+strum = "^0.17"
+strum_macros = "^0.17"
