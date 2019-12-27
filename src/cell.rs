@@ -3,7 +3,7 @@ use crate::styling::cell::Alignment;
 /// The representation of a single cell in a table row.
 /// Each cell contains a string.
 pub struct Cell {
-    content: String,
+    pub (crate) content: String,
     alignment: Alignment,
     width: u16,
     height: u16,

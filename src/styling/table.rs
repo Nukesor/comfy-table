@@ -13,7 +13,7 @@ use crate::styling::presets::ASCII_FULL;
 ///
 /// BorderIntersections are Intersections, where rows/columns lines meet outer borders.
 /// E.g.:
-/// ```
+/// ```text
 ///        --------
 ///        v      |
 /// +--+---+---+  |
@@ -66,9 +66,9 @@ impl TableStyle {
     /// Anyway, you can write your own preset strings and use them with this function.
     /// The function expects a characters for components to be in the same order as in the [Component] enum.
     ///
-    /// If the string isn't long enough, the default [ASCII_FULL] will be used for the remaining components
+    /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all remaining components.
     ///
-    /// If the string is too long, the remaining charaacters will be ignored.
+    /// If the string is too long, remaining charaacters will be simply ignored.
     pub fn from_preset(format: &str) -> Self {
         let mut table_style = TableStyle::new();
         let mut components = Component::iter();
@@ -87,7 +87,7 @@ impl TableStyle {
 
     /// Modify a preset with a modifier string from [modifiers](crate::styling::modifiers).
     /// For instance, the [UTF8_ROUND_CORNERS](crate::styling::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
-    pub fn apply_modifier(&mut self, modifier: &str) {
+    pub fn apply_modifier(&mut self, modifier: &str) -> &mut Self {
         let mut components = Component::iter();
 
         for character in modifier.chars() {
@@ -101,6 +101,8 @@ impl TableStyle {
                 break;
             }
         }
+
+        self
     }
 
     /// Define the char that will be used to draw a specific component
@@ -118,14 +120,16 @@ impl TableStyle {
     ///
     /// If in addition `TopLeftCorner`,`TopBorder` and `TopRightCorner` would be `None` as well,
     /// the first line wouldn't be displayed at all.
-    pub fn set_style(&mut self, component: Component, symbol: Option<char>) {
+    pub fn set_style(&mut self, component: Component, symbol: Option<char>) -> &mut Self {
         if let Some(symbol) = symbol {
             if symbol == ' ' {
                 self.style.insert(component, None);
-                return;
+                return self;
             }
         }
         self.style.insert(component, symbol);
+
+        self
     }
 
     /// Get a copy of the char currently used for drawing a specific component
