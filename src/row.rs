@@ -1,22 +1,16 @@
 use crate::cell::Cell;
 
-
 pub struct Row {
     cells: Vec<Cell>,
 }
 
-
 impl Row {
-    pub fn new() -> Row{
-        Row {
-            cells: Vec::new(),
-        }
+    pub fn new() -> Row {
+        Row { cells: Vec::new() }
     }
 
     pub fn from_cells(cells: Vec<Cell>) -> Row {
-        Row {
-            cells: cells,
-        }
+        Row { cells: cells }
     }
 
     pub fn longest_content(&self) -> usize {

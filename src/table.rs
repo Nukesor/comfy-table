@@ -1,7 +1,6 @@
-use crate::row::Row;
 use crate::column::Column;
+use crate::row::Row;
 use crate::styling::table::TableStyle;
-
 
 /// The representation of a table.
 pub struct Table {
@@ -10,8 +9,6 @@ pub struct Table {
     rows: Vec<Row>,
     pub style: TableStyle,
 }
-
-
 
 impl Table {
     /// Create a new table with default ASCII styling, no rows and a header
@@ -24,8 +21,7 @@ impl Table {
         }
     }
 
-    pub fn to_str(&mut self) {
-    }
+    pub fn to_str(&mut self) {}
 
     /// Set the header row of the table. This is usually the title of each column.
     pub fn set_header(&mut self, row: Row) -> &mut Self {

@@ -18,7 +18,7 @@ pub const ASCII_FULL: &str = "||--+==+-|+||++++++";
 /// -------+-------
 ///  c     | d
 /// ```
-pub const ASCII_NO_BORDERS : &str = "     == -|+        ";
+pub const ASCII_NO_BORDERS: &str = "     == -|+        ";
 
 /// Just like ASCII_FULL, but without vertical/horizontal middle lines
 /// ```text
@@ -64,4 +64,4 @@ pub const UTF8_FULL: &str = "││──╞═╪╡╌┆┼├┤┬┴┌┐
 /// │ c       d     │
 /// └───────────────┘
 /// ```
-pub const UTF8_BORDERS_ONLY : &str = "││──╞══╡     ──┌┐└┘";
+pub const UTF8_BORDERS_ONLY: &str = "││──╞══╡     ──┌┐└┘";

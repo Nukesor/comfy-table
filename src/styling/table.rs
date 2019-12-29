@@ -1,10 +1,8 @@
 use ::std::collections::HashMap;
-use ::strum_macros::EnumIter;
 use ::strum::IntoEnumIterator;
+use ::strum_macros::EnumIter;
 
 use crate::styling::presets::ASCII_FULL;
-
-
 
 /// All configurable table components.
 /// A character can be assigned to each component in the [TableStyle] struct.
@@ -45,14 +43,11 @@ pub enum Component {
     BottomRightCorner,
 }
 
-
 /// This struct wraps the various styling options for a table
 /// The default style preset when using `::new` is the [ASCII_FULL]
 pub struct TableStyle {
     style: HashMap<Component, Option<char>>,
 }
-
-
 
 impl TableStyle {
     /// Create a new TableStyle. The default style is [ASCII_FULL],
@@ -83,7 +78,6 @@ impl TableStyle {
 
         table_style
     }
-
 
     /// Modify a preset with a modifier string from [modifiers](crate::styling::modifiers).
     /// For instance, the [UTF8_ROUND_CORNERS](crate::styling::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
