@@ -33,7 +33,7 @@ impl Table {
     /// Add a new row to the table.
     pub fn add_row(&mut self, row: Row) -> &mut Self {
         self.autogenerate_columns(&row);
-        self.adjust_column_length(&row);
+        self.adjust_column_width(&row);
         self.rows.push(row);
 
         self
@@ -49,25 +49,25 @@ impl Table {
     }
 
     /// Update the max_content_width for all columns depending on the new row
-    fn adjust_column_length(&mut self, row: &Row) {
-        let max_lengths = row.max_content_lengths();
-        for (index, length) in max_lengths.iter().enumerate() {
+    fn adjust_column_width(&mut self, row: &Row) {
+        let max_widths = row.max_content_widths();
+        for (index, width) in max_widths.iter().enumerate() {
             // We expect this column to exist, since we autoenerate columns just before calling this function
-            let mut column = self.columns.get(index).unwrap();
-            column.max_content_length = length;
+            let mut column = self.columns.get_mut(index).unwrap();
+            column.max_content_width = *width;
         }
     }
 
-    // Get the length of the longest row.
+    // Get the width of the longest row.
     // This is needed to automatically calculate the amount of columns that need to be created.
     // # Comment for now, maybe we don't need this at all.
     // fn get_max_column(&self) -> usize {
-    //     let mut length;
+    //     let mut width;
     //     let mut longest = 0;
     //     for row in self.rows.iter() {
-    //         length = row.cell_count();
-    //         if length > longest {
-    //             longest = length
+    //         width = row.cell_count();
+    //         if width > longest {
+    //             longest = width
     //         }
     //     }
     //     longest

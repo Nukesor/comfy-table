@@ -13,14 +13,14 @@ impl Row {
         Row { cells: cells }
     }
 
-    /// Get the longest content length for all cells of this row
-    pub fn max_content_lengths(&self) -> Vec<usize> {
+    /// Get the longest content width for all cells of this row
+    pub fn max_content_widths(&self) -> Vec<usize> {
         // Iterate over all cells
         self.cells
             .iter()
             .map(|cell| {
-                // Iterate over all content strings and return a vector of string lengths.
-                // Each entry represents the longest string length for a cell.
+                // Iterate over all content strings and return a vector of string widths.
+                // Each entry represents the longest string width for a cell.
                 cell.content
                     .iter()
                     .map(|string| string.len())
