@@ -1,5 +1,3 @@
-pub mod cell;
-
 /// This module contains some styling presets for tables.
 /// Each constant has an example for the respective preset.
 pub mod presets;

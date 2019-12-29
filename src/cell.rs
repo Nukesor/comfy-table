@@ -1,9 +1,16 @@
-use crate::styling::cell::Alignment;
+pub enum Alignment {
+    Left,
+    Right,
+    Center,
+}
 
 /// The representation of a single cell in a table row.
 /// Each cell contains a string.
 pub struct Cell {
-    pub(crate) content: String,
+    /// Content is a list of strings.
+    /// We do this to handle newlines more easily
+    /// On set_content, the incoming string is split by '\n'
+    pub(crate) content: Vec<String>,
     alignment: Alignment,
     width: u16,
     height: u16,
@@ -12,7 +19,7 @@ pub struct Cell {
 impl Cell {
     /// Return a copy of the content contained in this cell.
     pub fn get_content(&self) -> String {
-        return self.content.clone();
+        return self.content.join("\n").clone();
     }
 
     /// Decide whether the content should be centered or aligned to the left/right.
