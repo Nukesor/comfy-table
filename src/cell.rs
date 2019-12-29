@@ -8,7 +8,7 @@ pub enum Alignment {
 /// Each cell contains a string.
 pub struct Cell {
     /// Content is a list of strings.
-    /// We do this to handle newlines more easily
+    /// This is done to handle newlines more easily.
     /// On set_content, the incoming string is split by '\n'
     pub(crate) content: Vec<String>,
     alignment: Alignment,

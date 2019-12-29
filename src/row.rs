@@ -13,19 +13,24 @@ impl Row {
         Row { cells: cells }
     }
 
-    pub fn longest_content(&self) -> usize {
-        let mut length;
-        let mut longest = 0;
-        for cell in self.cells.iter() {
-            length = cell.content.len();
-            if length > longest {
-                longest = length;
-            }
-        }
-
-        longest
+    /// Get the longest content length for all cells of this row
+    pub fn max_content_lengths(&self) -> Vec<usize> {
+        // Iterate over all cells
+        self.cells
+            .iter()
+            .map(|cell| {
+                // Iterate over all content strings and return a vector of string lengths.
+                // Each entry represents the longest string length for a cell.
+                cell.content
+                    .iter()
+                    .map(|string| string.len())
+                    .max()
+                    .unwrap_or(0)
+            })
+            .collect()
     }
 
+    /// Return the amount of cells on this row.
     pub fn cell_count(&self) -> usize {
         self.cells.len()
     }

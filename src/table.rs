@@ -33,17 +33,28 @@ impl Table {
     /// Add a new row to the table.
     pub fn add_row(&mut self, row: Row) -> &mut Self {
         self.autogenerate_columns(&row);
+        self.adjust_column_length(&row);
         self.rows.push(row);
 
         self
     }
 
-    /// In case the user didn't supply any columns, we need to determine, how many columns should be generated.
+    /// Autogenerate new columns, if a row is added with more cells than existing columns
     fn autogenerate_columns(&mut self, row: &Row) {
-        let column_count = row.cell_count();
-        let new_columns = column_count - self.columns.len();
-        for index in 0.. {
-            self.columns.push(Column::new());
+        if row.cell_count() > self.columns.len() {
+            for index in self.columns.len()..row.cell_count() {
+                self.columns.push(Column::new());
+            }
+        }
+    }
+
+    /// Update the max_content_width for all columns depending on the new row
+    fn adjust_column_length(&mut self, row: &Row) {
+        let max_lengths = row.max_content_lengths();
+        for (index, length) in max_lengths.iter().enumerate() {
+            // We expect this column to exist, since we autoenerate columns just before calling this function
+            let mut column = self.columns.get(index).unwrap();
+            column.max_content_length = length;
         }
     }
 
