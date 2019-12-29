@@ -40,7 +40,7 @@ pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||++++++";
 ///  c       d
 /// ---------------
 /// ```
-pub const ASCII_TOP_BORDERS_ONLY: &str = "||--+==+   ||++++++";
+pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "||-- ==    ||++    ";
 
 /// The UTF8 enabled version of the default style for tables.
 /// Quite beautiful isn't it?
