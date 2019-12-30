@@ -2,12 +2,27 @@ use crate::column::Column;
 use crate::row::Row;
 use crate::styling::table::TableStyle;
 
+
+pub enum ContentArrangement {
+    /// Don't do any automatic width calculation.
+    /// Table with this mode might overflow and look ugly, if content gets too long.
+    /// Constraints on columns are still respected.
+    Disabled,
+    /// Automatically determine the width of columns in regard to terminal width and content length.
+    /// With this mode, the content in cells will wrap automatically and comfy-table tries to determine
+    /// the best column layout for the given content.
+    /// Constraints on columns are still respected.
+    Automatic,
+}
+
+
 /// The representation of a table.
 pub struct Table {
     columns: Vec<Column>,
     header: Row,
     rows: Vec<Row>,
     pub style: TableStyle,
+    arrangement: ContentArrangement,
 }
 
 impl Table {
@@ -18,6 +33,7 @@ impl Table {
             header: header,
             rows: Vec::new(),
             style: TableStyle::new(),
+            arrangement: ContentArrangement::Automatic,
         }
     }
 
