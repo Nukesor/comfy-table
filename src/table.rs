@@ -59,7 +59,7 @@ impl Table {
     fn autogenerate_columns(&mut self, row: &Row) {
         if row.cell_count() > self.columns.len() {
             for index in self.columns.len()..row.cell_count() {
-                self.columns.push(Column::new());
+                self.columns.push(Column::new(index));
             }
         }
     }

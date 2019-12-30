@@ -17,6 +17,8 @@ pub enum Constraint {
 /// allows users to manipulate this option.
 /// On top of this, the column determines how much padding each cell should get.
 pub struct Column {
+    /// The index of the column
+    pub index: usize,
     /// Left/right padding for each cell of this column in spaces
     padding: (u32, u32),
     constraint: Option<Constraint>,
@@ -24,8 +26,9 @@ pub struct Column {
 }
 
 impl Column {
-    pub fn new() -> Self {
+    pub fn new(index: usize) -> Self {
         Column {
+            index: index,
             padding: (1, 1),
             constraint: None,
             max_content_width: 1,
