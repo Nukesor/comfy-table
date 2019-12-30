@@ -1,16 +1,24 @@
 use crate::cell::Cell;
 
 pub struct Row {
+    /// Index of the row. This will be set as soon as the row is added to the table
+    pub (crate) index: Option<usize>,
     cells: Vec<Cell>,
 }
 
 impl Row {
     pub fn new() -> Row {
-        Row { cells: Vec::new() }
+        Row {
+            index: None,
+            cells: Vec::new(),
+        }
     }
 
     pub fn from_cells(cells: Vec<Cell>) -> Row {
-        Row { cells: cells }
+        Row {
+            index: None,
+            cells: cells,
+        }
     }
 
     /// Get the longest content width for all cells of this row

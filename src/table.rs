@@ -47,9 +47,10 @@ impl Table {
     }
 
     /// Add a new row to the table.
-    pub fn add_row(&mut self, row: Row) -> &mut Self {
+    pub fn add_row(&mut self, mut row: Row) -> &mut Self {
         self.autogenerate_columns(&row);
         self.adjust_column_width(&row);
+        row.index = Some(self.rows.len());
         self.rows.push(row);
 
         self
