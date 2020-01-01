@@ -1,15 +1,17 @@
 pub enum Constraint {
-    /// Specify the exact percentage, this column should in respect to terminal width
+    /// Enforce a fix width for a column.
+    Width(u16),
+    /// Specify the exact percentage, this column should in respect to terminal width.
     Percentage(u16),
-    /// Specify a min amount of characters per line for a column
+    /// Specify a min amount of characters per line for a column.
     MinWidth(u16),
-    /// Specify a max amount of allowed characters for per line for a column
+    /// Specify a max amount of allowed characters for per line for a column.
     MaxWidth(u16),
     /// Force the column to be as long as it's content.
     /// Use with caution! This can easily break your table, if the column's content is overly long.
     ContentWidth,
-    /// Simply ignore the content of this Column
-    Ignore,
+    /// Hide this Column. It won't be displayed at all.
+    Hidden,
 }
 
 /// The Column struct mainly exists for styling purposes.
@@ -21,8 +23,8 @@ pub struct Column {
     pub index: usize,
     /// Left/right padding for each cell of this column in spaces
     padding: (u32, u32),
-    constraint: Option<Constraint>,
-    pub max_content_width: usize,
+    pub (crate) constraint: Option<Constraint>,
+    pub (crate) max_content_width: u16,
 }
 
 impl Column {
@@ -51,5 +53,10 @@ impl Column {
         self.constraint = Some(constraint);
 
         self
+    }
+
+    /// Get the constraint that is used for this column.
+    pub fn get_constraint(&mut self) -> Option<&Constraint> {
+        self.constraint.as_ref()
     }
 }

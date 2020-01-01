@@ -18,7 +18,7 @@ impl Cell {
     /// Create a new Cell from a String
     pub fn new(content: String) -> Self {
         Cell {
-            content: content.split('\n').collect(),
+            content: content.split('\n').map(|content| content.to_string()).collect(),
             alignment: Alignment::Left,
         }
     }

@@ -1,4 +1,5 @@
 use crate::column::Column;
+use crate::column::Constraint::*;
 use crate::row::Row;
 use crate::styling::table::TableStyle;
 
@@ -23,11 +24,11 @@ pub enum ContentArrangement {
 
 /// The representation of a table.
 pub struct Table {
-    columns: Vec<Column>,
+    pub (crate) columns: Vec<Column>,
     header: Row,
     rows: Vec<Row>,
     pub style: TableStyle,
-    arrangement: ContentArrangement,
+    pub (crate) arrangement: ContentArrangement,
 }
 
 impl Table {
@@ -42,7 +43,9 @@ impl Table {
         }
     }
 
-    pub fn to_str(&mut self) {}
+    pub fn to_string(&mut self) {
+
+    }
 
     /// Set the header row of the table. This is usually the title of each column.
     pub fn set_header(&mut self, row: Row) -> &mut Self {
@@ -61,6 +64,15 @@ impl Table {
         self
     }
 
+    pub fn get_column(&self, index: usize) -> Option<&Column> {
+        self.columns.get(index)
+    }
+
+    pub fn get_column_mut(&mut self, index: usize) -> Option<&mut Column> {
+        self.columns.get_mut(index)
+    }
+
+
     /// Autogenerate new columns, if a row is added with more cells than existing columns
     fn autogenerate_columns(&mut self, row: &Row) {
         if row.cell_count() > self.columns.len() {
@@ -76,7 +88,7 @@ impl Table {
         for (index, width) in max_widths.iter().enumerate() {
             // We expect this column to exist, since we autoenerate columns just before calling this function
             let mut column = self.columns.get_mut(index).unwrap();
-            column.max_content_width = *width;
+            column.max_content_width = *width as u16;
         }
     }
 
