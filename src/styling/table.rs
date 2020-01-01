@@ -4,6 +4,24 @@ use ::strum_macros::EnumIter;
 
 use crate::styling::presets::ASCII_FULL;
 
+/// Determin
+pub enum ContentArrangement {
+    /// Don't do any automatic width calculation.
+    /// Table with this mode might overflow and look ugly, if content gets too long.
+    /// Constraints on columns are still respected.
+    Disabled,
+    /// Automatically determine the width of columns in regard to terminal width and content length.
+    /// With this mode, the content in cells will wrap automatically and comfy-table tries to determine
+    /// the best column layout for the given content.
+    /// Constraints on columns are still respected.
+    Automatic,
+
+    // /// Same as Automatic, but the full width of the terminal will always be used.
+    // /// Use this, if you don't want tables that differ in width.
+    // /// Constraints on columns are still respected.
+    // Full,
+}
+
 /// All configurable table components.
 /// A character can be assigned to each component in the [TableStyle] struct.
 /// This is then used to draw character of the respective component to the commandline.

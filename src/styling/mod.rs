@@ -9,5 +9,7 @@ pub mod presets;
 /// Only non-whitespace characters are considered. You can use this, to write your own modifiers as well.
 pub mod modifiers;
 
-/// Everyth
+/// Everything about styling tables.
 pub mod table;
+
+pub mod cell;

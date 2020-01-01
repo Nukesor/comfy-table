@@ -1,8 +1,9 @@
 use ::termion::terminal_size;
 
 use crate::table::Table;
-use crate::column::{Constraint, Column};
+use crate::column::Constraint;
 use crate::column::Constraint::*;
+use crate::styling::table::ContentArrangement;
 
 
 /// This is used to store various styling options for a specific column
@@ -39,7 +40,7 @@ pub (crate) fn arrange_content(table: &mut Table) -> Vec<ColumnDisplayInfo> {
 
     let mut display_infos = Vec::new();
     for column in table.columns.iter() {
-        let mut info = ColumnDisplayInfo::new(column.max_content_width);
+        let mut info = ColumnDisplayInfo::new(column.get_max_content_width());
         if let Some(constraint) = column.constraint.as_ref() {
             evaluate_constraint(&mut info, constraint, term_width);
         }
@@ -48,8 +49,8 @@ pub (crate) fn arrange_content(table: &mut Table) -> Vec<ColumnDisplayInfo> {
     }
 
     match &table.arrangement {
-        Disabled => disabled_arrangement(&mut display_infos),
-        Automatic => automatic_arrangement(&mut display_infos, term_width),
+        ContentArrangement::Disabled => disabled_arrangement(&mut display_infos),
+        ContentArrangement::Automatic => automatic_arrangement(&mut display_infos, term_width),
     }
 
     display_infos
@@ -74,7 +75,6 @@ fn evaluate_constraint(info: &mut ColumnDisplayInfo, constraint: &Constraint, te
         }
         MaxWidth(max_width) => info.constraint = Some(MaxWidth(*max_width)),
         MinWidth(min_width) => info.constraint = Some(MinWidth(*min_width)),
-        _ => (),
     }
 }
 

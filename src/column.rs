@@ -46,6 +46,11 @@ impl Column {
         self
     }
 
+    /// Get the width in characters of the widest line in this column.
+    pub fn get_max_content_width(&self) -> u16 {
+        self.max_content_width
+    }
+
     /// Set the constraint for this column.
     /// Adding a constraint allows to define some additional styling parameters for columns
     /// This can be useful to counter undesired auto-formatting of content in tables.

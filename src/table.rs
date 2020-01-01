@@ -1,25 +1,7 @@
 use crate::column::Column;
-use crate::column::Constraint::*;
 use crate::row::Row;
-use crate::styling::table::TableStyle;
-
-
-pub enum ContentArrangement {
-    /// Don't do any automatic width calculation.
-    /// Table with this mode might overflow and look ugly, if content gets too long.
-    /// Constraints on columns are still respected.
-    Disabled,
-    /// Automatically determine the width of columns in regard to terminal width and content length.
-    /// With this mode, the content in cells will wrap automatically and comfy-table tries to determine
-    /// the best column layout for the given content.
-    /// Constraints on columns are still respected.
-    Automatic,
-
-    /// Same as Automatic, but the full width of the terminal will always be used.
-    /// Use this, if you don't want tables that differ in width.
-    /// Constraints on columns are still respected.
-    Full,
-}
+use crate::styling::table::{ContentArrangement, TableStyle};
+use crate::utils::arrangement::arrange_content;
 
 
 /// The representation of a table.
@@ -44,6 +26,7 @@ impl Table {
     }
 
     pub fn to_string(&mut self) {
+        let display_info = arrange_content(self);
 
     }
 
