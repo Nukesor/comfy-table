@@ -8,7 +8,7 @@ use crate::utils::arrangement::arrange_content;
 pub struct Table {
     pub (crate) columns: Vec<Column>,
     header: Row,
-    rows: Vec<Row>,
+    pub (crate) rows: Vec<Row>,
     pub style: TableStyle,
     pub (crate) arrangement: ContentArrangement,
 }

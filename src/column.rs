@@ -1,18 +1,5 @@
-pub enum Constraint {
-    /// Enforce a fix width for a column.
-    Width(u16),
-    /// Specify the exact percentage, this column should in respect to terminal width.
-    Percentage(u16),
-    /// Specify a min amount of characters per line for a column.
-    MinWidth(u16),
-    /// Specify a max amount of allowed characters for per line for a column.
-    MaxWidth(u16),
-    /// Force the column to be as long as it's content.
-    /// Use with caution! This can easily break your table, if the column's content is overly long.
-    ContentWidth,
-    /// Hide this Column. It won't be displayed at all.
-    Hidden,
-}
+use crate::styling::cell::CellAlignment;
+use crate::styling::column::Constraint;
 
 /// The Column struct mainly exists for styling purposes.
 /// It's used to determine how much horizontal space each column should get and
@@ -22,9 +9,11 @@ pub struct Column {
     /// The index of the column
     pub index: usize,
     /// Left/right padding for each cell of this column in spaces
-    padding: (u32, u32),
-    pub (crate) constraint: Option<Constraint>,
+    pub (crate) padding: (u16, u16),
+    /// Define the cell alligment for all cells of this column
+    cell_alignment: Option<CellAlignment>,
     pub (crate) max_content_width: u16,
+    pub (crate) constraint: Option<Constraint>,
 }
 
 impl Column {
@@ -34,13 +23,14 @@ impl Column {
             padding: (1, 1),
             constraint: None,
             max_content_width: 1,
+            cell_alignment: None,
         }
     }
 
     /// Set the padding for all cells of this column
     /// Padding is provided in the form of (left, right).
     /// Default is (1, 1)
-    pub fn set_padding(&mut self, padding: (u32, u32)) -> &mut Self {
+    pub fn set_padding(&mut self, padding: (u16, u16)) -> &mut Self {
         self.padding = padding;
 
         self
@@ -63,5 +53,12 @@ impl Column {
     /// Get the constraint that is used for this column.
     pub fn get_constraint(&mut self) -> Option<&Constraint> {
         self.constraint.as_ref()
+    }
+
+    /// Set the alignment for content inside of cells for this column
+    /// If the alignment attribute is set on a cell in this column as well,
+    /// The cell's alighment value will overwrite the column's setting.
+    pub fn set_cell_alignment(&mut self, alignment: Option<CellAlignment>) {
+        self.cell_alignment = alignment;
     }
 }

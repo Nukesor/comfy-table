@@ -3,7 +3,7 @@ use crate::cell::Cell;
 pub struct Row {
     /// Index of the row. This will be set as soon as the row is added to the table
     pub (crate) index: Option<usize>,
-    cells: Vec<Cell>,
+    pub (crate) cells: Vec<Cell>,
 }
 
 impl Row {

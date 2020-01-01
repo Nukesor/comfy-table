@@ -6,7 +6,7 @@ pub struct Cell {
     /// Content is a list of strings.
     /// This is done to handle newlines more easily.
     /// On set_content, the incoming string is split by '\n'
-    pub(crate) content: Vec<String>,
+    pub (crate) content: Vec<String>,
     alignment: CellAlignment,
 }
 
@@ -25,7 +25,7 @@ impl Cell {
     }
 
     /// Decide whether the content should be centered or aligned to the left/right.
-    pub fn align(&mut self, alignment: CellAlignment) {
+    pub fn set_alignment(&mut self, alignment: CellAlignment) {
         self.alignment = alignment
     }
 }

@@ -13,3 +13,5 @@ pub mod modifiers;
 pub mod table;
 
 pub mod cell;
+
+pub mod column;
