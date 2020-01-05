@@ -11,7 +11,7 @@ pub struct Column {
     /// Left/right padding for each cell of this column in spaces
     pub (crate) padding: (u16, u16),
     /// Define the cell alligment for all cells of this column
-    cell_alignment: Option<CellAlignment>,
+    pub (crate) cell_alignment: Option<CellAlignment>,
     pub (crate) max_content_width: u16,
     pub (crate) constraint: Option<Constraint>,
 }

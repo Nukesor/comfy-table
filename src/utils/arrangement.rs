@@ -2,6 +2,7 @@ use ::termion::terminal_size;
 
 use crate::table::Table;
 use crate::column::Column;
+use crate::styling::cell::CellAlignment;
 use crate::styling::column::Constraint;
 use crate::styling::column::Constraint::*;
 use crate::styling::table::ContentArrangement;
@@ -11,6 +12,7 @@ use crate::styling::table::ContentArrangement;
 /// The struct is only created temporarily during the drawing process
 pub struct ColumnDisplayInfo {
     pub padding: (u16, u16),
+    /// The max amount of characters over all lines in this column
     max_content_width: u16,
     /// Determine, whether the width attribute should be used.
     /// If true, the column has fixed width.
@@ -20,6 +22,8 @@ pub struct ColumnDisplayInfo {
     pub constraint: Option<Constraint>,
     /// Determine, whether this column should be hidden (ignored)
     pub hidden: bool,
+    /// Determine, whether this column should be hidden (ignored)
+    pub cell_alignment: Option<CellAlignment>,
 }
 
 impl ColumnDisplayInfo {
@@ -31,6 +35,7 @@ impl ColumnDisplayInfo {
             fixed: false,
             constraint: None,
             hidden: false,
+            cell_alignment: column.cell_alignment,
         }
     }
 }
