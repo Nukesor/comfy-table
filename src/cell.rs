@@ -1,5 +1,3 @@
-use crate::styling::cell::CellAlignment;
-
 /// The representation of a single cell in a table row.
 /// Each cell contains a string, which will later be displayed at the respective row/column.
 pub struct Cell {

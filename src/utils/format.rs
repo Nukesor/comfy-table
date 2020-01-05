@@ -20,10 +20,10 @@ use crate::styling::cell::CellAlignment;
 ///
 /// The strings for each row will be padded and aligned accordingly
 /// to their respective column.
-pub fn format_content(table: &Table, display_info: Vec<ColumnDisplayInfo>) -> Vec<Vec<Vec<String>>> {
+pub fn format_content(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<Vec<String>>> {
     // The content of the whole table
     let mut table_content = Vec::new();
-    for (row_index, row) in table.rows.iter().enumerate() {
+    for row in table.rows.iter() {
         // The content of this specific row
         let mut row_content = Vec::new();
 
@@ -62,6 +62,10 @@ pub fn format_content(table: &Table, display_info: Vec<ColumnDisplayInfo>) -> Ve
 
 
 
+/// Split a cell content line if it's longer than the specified columns width - padding
+/// This function tries to do this in a smart way, by taking the content's deliminator
+/// splitting it at these deliminators and reconnecting them until a line is full.
+/// Splitting of parts only occurs if the part doesn't fit in a single line by itself.
 pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
     let mut lines = Vec::new();
     let padding = info.padding.0 + info.padding.1;
@@ -133,9 +137,10 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
 }
 
 
-// Apply the alignment for a column. Alignment can be either Left/Right/Center.
-// In every case all lines will be exactly the same character length `info.width - padding long`
-// This is needed, so we can simply insert it into the border frame later on.
+/// Apply the alignment for a column. Alignment can be either Left/Right/Center.
+/// In every case all lines will be exactly the same character length `info.width - padding long`
+/// This is needed, so we can simply insert it into the border frame later on.
+/// Padding is applied in this function as well.
 pub fn align_line(mut line: String, info: &ColumnDisplayInfo) -> String {
     let padding = info.padding.0 + info.padding.1;
     let content_width = info.width - padding;
@@ -164,10 +169,11 @@ pub fn align_line(mut line: String, info: &ColumnDisplayInfo) -> String {
         }
     }
 
-    line
+    pad_line(line, info)
 }
 
 
+/// Apply the column's padding to this line
 pub fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
     let mut padded_line = String::new();
 

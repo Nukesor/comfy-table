@@ -2,6 +2,7 @@ use crate::column::Column;
 use crate::row::Row;
 use crate::styling::table::{ContentArrangement, TableStyle};
 use crate::utils::arrangement::arrange_content;
+use crate::utils::format::format_content;
 
 
 /// The representation of a table.
@@ -27,6 +28,7 @@ impl Table {
 
     pub fn to_string(&mut self) {
         let display_info = arrange_content(self);
+        let content = format_content(&self, &display_info);
 
     }
 

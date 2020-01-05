@@ -58,7 +58,8 @@ pub fn arrange_content(table: &mut Table) -> Vec<ColumnDisplayInfo> {
 
     match &table.arrangement {
         ContentArrangement::Disabled => disabled_arrangement(&mut display_infos),
-        ContentArrangement::Automatic => automatic_arrangement(&mut display_infos, term_width),
+        _ => (),
+//        ContentArrangement::Automatic => automatic_arrangement(&mut display_infos, term_width),
     }
 
     display_infos
@@ -99,8 +100,8 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 }
 
 
-fn automatic_arrangement(infos: &mut Vec<ColumnDisplayInfo>, term_width: u16) {
-    let mut remaining_width = term_width;
+//fn automatic_arrangement(infos: &mut Vec<ColumnDisplayInfo>, term_width: u16) {
+//    let mut remaining_width = term_width;
 //    for column in table.columns.iter_mut() {
 //        // A fix width is enforced for this column
 //        if let Some(constraint) = column.get_constraint().clone() {
@@ -119,4 +120,4 @@ fn automatic_arrangement(infos: &mut Vec<ColumnDisplayInfo>, term_width: u16) {
 //            let width = column.max_content_width;
 //        }
 //    }
-}
+//}
