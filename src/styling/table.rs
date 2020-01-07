@@ -46,7 +46,7 @@ pub enum Component {
     BottomBorder,
     HeaderLeftIntersection,
     HeaderBorder,
-    HeaderMiddleIntersection,
+    HeaderMiddleIntersections,
     HeaderRightIntersection,
     VerticalLines,
     HorizontalLines,
@@ -150,5 +150,21 @@ impl TableStyle {
             None => None,
             Some(option) => option.clone(),
         }
+    }
+
+    pub fn style_or_default(&self, component: Component) -> String {
+        match self.style.get(&component) {
+            None => " ".to_string(),
+            Some(option) => {
+                match option {
+                    None => " ".to_string(),
+                    Some(character) => character.to_string(),
+                }
+            }
+        }
+    }
+
+    pub fn style_exists(&self, component: Component) -> bool {
+        self.style.get(&component).is_some()
     }
 }
