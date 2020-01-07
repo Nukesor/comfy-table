@@ -3,13 +3,14 @@ use crate::row::Row;
 use crate::styling::table::{ContentArrangement, TableStyle};
 use crate::utils::arrangement::arrange_content;
 use crate::utils::format::format_content;
+use crate::utils::borders::draw_borders;
 
 /// The representation of a table.
 pub struct Table {
     pub(crate) columns: Vec<Column>,
     header: Row,
     pub(crate) rows: Vec<Row>,
-    pub style: TableStyle,
+    pub table_style: TableStyle,
     pub(crate) arrangement: ContentArrangement,
 }
 
@@ -20,14 +21,17 @@ impl Table {
             columns: Vec::new(),
             header: header,
             rows: Vec::new(),
-            style: TableStyle::new(),
+            table_style: TableStyle::new(),
             arrangement: ContentArrangement::Automatic,
         }
     }
 
-    pub fn to_string(&mut self) {
+    pub fn to_string(&mut self) -> String {
         let display_info = arrange_content(self);
         let content = format_content(&self, &display_info);
+        let lines = draw_borders(content, &self.table_style, &display_info);
+
+        lines.join("\n")
     }
 
     /// Set the header row of the table. This is usually the title of each column.
