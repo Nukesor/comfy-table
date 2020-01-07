@@ -15,7 +15,6 @@ pub enum ContentArrangement {
     /// the best column layout for the given content.
     /// Constraints on columns are still respected.
     Automatic,
-
     // /// Same as Automatic, but the full width of the terminal will always be used.
     // /// Use this, if you don't want tables that differ in width.
     // /// Constraints on columns are still respected.
@@ -155,12 +154,10 @@ impl TableStyle {
     pub fn style_or_default(&self, component: Component) -> String {
         match self.style.get(&component) {
             None => " ".to_string(),
-            Some(option) => {
-                match option {
-                    None => " ".to_string(),
-                    Some(character) => character.to_string(),
-                }
-            }
+            Some(option) => match option {
+                None => " ".to_string(),
+                Some(character) => character.to_string(),
+            },
         }
     }
 

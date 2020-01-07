@@ -1,12 +1,11 @@
 use ::termion::terminal_size;
 
-use crate::table::Table;
 use crate::column::Column;
 use crate::styling::cell::CellAlignment;
 use crate::styling::column::Constraint;
 use crate::styling::column::Constraint::*;
 use crate::styling::table::ContentArrangement;
-
+use crate::table::Table;
 
 /// This is used to store various styling options for a specific column
 /// The struct is only created temporarily during the drawing process
@@ -40,7 +39,6 @@ impl ColumnDisplayInfo {
     }
 }
 
-
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
 pub fn arrange_content(table: &mut Table) -> Vec<ColumnDisplayInfo> {
@@ -59,7 +57,7 @@ pub fn arrange_content(table: &mut Table) -> Vec<ColumnDisplayInfo> {
     match &table.arrangement {
         ContentArrangement::Disabled => disabled_arrangement(&mut display_infos),
         _ => (),
-//        ContentArrangement::Automatic => automatic_arrangement(&mut display_infos, term_width),
+        //        ContentArrangement::Automatic => automatic_arrangement(&mut display_infos, term_width),
     }
 
     display_infos
@@ -87,7 +85,6 @@ fn evaluate_constraint(info: &mut ColumnDisplayInfo, constraint: &Constraint, te
     }
 }
 
-
 /// If automatic arrangement is disabled, simply set the width of all columns
 /// to the respective max content width.
 fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
@@ -98,7 +95,6 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
         }
     }
 }
-
 
 //fn automatic_arrangement(infos: &mut Vec<ColumnDisplayInfo>, term_width: u16) {
 //    let mut remaining_width = term_width;

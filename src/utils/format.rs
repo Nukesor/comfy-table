@@ -1,7 +1,6 @@
+use crate::styling::cell::CellAlignment;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
-use crate::styling::cell::CellAlignment;
-
 
 /// Returns the formatted content of the table.
 /// The content is organized in the following structure
@@ -20,7 +19,10 @@ use crate::styling::cell::CellAlignment;
 ///
 /// The strings for each row will be padded and aligned accordingly
 /// to their respective column.
-pub fn format_content(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<Vec<String>>> {
+pub fn format_content(
+    table: &Table,
+    display_info: &Vec<ColumnDisplayInfo>,
+) -> Vec<Vec<Vec<String>>> {
     // The content of the whole table
     let mut table_content = Vec::new();
     for row in table.rows.iter() {
@@ -36,7 +38,7 @@ pub fn format_content(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> V
             let info = display_info.get(column_index).unwrap();
             // We simply ignore hidden columns
             if info.hidden {
-                continue
+                continue;
             }
 
             // Iterate over each line and split it into multiple, if necessary.
@@ -46,7 +48,6 @@ pub fn format_content(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> V
                     let mut splitted = split_line(line.clone(), &info);
                     cell_content.append(&mut splitted);
                 } else {
-
                     cell_content.push(align_line(line.clone(), info));
                 }
             }
@@ -59,8 +60,6 @@ pub fn format_content(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> V
 
     table_content
 }
-
-
 
 /// Split a cell content line if it's longer than the specified columns width - padding
 /// This function tries to do this in a smart way, by taking the content's deliminator
@@ -89,7 +88,7 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
             // Next part fits in line. Add and continue
             if next_length <= content_width as usize {
                 current_line += next;
-                continue
+                continue;
 
             // It doesn't fit, split it and put the remaining part back on the stack.
             } else {
@@ -126,16 +125,17 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
                 lines.push(current_line);
                 current_line = next.to_string();
             }
-
         }
     }
 
     // Iterate over all generated lines of this cell and align them
-    lines = lines.iter().map(|line| align_line(line.to_string(), info)).collect();
+    lines = lines
+        .iter()
+        .map(|line| align_line(line.to_string(), info))
+        .collect();
 
     lines
 }
-
 
 /// Apply the alignment for a column. Alignment can be either Left/Right/Center.
 /// In every case all lines will be exactly the same character length `info.width - padding long`
@@ -171,7 +171,6 @@ pub fn align_line(mut line: String, info: &ColumnDisplayInfo) -> String {
 
     pad_line(line, info)
 }
-
 
 /// Apply the column's padding to this line
 pub fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {

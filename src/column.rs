@@ -9,11 +9,11 @@ pub struct Column {
     /// The index of the column
     pub index: usize,
     /// Left/right padding for each cell of this column in spaces
-    pub (crate) padding: (u16, u16),
+    pub(crate) padding: (u16, u16),
     /// Define the cell alligment for all cells of this column
-    pub (crate) cell_alignment: Option<CellAlignment>,
-    pub (crate) max_content_width: u16,
-    pub (crate) constraint: Option<Constraint>,
+    pub(crate) cell_alignment: Option<CellAlignment>,
+    pub(crate) max_content_width: u16,
+    pub(crate) constraint: Option<Constraint>,
 }
 
 impl Column {

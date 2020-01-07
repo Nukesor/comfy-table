@@ -4,14 +4,17 @@ pub struct Cell {
     /// Content is a list of strings.
     /// This is done to handle newlines more easily.
     /// On set_content, the incoming string is split by '\n'
-    pub (crate) content: Vec<String>,
+    pub(crate) content: Vec<String>,
 }
 
 impl Cell {
     /// Create a new Cell from a String
     pub fn new(content: String) -> Self {
         Cell {
-            content: content.split('\n').map(|content| content.to_string()).collect(),
+            content: content
+                .split('\n')
+                .map(|content| content.to_string())
+                .collect(),
         }
     }
 

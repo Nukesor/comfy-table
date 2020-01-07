@@ -1,7 +1,11 @@
-use crate::utils::arrangement::ColumnDisplayInfo;
 use crate::styling::table::{Component, TableStyle};
+use crate::utils::arrangement::ColumnDisplayInfo;
 
-pub fn draw_borders(content: Vec<Vec<Vec<String>>>, table_style: &TableStyle, display_info: &Vec<ColumnDisplayInfo>) -> Vec<String> {
+pub fn draw_borders(
+    content: Vec<Vec<Vec<String>>>,
+    table_style: &TableStyle,
+    display_info: &Vec<ColumnDisplayInfo>,
+) -> Vec<String> {
     let mut lines = Vec::new();
     if should_draw_top_border(table_style) {
         lines.push(draw_top_border(table_style, display_info));
@@ -40,13 +44,12 @@ pub fn draw_top_border(table_style: &TableStyle, display_info: &Vec<ColumnDispla
     line
 }
 
-
-
 fn should_draw_top_border(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::TopLeftCorner) ||
-        table_style.style_exists(Component::TopBorder) ||
-        table_style.style_exists(Component::TopBorderIntersections) ||
-        table_style.style_exists(Component::TopRightCorner) {
+    if table_style.style_exists(Component::TopLeftCorner)
+        || table_style.style_exists(Component::TopBorder)
+        || table_style.style_exists(Component::TopBorderIntersections)
+        || table_style.style_exists(Component::TopRightCorner)
+    {
         return true;
     }
 
@@ -54,10 +57,11 @@ fn should_draw_top_border(table_style: &TableStyle) -> bool {
 }
 
 fn should_draw_bottom_border(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::BottomLeftCorner) ||
-        table_style.style_exists(Component::BottomBorder) ||
-        table_style.style_exists(Component::BottomBorderIntersections) ||
-        table_style.style_exists(Component::BottomRightCorner) {
+    if table_style.style_exists(Component::BottomLeftCorner)
+        || table_style.style_exists(Component::BottomBorder)
+        || table_style.style_exists(Component::BottomBorderIntersections)
+        || table_style.style_exists(Component::BottomRightCorner)
+    {
         return true;
     }
 
@@ -65,10 +69,11 @@ fn should_draw_bottom_border(table_style: &TableStyle) -> bool {
 }
 
 fn should_draw_left_border(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::TopLeftCorner) ||
-        table_style.style_exists(Component::LeftBorder) ||
-        table_style.style_exists(Component::LeftBorderIntersections) ||
-        table_style.style_exists(Component::BottomLeftCorner) {
+    if table_style.style_exists(Component::TopLeftCorner)
+        || table_style.style_exists(Component::LeftBorder)
+        || table_style.style_exists(Component::LeftBorderIntersections)
+        || table_style.style_exists(Component::BottomLeftCorner)
+    {
         return true;
     }
 
@@ -76,10 +81,11 @@ fn should_draw_left_border(table_style: &TableStyle) -> bool {
 }
 
 fn should_draw_right_border(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::TopRightCorner) ||
-        table_style.style_exists(Component::RightBorder) ||
-        table_style.style_exists(Component::RightBorderIntersections) ||
-        table_style.style_exists(Component::BottomRightCorner) {
+    if table_style.style_exists(Component::TopRightCorner)
+        || table_style.style_exists(Component::RightBorder)
+        || table_style.style_exists(Component::RightBorderIntersections)
+        || table_style.style_exists(Component::BottomRightCorner)
+    {
         return true;
     }
 
@@ -87,10 +93,11 @@ fn should_draw_right_border(table_style: &TableStyle) -> bool {
 }
 
 fn should_draw_horizontal_lines(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::LeftBorderIntersections) ||
-        table_style.style_exists(Component::HorizontalLines) ||
-        table_style.style_exists(Component::MiddleIntersections) ||
-        table_style.style_exists(Component::RightBorderIntersections) {
+    if table_style.style_exists(Component::LeftBorderIntersections)
+        || table_style.style_exists(Component::HorizontalLines)
+        || table_style.style_exists(Component::MiddleIntersections)
+        || table_style.style_exists(Component::RightBorderIntersections)
+    {
         return true;
     }
 
@@ -98,11 +105,12 @@ fn should_draw_horizontal_lines(table_style: &TableStyle) -> bool {
 }
 
 fn should_draw_vertical_lines(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::TopBorderIntersections) ||
-        table_style.style_exists(Component::HeaderMiddleIntersections) ||
-        table_style.style_exists(Component::VerticalLines) ||
-        table_style.style_exists(Component::MiddleIntersections) ||
-        table_style.style_exists(Component::BottomBorderIntersections) {
+    if table_style.style_exists(Component::TopBorderIntersections)
+        || table_style.style_exists(Component::HeaderMiddleIntersections)
+        || table_style.style_exists(Component::VerticalLines)
+        || table_style.style_exists(Component::MiddleIntersections)
+        || table_style.style_exists(Component::BottomBorderIntersections)
+    {
         return true;
     }
 

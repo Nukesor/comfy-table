@@ -4,14 +4,13 @@ use crate::styling::table::{ContentArrangement, TableStyle};
 use crate::utils::arrangement::arrange_content;
 use crate::utils::format::format_content;
 
-
 /// The representation of a table.
 pub struct Table {
-    pub (crate) columns: Vec<Column>,
+    pub(crate) columns: Vec<Column>,
     header: Row,
-    pub (crate) rows: Vec<Row>,
+    pub(crate) rows: Vec<Row>,
     pub style: TableStyle,
-    pub (crate) arrangement: ContentArrangement,
+    pub(crate) arrangement: ContentArrangement,
 }
 
 impl Table {
@@ -29,7 +28,6 @@ impl Table {
     pub fn to_string(&mut self) {
         let display_info = arrange_content(self);
         let content = format_content(&self, &display_info);
-
     }
 
     /// Set the header row of the table. This is usually the title of each column.
@@ -56,7 +54,6 @@ impl Table {
     pub fn get_column_mut(&mut self, index: usize) -> Option<&mut Column> {
         self.columns.get_mut(index)
     }
-
 
     /// Autogenerate new columns, if a row is added with more cells than existing columns
     fn autogenerate_columns(&mut self, row: &Row) {
