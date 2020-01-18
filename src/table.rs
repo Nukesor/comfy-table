@@ -2,8 +2,8 @@ use crate::column::Column;
 use crate::row::Row;
 use crate::styling::table::{ContentArrangement, TableStyle};
 use crate::utils::arrangement::arrange_content;
-use crate::utils::format::format_content;
 use crate::utils::borders::draw_borders;
+use crate::utils::format::format_content;
 
 /// The representation of a table.
 pub struct Table {

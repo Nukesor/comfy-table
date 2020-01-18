@@ -50,23 +50,28 @@ pub fn draw_top_border(table_style: &TableStyle, display_info: &Vec<ColumnDispla
     line
 }
 
-
 pub fn draw_content(
     content: Vec<Vec<Vec<String>>>,
     table_style: &TableStyle,
     display_info: &Vec<ColumnDisplayInfo>,
 ) -> Vec<String> {
     let lines = Vec::new();
+    // Iterate over all rows
+    for row in content.iter() {
 
+    }
 
     lines
 }
 
-
-pub fn draw_bottom_border(table_style: &TableStyle, display_info: &Vec<ColumnDisplayInfo>) -> String {
+pub fn draw_bottom_border(
+    table_style: &TableStyle,
+    display_info: &Vec<ColumnDisplayInfo>,
+) -> String {
     let bottom_left_corner = table_style.style_or_default(Component::BottomLeftCorner);
     let bottom_border = table_style.style_or_default(Component::BottomBorder);
-    let bottom_border_intersection = table_style.style_or_default(Component::BottomBorderIntersections);
+    let bottom_border_intersection =
+        table_style.style_or_default(Component::BottomBorderIntersections);
     let bottom_right_corner = table_style.style_or_default(Component::BottomRightCorner);
 
     let mut line = String::new();
