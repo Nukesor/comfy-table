@@ -1,5 +1,5 @@
 use crate::column::Column;
-use crate::row::Row;
+use crate::row::{Row, ToRow};
 use crate::styling::table::{ContentArrangement, TableStyle};
 use crate::utils::arrangement::arrange_content;
 use crate::utils::borders::draw_borders;
@@ -22,7 +22,7 @@ impl Table {
             header: None,
             rows: Vec::new(),
             table_style: TableStyle::new(),
-            arrangement: ContentArrangement::Automatic,
+            arrangement: ContentArrangement::Disabled,
         }
     }
 
@@ -35,16 +35,20 @@ impl Table {
     }
 
     /// Set the header row of the table. This is usually the title of each column.
-    pub fn set_header(&mut self, row: Row) -> &mut Self {
+    pub fn set_header<T: ToRow>(&mut self, mut row: T) -> &mut Self {
+        let row = row.to_row();
+        self.autogenerate_columns(&row);
+        self.adjust_max_column_widths(&row);
         self.header = Some(row);
 
         self
     }
 
     /// Add a new row to the table.
-    pub fn add_row(&mut self, mut row: Row) -> &mut Self {
+    pub fn add_row<T: ToRow>(&mut self, mut row: T) -> &mut Self {
+        let mut row = row.to_row();
         self.autogenerate_columns(&row);
-        self.adjust_column_width(&row);
+        self.adjust_max_column_widths(&row);
         row.index = Some(self.rows.len());
         self.rows.push(row);
 
@@ -69,27 +73,47 @@ impl Table {
     }
 
     /// Update the max_content_width for all columns depending on the new row
-    fn adjust_column_width(&mut self, row: &Row) {
+    fn adjust_max_column_widths(&mut self, row: &Row) {
         let max_widths = row.max_content_widths();
         for (index, width) in max_widths.iter().enumerate() {
             // We expect this column to exist, since we autoenerate columns just before calling this function
             let mut column = self.columns.get_mut(index).unwrap();
-            column.max_content_width = *width as u16;
+            if column.max_content_width < *width as u16 {
+                column.max_content_width = *width as u16;
+            }
         }
     }
 
-    // Get the width of the longest row.
-    // This is needed to automatically calculate the amount of columns that need to be created.
-    // # Comment for now, maybe we don't need this at all.
-    // fn get_max_column(&self) -> usize {
-    //     let mut width;
-    //     let mut longest = 0;
-    //     for row in self.rows.iter() {
-    //         width = row.cell_count();
-    //         if width > longest {
-    //             longest = width
-    //         }
-    //     }
-    //     longest
-    // }
+    /// Return a vector representing the maximum amount of characters in any line of this column.
+    /// This is mostly needed for internal testing and formatting, but it can be interesting
+    /// if you want to check how wide the longest line for each column is during runtime.
+    pub fn column_max_content_widths(&self) -> Vec<u16> {
+        self.columns.iter().map(|column| column.max_content_width).collect()
+    }
+
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_column_generation() {
+        let mut table = Table::new();
+        table.set_header(&vec!["thr", "four", "fivef"]);
+
+        // When adding a new row, columns are automatically generated
+        assert_eq!(table.columns.len(), 3);
+        // The max content width is also correctly set for each column
+        assert_eq!(table.column_max_content_widths(), vec![3, 4, 5]);
+
+        // When adding a new row, the max content width is updated accordingly
+        table.add_row(&vec!["four", "fivef", "very long text with 23"]);
+        assert_eq!(table.column_max_content_widths(), vec![4, 5, 22]);
+
+        // Now add a row that has column lines. The max content width shouldn't change
+        table.add_row(&vec!["", "", "shorter"]);
+        assert_eq!(table.column_max_content_widths(), vec![4, 5, 22]);
+    }
 }

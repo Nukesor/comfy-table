@@ -8,7 +8,7 @@
 /// | c     | d     |
 /// +-------+-------+
 /// ```
-pub const ASCII_FULL: &str = "||--+==+-|+||++++++";
+pub const ASCII_FULL: &str = "||--+==+|-+||++++++";
 
 /// Default style without any borders
 /// ```text
@@ -18,7 +18,7 @@ pub const ASCII_FULL: &str = "||--+==+-|+||++++++";
 /// -------+-------
 ///  c     | d
 /// ```
-pub const ASCII_NO_BORDERS: &str = "     == -|+        ";
+pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 
 /// Just like ASCII_FULL, but without vertical/horizontal middle lines
 /// ```text
@@ -53,7 +53,7 @@ pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "||-- ==    ||++    ";
 /// │ c     ┆ d     │
 /// └───────┴───────┘
 /// ```
-pub const UTF8_FULL: &str = "││──╞═╪╡╌┆┼├┤┬┴┌┐└┘";
+pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐└┘";
 
 /// Just like the UTF8 FULL version, but without vertical/horizontal middle lines.
 /// ```text

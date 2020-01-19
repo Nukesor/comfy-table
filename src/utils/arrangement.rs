@@ -29,7 +29,7 @@ impl ColumnDisplayInfo {
     fn new(column: &Column) -> Self {
         ColumnDisplayInfo {
             padding: column.padding,
-            max_content_width: column.get_max_content_width(),
+            max_content_width: column.max_content_width,
             width: 0,
             fixed: false,
             constraint: None,
@@ -41,7 +41,7 @@ impl ColumnDisplayInfo {
 
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
-pub fn arrange_content(table: &mut Table) -> Vec<ColumnDisplayInfo> {
+pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     let (term_width, _) = terminal_size().unwrap();
 
     let mut display_infos = Vec::new();
@@ -77,7 +77,7 @@ fn evaluate_constraint(info: &mut ColumnDisplayInfo, constraint: &Constraint, te
             info.fixed = true;
         }
         ContentWidth => {
-            info.width = info.max_content_width;
+            info.width = info.max_content_width + info.padding.0 + info.padding.1;
             info.fixed = true;
         }
         MaxWidth(max_width) => info.constraint = Some(MaxWidth(*max_width)),
@@ -90,7 +90,7 @@ fn evaluate_constraint(info: &mut ColumnDisplayInfo, constraint: &Constraint, te
 fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
     for info in infos.iter_mut() {
         if !info.fixed {
-            info.width = info.max_content_width;
+            info.width = info.max_content_width + info.padding.0 + info.padding.1;
             info.fixed = true;
         }
     }
@@ -117,3 +117,25 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 //        }
 //    }
 //}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_disabled_arrangement() {
+        let mut table = Table::new();
+        table.set_header(&vec!["head", "head", "head"]);
+        table.add_row(&vec!["four", "fivef", "sixsix"]);
+
+        let display_infos = arrange_content(&table);
+        // The max_ width should just be copied from the column
+        let max_widths: Vec<u16> = display_infos.iter().map(|info| info.max_content_width).collect();
+        assert_eq!(max_widths, vec![4, 5, 6]);
+
+        // In default mode without any constraints
+        let widths: Vec<u16> = display_infos.iter().map(|info| info.width).collect();
+        assert_eq!(widths, vec![6, 7, 8]);
+    }
+}

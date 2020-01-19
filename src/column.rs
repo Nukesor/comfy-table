@@ -22,7 +22,7 @@ impl Column {
             index: index,
             padding: (1, 1),
             constraint: None,
-            max_content_width: 1,
+            max_content_width: 0,
             cell_alignment: None,
         }
     }

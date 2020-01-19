@@ -1,5 +1,28 @@
+/// Allow the conversion of a type to a vector of cells.
+/// By default this is implemented for all types implementing
+/// IntoIterator where the iterated Item type implements ToString.
+/// E.g. a Vec<i32> works
+pub trait ToCells {
+    fn to_cells(&mut self) -> Vec<Cell>;
+}
+
+impl<T: Clone + IntoIterator> ToCells for T where
+    T::Item: ToString {
+    fn to_cells(&mut self) -> Vec<Cell> {
+        self.clone().into_iter().map(|item| Cell::new(item)).collect()
+    }
+}
+
+/// This is quite expensive, but it's convenient
+impl ToString for Cell {
+    fn to_string(&self) -> String {
+        self.get_content()
+    }
+}
+
 /// The representation of a single cell in a table row.
 /// Each cell contains a string, which will later be displayed at the respective row/column.
+#[derive(Clone)]
 pub struct Cell {
     /// Content is a list of strings.
     /// This is done to handle newlines more easily.
@@ -21,17 +44,5 @@ impl Cell {
     /// Return a copy of the content contained in this cell.
     pub fn get_content(&self) -> String {
         return self.content.join("\n").clone();
-    }
-}
-
-
-pub trait ToCells {
-    fn to_cells(&mut self) -> Vec<Cell>;
-}
-
-impl<T: Copy + IntoIterator> ToCells for T where
-    T::Item: ToString {
-    fn to_cells(&mut self) -> Vec<Cell> {
-        self.into_iter().map(|item| Cell::new(item)).collect()
     }
 }

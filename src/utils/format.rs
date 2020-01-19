@@ -61,12 +61,21 @@ pub fn format_content(
             temp_row_content.push(cell_content);
         }
 
-        // Right now, we have a different structure than we actually desire.
+        // Right now, we have a different structure than desired.
         // The content is organized by `row->cell->line`.
-        // We want to remove the cell from our datastructure.
-        // In the end it should look like this row->line->column.
+        // We want to remove the cell from our datastructure, since this makes the next step a lot easier.
+        // In the end it should look like this: `row->line->column`.
         // To achieve this, we calculate the max amount of lines for the current row.
         // Afterwards, we iterate over each cell and convert the current structure to the desired one.
+        // This step basically transforms this:
+        //  tc[0][0][0]     tc[0][1][0]
+        //  tc[0][0][1]     tc[0][1][1]
+        //  tc[0][0][2]     This part of the line is missing
+        //
+        // to this:
+        //  tc[0][0][0]     tc[0][0][1]
+        //  tc[0][1][0]     tc[0][1][1]
+        //  tc[0][2][0]     tc[0][2][1] <- Now filled with placeholder (spaces)
         let max_lines = temp_row_content.iter().map(|cell| cell.len()).max().unwrap_or(0);
         let mut row_content = Vec::new();
         for index in 0..max_lines {
@@ -97,7 +106,6 @@ pub fn format_content(
 pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
     let mut lines = Vec::new();
     let padding = info.padding.0 + info.padding.1;
-    println!("{}, {}", padding, info.width);
     let content_width = info.width - padding;
 
     // Split the line by the given deliminator and turn the content into a stack.
