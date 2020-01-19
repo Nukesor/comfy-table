@@ -28,4 +28,3 @@ fn simple_table() {
 +----------------------+----------------------+------------------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
-
