@@ -1,8 +1,7 @@
-use crate::cell::{ToCells, Cell};
+use crate::cell::{Cell, ToCells};
 
 pub trait ToRow {
     fn to_row(&mut self) -> Row;
-
 }
 
 impl<T: ToCells> ToRow for T {
@@ -69,7 +68,13 @@ mod tests {
 
     #[test]
     fn test_correct_max_content_width() {
-        let row = Row::from(&vec!["", "four", "fivef", "sixsix", "11 but with\na newline"]);
+        let row = Row::from(&vec![
+            "",
+            "four",
+            "fivef",
+            "sixsix",
+            "11 but with\na newline",
+        ]);
 
         let max_content_widths = row.max_content_widths();
 

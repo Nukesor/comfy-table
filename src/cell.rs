@@ -6,10 +6,15 @@ pub trait ToCells {
     fn to_cells(&mut self) -> Vec<Cell>;
 }
 
-impl<T: Clone + IntoIterator> ToCells for T where
-    T::Item: ToString {
+impl<T: Clone + IntoIterator> ToCells for T
+where
+    T::Item: ToString,
+{
     fn to_cells(&mut self) -> Vec<Cell> {
-        self.clone().into_iter().map(|item| Cell::new(item)).collect()
+        self.clone()
+            .into_iter()
+            .map(|item| Cell::new(item))
+            .collect()
     }
 }
 
@@ -34,7 +39,8 @@ impl Cell {
     /// Create a new Cell
     pub fn new<T: ToString>(content: T) -> Self {
         Cell {
-            content: content.to_string()
+            content: content
+                .to_string()
                 .split('\n')
                 .map(|content| content.to_string())
                 .collect(),

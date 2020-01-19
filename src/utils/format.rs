@@ -32,7 +32,7 @@ pub fn format_content(
         Some(header) => {
             table_content.push(format_row(header, display_info));
         }
-        None => ()
+        None => (),
     }
 
     for row in table.rows.iter() {
@@ -41,10 +41,7 @@ pub fn format_content(
     table_content
 }
 
-pub fn format_row(
-    row: &Row,
-    display_info: &Vec<ColumnDisplayInfo>,
-) -> Vec<Vec<String>> {
+pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<String>> {
     // The content of this specific row
     let mut temp_row_content = Vec::new();
 
@@ -95,7 +92,11 @@ pub fn format_row(
     //  tc[0][0][0]     tc[0][0][1]
     //  tc[0][1][0]     tc[0][1][1]
     //  tc[0][2][0]     tc[0][2][1] <- Now filled with placeholder (spaces)
-    let max_lines = temp_row_content.iter().map(|cell| cell.len()).max().unwrap_or(0);
+    let max_lines = temp_row_content
+        .iter()
+        .map(|cell| cell.len())
+        .max()
+        .unwrap_or(0);
     let mut row_content = Vec::new();
     for index in 0..max_lines {
         let mut line = Vec::new();

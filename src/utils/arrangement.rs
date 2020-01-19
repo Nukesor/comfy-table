@@ -118,7 +118,6 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 //    }
 //}
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -131,7 +130,10 @@ mod tests {
 
         let display_infos = arrange_content(&table);
         // The max_ width should just be copied from the column
-        let max_widths: Vec<u16> = display_infos.iter().map(|info| info.max_content_width).collect();
+        let max_widths: Vec<u16> = display_infos
+            .iter()
+            .map(|info| info.max_content_width)
+            .collect();
         assert_eq!(max_widths, vec![4, 5, 6]);
 
         // In default mode without any constraints

@@ -93,11 +93,12 @@ impl Table {
     /// This is mostly needed for internal testing and formatting, but it can be interesting
     /// if you want to check how wide the longest line for each column is during runtime.
     pub fn column_max_content_widths(&self) -> Vec<u16> {
-        self.columns.iter().map(|column| column.max_content_width).collect()
+        self.columns
+            .iter()
+            .map(|column| column.max_content_width)
+            .collect()
     }
-
 }
-
 
 #[cfg(test)]
 mod tests {

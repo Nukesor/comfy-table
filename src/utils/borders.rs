@@ -82,10 +82,7 @@ fn draw_rows(
 }
 
 // Takes the parts of a single line, surrounds them with borders and adds vertical lines.
-fn embed_line(
-    line_parts: &Vec<String>,
-    table_style: &TableStyle,
-) -> String {
+fn embed_line(line_parts: &Vec<String>, table_style: &TableStyle) -> String {
     let vertical_lines = table_style.style_or_default(Component::VerticalLines);
     let left_border = table_style.style_or_default(Component::LeftBorder);
     let right_border = table_style.style_or_default(Component::RightBorder);
@@ -114,12 +111,7 @@ fn draw_horizontal_lines(
     display_info: &Vec<ColumnDisplayInfo>,
     header: bool,
 ) -> String {
-    let (
-        left_intersection,
-        horizontal_lines,
-        middle_intersection,
-        right_intersection,
-    ) = if header {
+    let (left_intersection, horizontal_lines, middle_intersection, right_intersection) = if header {
         (
             table_style.style_or_default(Component::LeftHeaderIntersection),
             table_style.style_or_default(Component::HeaderLines),
@@ -159,14 +151,10 @@ fn draw_horizontal_lines(
     line
 }
 
-fn draw_bottom_border(
-    table_style: &TableStyle,
-    display_info: &Vec<ColumnDisplayInfo>,
-) -> String {
+fn draw_bottom_border(table_style: &TableStyle, display_info: &Vec<ColumnDisplayInfo>) -> String {
     let left_corner = table_style.style_or_default(Component::BottomLeftCorner);
     let bottom_border = table_style.style_or_default(Component::BottomBorder);
-    let middle_intersection =
-        table_style.style_or_default(Component::BottomBorderIntersections);
+    let middle_intersection = table_style.style_or_default(Component::BottomBorderIntersections);
     let right_corner = table_style.style_or_default(Component::BottomRightCorner);
 
     let mut line = String::new();
