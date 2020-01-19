@@ -1,8 +1,7 @@
 use comfy_table::prelude::*;
 use comfy_table::styling::presets::*;
 
-#[test]
-fn presets_work() {
+fn get_preset_table() -> Table {
     let mut table = Table::new();
     table.set_header(&vec!["Header1", "Header2", "Header3"]);
     table.add_row(&vec![
@@ -16,6 +15,12 @@ fn presets_work() {
         "One Three",
     ]);
 
+    table
+}
+
+#[test]
+fn ascii_no_borders() {
+    let mut table = get_preset_table();
     table.load_preset(ASCII_NO_BORDERS);
     let expected = concat!(
         " Header1 | Header2 | Header3   \n",
@@ -25,8 +30,11 @@ fn presets_work() {
         " One One | One Two | One Three ",
     );
     assert_eq!(&table.to_string(), expected);
+}
 
-
+#[test]
+fn ascii_borders_only() {
+    let mut table = get_preset_table();
     table.load_preset(ASCII_BORDERS_ONLY);
     let expected = "
 +-------------------------------+
@@ -37,8 +45,11 @@ fn presets_work() {
 | One One   One Two   One Three |
 +-------------------------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
 
-
+#[test]
+fn ascii_horizontal_borders_only() {
+    let mut table = get_preset_table();
     table.load_preset(ASCII_HORIZONTAL_BORDERS_ONLY);
     let expected = concat!(
         "-------------------------------\n",
@@ -50,7 +61,11 @@ fn presets_work() {
         "-------------------------------",
     );
     assert_eq!(&table.to_string(), expected);
+}
 
+#[test]
+fn utf8_full() {
+    let mut table = get_preset_table();
     table.load_preset(UTF8_FULL);
     let expected = "
 ┌─────────┬─────────┬───────────┐
@@ -61,7 +76,11 @@ fn presets_work() {
 │ One One ┆ One Two ┆ One Three │
 └─────────┴─────────┴───────────┘";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
 
+#[test]
+fn utf8_borders_only() {
+    let mut table = get_preset_table();
     table.load_preset(UTF8_BORDERS_ONLY);
     let expected = "
 ┌───────────────────────────────┐
