@@ -29,7 +29,7 @@ pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 /// | c       d     |
 /// +---------------+
 /// ```
-pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||++++++";
+pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 
 /// Just like ASCII_FULL, but without vertical/horizontal middle lines and no side borders
 /// ```text
@@ -40,7 +40,7 @@ pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||++++++";
 ///  c       d
 /// ---------------
 /// ```
-pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "||-- ==    ||++    ";
+pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "  -- ==  --  --    ";
 
 /// The UTF8 enabled version of the default style for tables.
 /// Quite beautiful isn't it?

@@ -209,6 +209,7 @@ fn should_draw_left_border(table_style: &TableStyle) -> bool {
     if table_style.style_exists(Component::TopLeftCorner)
         || table_style.style_exists(Component::LeftBorder)
         || table_style.style_exists(Component::LeftBorderIntersections)
+        || table_style.style_exists(Component::LeftHeaderIntersection)
         || table_style.style_exists(Component::BottomLeftCorner)
     {
         return true;
@@ -221,6 +222,7 @@ fn should_draw_right_border(table_style: &TableStyle) -> bool {
     if table_style.style_exists(Component::TopRightCorner)
         || table_style.style_exists(Component::RightBorder)
         || table_style.style_exists(Component::RightBorderIntersections)
+        || table_style.style_exists(Component::RightHeaderIntersection)
         || table_style.style_exists(Component::BottomRightCorner)
     {
         return true;

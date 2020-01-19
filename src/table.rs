@@ -49,6 +49,17 @@ impl Table {
         self.header.as_ref()
     }
 
+    /// Convenience wrapper for table.table_style.load_preset()
+    pub fn load_preset(&mut self, preset: &str) {
+        self.table_style.load_preset(preset);
+    }
+
+    /// Convenience wrapper for table.table_style.apply_modifier()
+    pub fn apply_modifier(&mut self, modifier: &str) {
+        self.table_style.apply_modifier(modifier);
+    }
+
+
     /// Add a new row to the table.
     pub fn add_row<T: ToRow>(&mut self, mut row: T) -> &mut Self {
         let mut row = row.to_row();

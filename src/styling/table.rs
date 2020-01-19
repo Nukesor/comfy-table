@@ -63,7 +63,7 @@ pub enum Component {
 /// The default style preset when using `::new` is the [ASCII_FULL]
 pub struct TableStyle {
     pub(crate) has_header: bool,
-    style: HashMap<Component, Option<char>>,
+    style: HashMap<Component, char>,
 }
 
 impl TableStyle {
@@ -87,12 +87,20 @@ impl TableStyle {
     /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all remaining components.
     ///
     /// If the string is too long, remaining charaacters will be simply ignored.
-    pub fn load_preset(&mut self, format: &str) {
+    pub fn load_preset(&mut self, preset: &str) {
         let mut components = Component::iter();
 
-        for character in format.chars() {
+        for character in preset.chars() {
             if let Some(component) = components.next() {
-                self.style.insert(component, Some(character));
+                // White spaces mean "don't draw this" in presets
+                // If we want to override the default preset, we need to remove
+                // this component from the HashMap in case we find a whitespace.
+                if character == ' ' {
+                    self.style.remove(&component);
+                    continue;
+                }
+
+                self.style.insert(component, character);
             } else {
                 break;
             }
@@ -110,7 +118,7 @@ impl TableStyle {
                 continue;
             }
             if let Some(component) = components.next() {
-                self.style.insert(component, Some(character));
+                self.style.insert(component, character);
             } else {
                 break;
             }
@@ -134,14 +142,13 @@ impl TableStyle {
     ///
     /// If in addition `TopLeftCorner`,`TopBorder` and `TopRightCorner` would be `None` as well,
     /// the first line wouldn't be displayed at all.
-    pub fn set_style(&mut self, component: Component, symbol: Option<char>) -> &mut Self {
-        if let Some(symbol) = symbol {
-            if symbol == ' ' {
-                self.style.insert(component, None);
-                return self;
+    pub fn set_style(&mut self, component: Component, character: Option<char>) -> &mut Self {
+        match character {
+            Some(character) => {
+                self.style.insert(component, character);
             }
-        }
-        self.style.insert(component, symbol);
+            None => (),
+        };
 
         self
     }
@@ -150,17 +157,14 @@ impl TableStyle {
     pub fn get_style(&mut self, component: Component) -> Option<char> {
         match self.style.get(&component) {
             None => None,
-            Some(option) => option.clone(),
+            Some(character) => Some(*character),
         }
     }
 
     pub fn style_or_default(&self, component: Component) -> String {
         match self.style.get(&component) {
             None => " ".to_string(),
-            Some(option) => match option {
-                None => " ".to_string(),
-                Some(character) => character.to_string(),
-            },
+            Some(character) => character.to_string(),
         }
     }
 
