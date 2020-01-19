@@ -19,4 +19,3 @@ maintenance = { status = "actively-developed" }
 termion = "^1.5"
 strum = "^0.17"
 strum_macros = "^0.17"
-textwrap = "^0.11"

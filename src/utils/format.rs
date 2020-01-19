@@ -97,6 +97,7 @@ pub fn format_content(
 pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
     let mut lines = Vec::new();
     let padding = info.padding.0 + info.padding.1;
+    println!("{}, {}", padding, info.width);
     let content_width = info.width - padding;
 
     // Split the line by the given deliminator and turn the content into a stack.

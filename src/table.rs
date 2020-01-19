@@ -8,7 +8,7 @@ use crate::utils::format::format_content;
 /// The representation of a table.
 pub struct Table {
     pub(crate) columns: Vec<Column>,
-    header: Row,
+    header: Option<Row>,
     pub(crate) rows: Vec<Row>,
     pub table_style: TableStyle,
     pub(crate) arrangement: ContentArrangement,
@@ -16,10 +16,10 @@ pub struct Table {
 
 impl Table {
     /// Create a new table with default ASCII styling, no rows and a header
-    pub fn new(header: Row) -> Self {
+    pub fn new() -> Self {
         Table {
             columns: Vec::new(),
-            header: header,
+            header: None,
             rows: Vec::new(),
             table_style: TableStyle::new(),
             arrangement: ContentArrangement::Automatic,
@@ -36,7 +36,7 @@ impl Table {
 
     /// Set the header row of the table. This is usually the title of each column.
     pub fn set_header(&mut self, row: Row) -> &mut Self {
-        self.header = row;
+        self.header = Some(row);
 
         self
     }

@@ -61,7 +61,7 @@ fn draw_rows(
     while let Some(row) = row_iter.next() {
         // Concatenate the line parts and insert the vertical borders if needed
         for line_parts in row.iter() {
-            lines.push(embed_line(line_parts, table_style, display_info));
+            lines.push(embed_line(line_parts, table_style));
         }
 
         // Draw a horizontal line, if we should and if we aren't in the last line of the table.
@@ -77,7 +77,6 @@ fn draw_rows(
 fn embed_line(
     line_parts: &Vec<String>,
     table_style: &TableStyle,
-    display_info: &Vec<ColumnDisplayInfo>,
 ) -> String {
     let vertical_lines = table_style.style_or_default(Component::VerticalLines);
     let left_border = table_style.style_or_default(Component::LeftBorder);
@@ -91,7 +90,7 @@ fn embed_line(
     let mut part_iter = line_parts.iter().peekable();
     while let Some(part) = part_iter.next() {
         line += part;
-        if (should_draw_vertical_lines(table_style) && part_iter.peek().is_some()) {
+        if should_draw_vertical_lines(table_style) && part_iter.peek().is_some() {
             line += &vertical_lines;
         } else if should_draw_right_border(table_style) && !part_iter.peek().is_some() {
             line += &right_border;

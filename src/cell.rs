@@ -8,10 +8,10 @@ pub struct Cell {
 }
 
 impl Cell {
-    /// Create a new Cell from a String
-    pub fn new(content: String) -> Self {
+    /// Create a new Cell
+    pub fn new<T: ToString>(content: T) -> Self {
         Cell {
-            content: content
+            content: content.to_string()
                 .split('\n')
                 .map(|content| content.to_string())
                 .collect(),
@@ -21,5 +21,17 @@ impl Cell {
     /// Return a copy of the content contained in this cell.
     pub fn get_content(&self) -> String {
         return self.content.join("\n").clone();
+    }
+}
+
+
+pub trait ToCells {
+    fn to_cells(&mut self) -> Vec<Cell>;
+}
+
+impl<T: Copy + IntoIterator> ToCells for T where
+    T::Item: ToString {
+    fn to_cells(&mut self) -> Vec<Cell> {
+        self.into_iter().map(|item| Cell::new(item)).collect()
     }
 }

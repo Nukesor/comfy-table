@@ -1,4 +1,4 @@
-use crate::cell::Cell;
+use crate::cell::{ToCells, Cell};
 
 pub struct Row {
     /// Index of the row. This will be set as soon as the row is added to the table
@@ -18,6 +18,13 @@ impl Row {
         Row {
             index: None,
             cells: cells,
+        }
+    }
+
+    pub fn from<T: ToCells>(mut cells: T) -> Row {
+        Row {
+            index: None,
+            cells: cells.to_cells(),
         }
     }
 

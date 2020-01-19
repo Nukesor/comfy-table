@@ -4,7 +4,6 @@ use ::strum_macros::EnumIter;
 
 use crate::styling::presets::ASCII_FULL;
 
-/// Determin
 pub enum ContentArrangement {
     /// Don't do any automatic width calculation.
     /// Table with this mode might overflow and look ugly, if content gets too long.
@@ -16,7 +15,7 @@ pub enum ContentArrangement {
     /// Constraints on columns are still respected.
     Automatic,
     // /// Same as Automatic, but the full width of the terminal will always be used.
-    // /// Use this, if you don't want tables that differ in width.
+    // /// Use this, if you want tables to use as much space as possible.
     // /// Constraints on columns are still respected.
     // Full,
 }
@@ -69,7 +68,12 @@ pub struct TableStyle {
 impl TableStyle {
     /// Create a new TableStyle. The default style is [ASCII_FULL],
     pub fn new() -> Self {
-        TableStyle::from_preset(ASCII_FULL)
+        let mut table_style = TableStyle {
+            style: HashMap::new(),
+        };
+        table_style.load_preset(ASCII_FULL);
+
+        table_style
     }
 
     /// This function creates a TableStyle from a given preset string.
@@ -81,19 +85,16 @@ impl TableStyle {
     /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all remaining components.
     ///
     /// If the string is too long, remaining charaacters will be simply ignored.
-    pub fn from_preset(format: &str) -> Self {
-        let mut table_style = TableStyle::new();
+    pub fn load_preset(&mut self, format: &str) {
         let mut components = Component::iter();
 
         for character in format.chars() {
             if let Some(component) = components.next() {
-                table_style.style.insert(component, Some(character));
+                self.style.insert(component, Some(character));
             } else {
                 break;
             }
         }
-
-        table_style
     }
 
     /// Modify a preset with a modifier string from [modifiers](crate::styling::modifiers).
