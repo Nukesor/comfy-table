@@ -1,3 +1,4 @@
+use crate::row::Row;
 use crate::styling::cell::CellAlignment;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
@@ -25,78 +26,93 @@ pub fn format_content(
 ) -> Vec<Vec<Vec<String>>> {
     // The content of the whole table
     let mut table_content = Vec::new();
-    for row in table.rows.iter() {
-        // The content of this specific row
-        let mut temp_row_content = Vec::new();
 
-        let mut max_content_lines = 0;
-        // Now iterate over all cells and handle them according to their alignment
-        for (column_index, cell) in row.cells.iter().enumerate() {
-            // Each cell is devided into several lines devided by newline
-            // Every line that's too long will be split into two/several lines
-            let mut cell_content = Vec::new();
-
-            let info = display_info.get(column_index).unwrap();
-            // We simply ignore hidden columns
-            if info.hidden {
-                continue;
-            }
-
-            // Iterate over each line and split it into multiple lines, if necessary.
-            // Newlines added by the user will be preserved.
-            for line in cell.content.iter() {
-                if line.len() as u16 > info.width {
-                    let mut splitted = split_line(line.clone(), &info);
-                    cell_content.append(&mut splitted);
-                } else {
-                    cell_content.push(align_line(line.clone(), info));
-                }
-            }
-
-            // Calculate the maximum amount of lines on this row.
-            if cell_content.len() > max_content_lines {
-                max_content_lines = cell_content.len();
-            }
-
-            temp_row_content.push(cell_content);
+    // Format table header if it exists
+    match table.get_header() {
+        Some(header) => {
+            table_content.push(format_row(header, display_info));
         }
-
-        // Right now, we have a different structure than desired.
-        // The content is organized by `row->cell->line`.
-        // We want to remove the cell from our datastructure, since this makes the next step a lot easier.
-        // In the end it should look like this: `row->line->column`.
-        // To achieve this, we calculate the max amount of lines for the current row.
-        // Afterwards, we iterate over each cell and convert the current structure to the desired one.
-        // This step basically transforms this:
-        //  tc[0][0][0]     tc[0][1][0]
-        //  tc[0][0][1]     tc[0][1][1]
-        //  tc[0][0][2]     This part of the line is missing
-        //
-        // to this:
-        //  tc[0][0][0]     tc[0][0][1]
-        //  tc[0][1][0]     tc[0][1][1]
-        //  tc[0][2][0]     tc[0][2][1] <- Now filled with placeholder (spaces)
-        let max_lines = temp_row_content.iter().map(|cell| cell.len()).max().unwrap_or(0);
-        let mut row_content = Vec::new();
-        for index in 0..max_lines {
-            let mut line = Vec::new();
-            for (column_index, cell) in temp_row_content.iter().enumerate() {
-                let info = display_info.get(column_index).unwrap();
-                match cell.get(index) {
-                    // The current cell has content for this line. Append it
-                    Some(content) => line.push(content.clone()),
-                    // The current cell doesn't have content for this line.
-                    // Fill with a placeholder (empty spaces)
-                    None => line.push(" ".repeat(info.width as usize)),
-                }
-            }
-            row_content.push(line);
-        }
-
-        table_content.push(row_content);
+        None => ()
     }
 
+    for row in table.rows.iter() {
+        table_content.push(format_row(row, display_info));
+    }
     table_content
+}
+
+pub fn format_row(
+    row: &Row,
+    display_info: &Vec<ColumnDisplayInfo>,
+) -> Vec<Vec<String>> {
+    // The content of this specific row
+    let mut temp_row_content = Vec::new();
+
+    let mut max_content_lines = 0;
+    // Now iterate over all cells and handle them according to their alignment
+    for (column_index, cell) in row.cells.iter().enumerate() {
+        // Each cell is devided into several lines devided by newline
+        // Every line that's too long will be split into two/several lines
+        let mut cell_content = Vec::new();
+
+        let info = display_info.get(column_index).unwrap();
+        // We simply ignore hidden columns
+        if info.hidden {
+            continue;
+        }
+
+        // Iterate over each line and split it into multiple lines, if necessary.
+        // Newlines added by the user will be preserved.
+        for line in cell.content.iter() {
+            if line.len() as u16 > info.width {
+                let mut splitted = split_line(line.clone(), &info);
+                cell_content.append(&mut splitted);
+            } else {
+                cell_content.push(align_line(line.clone(), info));
+            }
+        }
+
+        // Calculate the maximum amount of lines on this row.
+        if cell_content.len() > max_content_lines {
+            max_content_lines = cell_content.len();
+        }
+
+        temp_row_content.push(cell_content);
+    }
+
+    // Right now, we have a different structure than desired.
+    // The content is organized by `row->cell->line`.
+    // We want to remove the cell from our datastructure, since this makes the next step a lot easier.
+    // In the end it should look like this: `row->line->column`.
+    // To achieve this, we calculate the max amount of lines for the current row.
+    // Afterwards, we iterate over each cell and convert the current structure to the desired one.
+    // This step basically transforms this:
+    //  tc[0][0][0]     tc[0][1][0]
+    //  tc[0][0][1]     tc[0][1][1]
+    //  tc[0][0][2]     This part of the line is missing
+    //
+    // to this:
+    //  tc[0][0][0]     tc[0][0][1]
+    //  tc[0][1][0]     tc[0][1][1]
+    //  tc[0][2][0]     tc[0][2][1] <- Now filled with placeholder (spaces)
+    let max_lines = temp_row_content.iter().map(|cell| cell.len()).max().unwrap_or(0);
+    let mut row_content = Vec::new();
+    for index in 0..max_lines {
+        let mut line = Vec::new();
+        for (column_index, cell) in temp_row_content.iter().enumerate() {
+            let info = display_info.get(column_index).unwrap();
+            match cell.get(index) {
+                // The current cell has content for this line. Append it
+                Some(content) => line.push(content.clone()),
+                // The current cell doesn't have content for this line.
+                // Fill with a placeholder (empty spaces)
+                None => line.push(" ".repeat(info.width as usize)),
+            }
+        }
+        row_content.push(line);
+    }
+
+    row_content
 }
 
 /// Split a cell content line if it's longer than the specified columns width - padding

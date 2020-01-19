@@ -42,10 +42,10 @@ pub enum Component {
     RightBorder,
     TopBorder,
     BottomBorder,
-    HeaderLeftIntersection,
-    HeaderBorder,
-    HeaderMiddleIntersections,
-    HeaderRightIntersection,
+    LeftHeaderIntersection,
+    HeaderLines,
+    MiddleHeaderIntersections,
+    RightHeaderIntersection,
     VerticalLines,
     HorizontalLines,
     MiddleIntersections,
@@ -62,6 +62,7 @@ pub enum Component {
 /// This struct wraps the various styling options for a table
 /// The default style preset when using `::new` is the [ASCII_FULL]
 pub struct TableStyle {
+    pub(crate) has_header: bool,
     style: HashMap<Component, Option<char>>,
 }
 
@@ -69,6 +70,7 @@ impl TableStyle {
     /// Create a new TableStyle. The default style is [ASCII_FULL],
     pub fn new() -> Self {
         let mut table_style = TableStyle {
+            has_header: false,
             style: HashMap::new(),
         };
         table_style.load_preset(ASCII_FULL);

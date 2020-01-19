@@ -40,8 +40,13 @@ impl Table {
         self.autogenerate_columns(&row);
         self.adjust_max_column_widths(&row);
         self.header = Some(row);
+        self.table_style.has_header = true;
 
         self
+    }
+
+    pub fn get_header(&self) -> Option<&Row> {
+        self.header.as_ref()
     }
 
     /// Add a new row to the table.

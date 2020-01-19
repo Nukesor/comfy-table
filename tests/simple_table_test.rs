@@ -9,7 +9,7 @@ fn basic_table_works() {
     let row = Row::from(&vec!["This is a text", "This is another text", "This is the third text"]);
     table.add_row(row);
 
-    let row = Row::from(&vec!["This is another text", "asdfaes", "ag;aiufe"]);
+    let row = Row::from(&vec!["This is another text", "Now\nadd some\nmulti line stuff", "This is awesome"]);
     table.add_row(row);
 
     print!("{}", table.to_string());
