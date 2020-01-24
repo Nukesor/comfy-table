@@ -56,6 +56,8 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<S
         // Every line that's too long will be split into two/several lines
         let mut cell_content = Vec::new();
 
+        // Check if the row has as many cells as the table has columns
+        // If that's not the case, fill the missing cell with empty spaces
         let cell = if let Some(cell) = cell_iter.next() {
             cell
         } else {
