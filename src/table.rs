@@ -61,7 +61,6 @@ impl Table {
         self.table_style.apply_modifier(modifier);
     }
 
-
     /// Add a new row to the table.
     pub fn add_row<T: ToRow>(&mut self, row: T) -> &mut Self {
         let mut row = row.to_row();

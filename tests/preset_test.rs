@@ -4,16 +4,8 @@ use comfy_table::style::presets::*;
 fn get_preset_table() -> Table {
     let mut table = Table::new();
     table.set_header(&vec!["Header1", "Header2", "Header3"]);
-    table.add_row(&vec![
-        "One One",
-        "One Two",
-        "One Three",
-    ]);
-    table.add_row(&vec![
-        "One One",
-        "One Two",
-        "One Three",
-    ]);
+    table.add_row(&vec!["One One", "One Two", "One Three"]);
+    table.add_row(&vec!["One One", "One Two", "One Three"]);
 
     table
 }

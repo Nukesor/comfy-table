@@ -1,5 +1,5 @@
+use ::crossterm::style::{Attribute, Color};
 use comfy_table::prelude::*;
-use ::crossterm::style::{Color, Attribute};
 
 #[test]
 fn styled_table() {

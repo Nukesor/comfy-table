@@ -1,4 +1,4 @@
-use ::crossterm::style::{Color, Attribute};
+use ::crossterm::style::{Attribute, Color};
 
 use crate::style::cell::CellAlignment;
 

@@ -17,6 +17,6 @@ pub mod cell;
 pub mod column;
 
 /// Reexport for important crossterm enums
-pub use ::crossterm::style::Color;
-/// Reexport for important crossterm enums
 pub use ::crossterm::style::Attribute;
+/// Reexport for important crossterm enums
+pub use ::crossterm::style::Color;

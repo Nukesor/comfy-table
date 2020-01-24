@@ -12,6 +12,6 @@ pub use crate::style::table::ContentArrangement;
 pub mod prelude {
     pub use crate::cell::Cell;
     pub use crate::row::Row;
-    pub use crate::table::Table;
     pub use crate::style::cell::CellAlignment;
+    pub use crate::table::Table;
 }

@@ -1,7 +1,7 @@
 use ::crossterm::style::style;
 
-use crate::row::Row;
 use crate::cell::Cell;
+use crate::row::Row;
 use crate::style::cell::CellAlignment;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
