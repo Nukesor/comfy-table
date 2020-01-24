@@ -1,10 +1,10 @@
-use ::termion::terminal_size;
+use ::crossterm::terminal::size;
 
 use crate::column::Column;
-use crate::styling::cell::CellAlignment;
-use crate::styling::column::Constraint;
-use crate::styling::column::Constraint::*;
-use crate::styling::table::ContentArrangement;
+use crate::style::cell::CellAlignment;
+use crate::style::column::Constraint;
+use crate::style::column::Constraint::*;
+use crate::style::table::ContentArrangement;
 use crate::table::Table;
 
 /// This is used to store various styling options for a specific column
@@ -42,7 +42,7 @@ impl ColumnDisplayInfo {
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
 pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
-    let (term_width, _) = terminal_size().unwrap();
+    let (term_width, _) = size().unwrap();
 
     let mut display_infos = Vec::new();
     for column in table.columns.iter() {

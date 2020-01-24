@@ -1,6 +1,6 @@
 use crate::column::Column;
 use crate::row::{Row, ToRow};
-use crate::styling::table::{ContentArrangement, TableStyle};
+use crate::style::table::{ContentArrangement, TableStyle};
 use crate::utils::arrangement::arrange_content;
 use crate::utils::borders::draw_borders;
 use crate::utils::format::format_content;

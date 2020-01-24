@@ -1,5 +1,5 @@
 use crate::row::Row;
-use crate::styling::cell::CellAlignment;
+use crate::style::cell::CellAlignment;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
 

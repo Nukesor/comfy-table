@@ -2,7 +2,7 @@ use ::std::collections::HashMap;
 use ::strum::IntoEnumIterator;
 use ::strum_macros::EnumIter;
 
-use crate::styling::presets::ASCII_FULL;
+use crate::style::presets::ASCII_FULL;
 
 pub enum ContentArrangement {
     /// Don't do any automatic width calculation.

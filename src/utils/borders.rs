@@ -1,4 +1,4 @@
-use crate::styling::table::{Component, TableStyle};
+use crate::style::table::{Component, TableStyle};
 use crate::utils::arrangement::ColumnDisplayInfo;
 
 pub fn draw_borders(

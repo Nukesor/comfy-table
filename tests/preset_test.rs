@@ -1,5 +1,5 @@
 use comfy_table::prelude::*;
-use comfy_table::styling::presets::*;
+use comfy_table::style::presets::*;
 
 fn get_preset_table() -> Table {
     let mut table = Table::new();

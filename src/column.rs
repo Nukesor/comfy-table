@@ -1,5 +1,5 @@
-use crate::styling::cell::CellAlignment;
-use crate::styling::column::Constraint;
+use crate::style::cell::CellAlignment;
+use crate::style::column::Constraint;
 
 /// The Column struct mainly exists for styling purposes.
 /// It's used to determine how much horizontal space each column should get and
