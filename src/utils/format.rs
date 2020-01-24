@@ -1,3 +1,5 @@
+use ::crossterm::style::style;
+
 use crate::row::Row;
 use crate::cell::Cell;
 use crate::style::cell::CellAlignment;
@@ -66,7 +68,11 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<S
                 let mut splitted = split_line(line.clone(), &info, cell);
                 cell_content.append(&mut splitted);
             } else {
-                cell_content.push(align_line(line.clone(), info, cell));
+                let mut line = align_line(line.clone(), info, cell);
+                if true {
+                    line = style_line(line, cell);
+                }
+                cell_content.push(line);
             }
         }
 
@@ -185,9 +191,16 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell) -> Vec<St
     }
 
     // Iterate over all generated lines of this cell and align them
+    // If cell styling should be applied, do this here as well.
     lines = lines
         .iter()
         .map(|line| align_line(line.to_string(), info, cell))
+        .map(|line| {
+            if true {
+                return style_line(line, cell);
+            }
+            line
+        })
         .collect();
 
     lines
@@ -241,4 +254,24 @@ pub fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
     padded_line += &" ".repeat(info.padding.1 as usize);
 
     padded_line
+}
+
+pub fn style_line(line: String, cell: &Cell) -> String {
+    let mut content = style(line);
+
+    // Apply frontend color
+    if let Some(color) = cell.fg {
+        content = content.with(color);
+    }
+
+    // Apply backend color
+    if let Some(color) = cell.bg {
+        content = content.on(color);
+    }
+
+    for attribute in cell.attributes.iter() {
+        content = content.attribute(*attribute);
+    }
+
+    content.to_string()
 }
