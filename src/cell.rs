@@ -12,20 +12,29 @@ pub trait ToCells {
 
 impl<T: Clone + IntoIterator> ToCells for T
 where
-    T::Item: ToString,
+    T::Item: ToCell,
 {
     fn to_cells(&mut self) -> Vec<Cell> {
         self.clone()
             .into_iter()
-            .map(|item| Cell::new(item))
+            .map(|item| item.to_cell())
             .collect()
     }
 }
 
-/// This is quite expensive, but it's convenient
-impl ToString for Cell {
-    fn to_string(&self) -> String {
-        self.get_content()
+pub trait ToCell {
+    fn to_cell(self) -> Cell;
+}
+
+impl<T: ToString> ToCell for T {
+    fn to_cell(self) -> Cell {
+        Cell::new(self.to_string())
+    }
+}
+
+impl ToCell for Cell {
+    fn to_cell(self) -> Cell {
+        self
     }
 }
 
@@ -74,7 +83,7 @@ impl Cell {
     /// let mut cell = Cell::new("Some content")
     ///     .set_alignment(CellAlignment::Center);
     /// ```
-    pub fn set_alignment(&mut self, alignment: CellAlignment) -> &mut Self {
+    pub fn set_alignment(mut self, alignment: CellAlignment) -> Self {
         self.alignment = Some(alignment);
 
         self
@@ -88,9 +97,9 @@ impl Cell {
     /// use comfy_table::cell::Cell;
     ///
     /// let mut cell = Cell::new("Some content")
-    ///     .set_fg(Color::Red);
+    ///     .fg(Color::Red);
     /// ```
-    pub fn set_fg(&mut self, color: Color) -> &mut Self {
+    pub fn fg(mut self, color: Color) -> Self {
         self.fg = Some(color);
 
         self
@@ -104,9 +113,9 @@ impl Cell {
     /// use comfy_table::cell::Cell;
     ///
     /// let mut cell = Cell::new("Some content")
-    ///     .set_bg(Color::Red);
+    ///     .bg(Color::Red);
     /// ```
-    pub fn set_bg(&mut self, color: Color) -> &mut Self {
+    pub fn bg(mut self, color: Color) -> Self {
         self.bg = Some(color);
 
         self
@@ -123,14 +132,14 @@ impl Cell {
     /// let mut cell = Cell::new("Some content")
     ///     .add_attribute(Attribute::Bold);
     /// ```
-    pub fn add_attribute(&mut self, attribute: Attribute) -> &mut Self {
+    pub fn add_attribute(mut self, attribute: Attribute) -> Self {
         self.attributes.push(attribute);
 
         self
     }
 
     /// Same as add_attribute, but you can pass a Vector of Attributes
-    pub fn add_attributes(&mut self, mut attribute: Vec<Attribute>) -> &mut Self {
+    pub fn add_attributes(mut self, mut attribute: Vec<Attribute>) -> Self {
         self.attributes.append(&mut attribute);
 
         self

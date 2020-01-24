@@ -1,19 +1,19 @@
 use crate::cell::{Cell, ToCells};
 
 pub trait ToRow {
-    fn to_row(&mut self) -> Row;
+    fn to_row(self) -> Row;
 }
 
 impl<T: ToCells> ToRow for T {
-    fn to_row(&mut self) -> Row {
+    fn to_row(mut self) -> Row {
         Row::from(self.to_cells())
     }
 }
 
 // This is somewhat expensive, but convenient
 impl ToRow for Row {
-    fn to_row(&mut self) -> Row {
-        self.clone()
+    fn to_row(self) -> Row {
+        self
     }
 }
 

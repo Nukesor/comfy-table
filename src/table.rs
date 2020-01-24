@@ -35,7 +35,7 @@ impl Table {
     }
 
     /// Set the header row of the table. This is usually the title of each column.
-    pub fn set_header<T: ToRow>(&mut self, mut row: T) -> &mut Self {
+    pub fn set_header<T: ToRow>(&mut self, row: T) -> &mut Self {
         let row = row.to_row();
         self.autogenerate_columns(&row);
         self.adjust_max_column_widths(&row);
@@ -61,7 +61,7 @@ impl Table {
 
 
     /// Add a new row to the table.
-    pub fn add_row<T: ToRow>(&mut self, mut row: T) -> &mut Self {
+    pub fn add_row<T: ToRow>(&mut self, row: T) -> &mut Self {
         let mut row = row.to_row();
         self.autogenerate_columns(&row);
         self.adjust_max_column_widths(&row);
