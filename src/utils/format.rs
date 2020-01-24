@@ -1,4 +1,5 @@
 use crate::row::Row;
+use crate::cell::Cell;
 use crate::style::cell::CellAlignment;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
@@ -62,10 +63,10 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<S
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if line.len() as u16 > info.width {
-                let mut splitted = split_line(line.clone(), &info);
+                let mut splitted = split_line(line.clone(), &info, cell);
                 cell_content.append(&mut splitted);
             } else {
-                cell_content.push(align_line(line.clone(), info));
+                cell_content.push(align_line(line.clone(), info, cell));
             }
         }
 
@@ -120,7 +121,7 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<S
 /// This function tries to do this in a smart way, by taking the content's deliminator
 /// splitting it at these deliminators and reconnecting them until a line is full.
 /// Splitting of parts only occurs if the part doesn't fit in a single line by itself.
-pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
+pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell) -> Vec<String> {
     let mut lines = Vec::new();
     let padding = info.padding.0 + info.padding.1;
     let content_width = info.width - padding;
@@ -186,7 +187,7 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
     // Iterate over all generated lines of this cell and align them
     lines = lines
         .iter()
-        .map(|line| align_line(line.to_string(), info))
+        .map(|line| align_line(line.to_string(), info, cell))
         .collect();
 
     lines
@@ -196,14 +197,18 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo) -> Vec<String> {
 /// In every case all lines will be exactly the same character length `info.width - padding long`
 /// This is needed, so we can simply insert it into the border frame later on.
 /// Padding is applied in this function as well.
-pub fn align_line(mut line: String, info: &ColumnDisplayInfo) -> String {
+pub fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String {
     let padding = info.padding.0 + info.padding.1;
     let content_width = info.width - padding;
 
     let remaining = content_width as f32 - line.chars().count() as f32;
 
-    // Determine the alignment of the column cells. Default is Left
-    let alignment = if let Some(alignment) = info.cell_alignment {
+    // Determine the alignment of the column cells.
+    // Cell settings overwrite the columns Alignment settings.
+    // Default is Left
+    let alignment = if let Some(alignment) = cell.alignment {
+        alignment
+    } else if let Some(alignment) = info.cell_alignment {
         alignment
     } else {
         CellAlignment::Left

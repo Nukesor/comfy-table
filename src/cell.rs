@@ -1,5 +1,7 @@
 use ::crossterm::style::{Color, Attribute};
 
+use crate::style::cell::CellAlignment;
+
 /// Allow the conversion of a type to a vector of cells.
 /// By default this is implemented for all types implementing
 /// IntoIterator where the iterated Item type implements ToString.
@@ -35,6 +37,7 @@ pub struct Cell {
     /// This is done to handle newlines more easily.
     /// On set_content, the incoming string is split by '\n'
     pub(crate) content: Vec<String>,
+    pub(crate) alignment: Option<CellAlignment>,
     pub(crate) fg: Option<Color>,
     pub(crate) bg: Option<Color>,
     pub(crate) attributes: Vec<Attribute>,
@@ -49,6 +52,7 @@ impl Cell {
                 .split('\n')
                 .map(|content| content.to_string())
                 .collect(),
+            alignment: None,
             fg: None,
             bg: None,
             attributes: Vec::new(),
@@ -60,6 +64,22 @@ impl Cell {
         return self.content.join("\n").clone();
     }
 
+    /// Set the alignment of content for this cell.
+    ///
+    /// Setting this overwrites alignment settings of the Column for this specific Cell.
+    /// ```
+    /// use comfy_table::style::cell::CellAlignment;
+    /// use comfy_table::cell::Cell;
+    ///
+    /// let mut cell = Cell::new("Some content")
+    ///     .set_alignment(CellAlignment::Center);
+    /// ```
+    pub fn set_alignment(&mut self, alignment: CellAlignment) -> &mut Self {
+        self.alignment = Some(alignment);
+
+        self
+    }
+
     /// Set the foreground text color for this cell.
     /// comfy-table uses [Crossterm Colors](crossterm::style::Color).
     /// Look at their documentation for all possible Colors.
@@ -68,10 +88,10 @@ impl Cell {
     /// use comfy_table::cell::Cell;
     ///
     /// let mut cell = Cell::new("Some content")
-    ///     .set_fg(Some(Color::Red));
+    ///     .set_fg(Color::Red);
     /// ```
-    pub fn set_fg(mut self, color: Option<Color>) -> Self {
-        self.fg = color;
+    pub fn set_fg(&mut self, color: Color) -> &mut Self {
+        self.fg = Some(color);
 
         self
     }
@@ -84,10 +104,10 @@ impl Cell {
     /// use comfy_table::cell::Cell;
     ///
     /// let mut cell = Cell::new("Some content")
-    ///     .set_bg(Some(Color::Red));
+    ///     .set_bg(Color::Red);
     /// ```
-    pub fn set_bg(mut self, color: Option<Color>) -> Self {
-        self.bg = color;
+    pub fn set_bg(&mut self, color: Color) -> &mut Self {
+        self.bg = Some(color);
 
         self
     }
@@ -103,14 +123,14 @@ impl Cell {
     /// let mut cell = Cell::new("Some content")
     ///     .add_attribute(Attribute::Bold);
     /// ```
-    pub fn add_attribute(mut self, attribute: Attribute) -> Self {
+    pub fn add_attribute(&mut self, attribute: Attribute) -> &mut Self {
         self.attributes.push(attribute);
 
         self
     }
 
     /// Same as add_attribute, but you can pass a Vector of Attributes
-    pub fn add_attributes(mut self, mut attribute: Vec<Attribute>) -> Self {
+    pub fn add_attributes(&mut self, mut attribute: Vec<Attribute>) -> &mut Self {
         self.attributes.append(&mut attribute);
 
         self
