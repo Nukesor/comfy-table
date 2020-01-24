@@ -29,3 +29,35 @@ fn simple_table() {
 +----------------------+----------------------+------------------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
+
+#[test]
+fn missing_column_table() {
+    let mut table = Table::new();
+    table.set_header(&vec!["Header1", "Header2", "Header3"]);
+
+    table.add_row(&vec![
+        "One One",
+        "One Two",
+        "One Three",
+    ]);
+    table.add_row(&vec![
+        "Two One",
+        "Two Two",
+    ]);
+    table.add_row(&vec![
+        "Three One",
+    ]);
+
+    println!("{}", table.to_string());
+    let expected = "
++-----------+---------+-----------+
+| Header1   | Header2 | Header3   |
++=================================+
+| One One   | One Two | One Three |
+|-----------+---------+-----------|
+| Two One   | Two Two |           |
+|-----------+---------+-----------|
+| Three One |         |           |
++-----------+---------+-----------+";
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}

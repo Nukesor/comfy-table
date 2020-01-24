@@ -47,15 +47,23 @@ pub fn format_content(
 pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<String>> {
     // The content of this specific row
     let mut temp_row_content = Vec::new();
-
     let mut max_content_lines = 0;
+
+    let mut cell_iter = row.cells.iter();
     // Now iterate over all cells and handle them according to their alignment
-    for (column_index, cell) in row.cells.iter().enumerate() {
+    for info in display_info.iter() {
         // Each cell is devided into several lines devided by newline
         // Every line that's too long will be split into two/several lines
         let mut cell_content = Vec::new();
 
-        let info = display_info.get(column_index).unwrap();
+        let cell = if let Some(cell) = cell_iter.next() {
+            cell
+        } else {
+            cell_content.push(" ".repeat(info.width as usize));
+            temp_row_content.push(cell_content);
+            continue;
+        };
+
         // We simply ignore hidden columns
         if info.hidden {
             continue;
@@ -107,8 +115,9 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<S
     let mut row_content = Vec::new();
     for index in 0..max_lines {
         let mut line = Vec::new();
-        for (column_index, cell) in temp_row_content.iter().enumerate() {
-            let info = display_info.get(column_index).unwrap();
+        let mut cell_iter = temp_row_content.iter();
+        for info in display_info.iter() {
+            let cell = cell_iter.next().unwrap();
             match cell.get(index) {
                 // The current cell has content for this line. Append it
                 Some(content) => line.push(content.clone()),
