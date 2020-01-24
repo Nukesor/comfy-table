@@ -16,6 +16,7 @@ fn simple_table() {
         "This is awesome",
     ]);
 
+    println!("{}", table.to_string());
     let expected = "
 +----------------------+----------------------+------------------------+
 | Header1              | Header2              | Header3                |

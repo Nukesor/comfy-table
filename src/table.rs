@@ -14,6 +14,16 @@ pub struct Table {
     pub(crate) arrangement: ContentArrangement,
 }
 
+impl ToString for Table {
+    fn to_string(&self) -> String {
+        let display_info = arrange_content(self);
+        let content = format_content(&self, &display_info);
+        let lines = draw_borders(content, &self.table_style, &display_info);
+
+        lines.join("\n")
+    }
+}
+
 impl Table {
     /// Create a new table with default ASCII styling, no rows and a header
     pub fn new() -> Self {
@@ -24,14 +34,6 @@ impl Table {
             table_style: TableStyle::new(),
             arrangement: ContentArrangement::Disabled,
         }
-    }
-
-    pub fn to_string(&mut self) -> String {
-        let display_info = arrange_content(self);
-        let content = format_content(&self, &display_info);
-        let lines = draw_borders(content, &self.table_style, &display_info);
-
-        lines.join("\n")
     }
 
     /// Set the header row of the table. This is usually the title of each column.

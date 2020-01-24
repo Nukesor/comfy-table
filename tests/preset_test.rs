@@ -29,6 +29,7 @@ fn ascii_no_borders() {
         "---------+---------+-----------\n",
         " One One | One Two | One Three ",
     );
+    println!("{}", table.to_string());
     assert_eq!(&table.to_string(), expected);
 }
 
@@ -60,6 +61,7 @@ fn ascii_horizontal_borders_only() {
         " One One   One Two   One Three \n",
         "-------------------------------",
     );
+    println!("{}", table.to_string());
     assert_eq!(&table.to_string(), expected);
 }
 
@@ -75,6 +77,8 @@ fn utf8_full() {
 ├╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
 │ One One ┆ One Two ┆ One Three │
 └─────────┴─────────┴───────────┘";
+
+    println!("{}", table.to_string());
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -89,5 +93,7 @@ fn utf8_borders_only() {
 │ One One   One Two   One Three │
 │ One One   One Two   One Three │
 └───────────────────────────────┘";
+
+    println!("{}", table.to_string());
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
