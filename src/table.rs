@@ -262,13 +262,24 @@ impl Table {
     ///
     /// If in addition `TopLeftCorner`,`TopBorder` and `TopRightCorner` would be `None` as well,
     /// the first line wouldn't be displayed at all.
-    pub fn set_style(&mut self, component: TableComponent, character: Option<char>) -> &mut Self {
-        match character {
-            Some(character) => {
-                self.style.insert(component, character);
-            }
-            None => (),
-        };
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    /// use comfy_table::style::presets::UTF8_FULL;
+    /// use comfy_table::style::TableComponent::*;
+    ///
+    /// let mut table = Table::new();
+    /// // Load the UTF8_FULL preset
+    /// table.load_preset(UTF8_FULL);
+    /// // Set all outer corners to round UTF8 corners
+    /// // This is basically the same as the UTF8_ROUND_CORNERS modifier
+    /// table.set_style(TopLeftCorner, '╭');
+    /// table.set_style(TopRightCorner, '╮');
+    /// table.set_style(BottomLeftCorner, '╰');
+    /// table.set_style(BottomRightCorner, '╯');
+    /// ```
+    pub fn set_style(&mut self, component: TableComponent, character: char) -> &mut Self {
+        self.style.insert(component, character);
 
         self
     }
@@ -280,6 +291,16 @@ impl Table {
             Some(character) => Some(*character),
         }
     }
+
+    /// Remove the style for a specific component of the table.\
+    /// By default, a space will be used as a placeholder instead.\
+    /// Though, if for instance all components of the left border are removed, the left border won't be displayed.
+    pub fn remove_style(&mut self, component: TableComponent) -> &mut Self {
+        self.style.remove(&component);
+
+        self
+    }
+
 
     /// Return a vector representing the maximum amount of characters in any line of this column. \
     /// This is mostly needed for internal testing and formatting, but can be interesting

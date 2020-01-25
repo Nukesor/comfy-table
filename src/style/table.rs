@@ -10,7 +10,7 @@ use ::strum_macros::EnumIter;
 /// ```
 pub enum ContentArrangement {
     /// Don't do any automatic content arrangement. \
-    /// Table with this mode might become wider than your output and look ugly. \
+    /// Tables with this mode might become wider than your output and look ugly. \
     /// Constraints on columns are still respected.
     Disabled,
     /// Automatically determine the width of columns in regard to terminal width and content length. \
@@ -18,8 +18,8 @@ pub enum ContentArrangement {
     /// for the given content. \
     /// Constraints on columns are still respected.
     ///
-    /// **Warning:** If terminal width cannot be determined and no table_width is set via [set_table_width](crate::table::Table::set_table_width)
-    /// this option won't work and [ContentArrangement::Disabled] will be used as a fallback.
+    /// **Warning:** If terminal width cannot be determined and no table_width is set via [Table::set_table_width](crate::table::Table::set_table_width),
+    /// this option won't work and [Disabled](ContentArrangement::Disabled) will be used as a fallback.
     Dynamic,
     // /// Same as [ContentArrangement::Dynamic], but the full width of the terminal will always be used.
     // /// Use this, if you want tables to use as much space as possible.
@@ -28,7 +28,7 @@ pub enum ContentArrangement {
 }
 
 /// All configurable table components.
-/// A character can be assigned to each component via [crate::table::Table::set_style].
+/// A character can be assigned to each component via [Table::set_style](crate::table::Table::set_style).
 /// This is then used to draw character of the respective component to the commandline.
 ///
 /// I hope that most component names are self-explanatory. Just in case:
