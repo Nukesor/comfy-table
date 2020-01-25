@@ -1,6 +1,6 @@
 use crate::column::Column;
-use crate::style::{Constraint, ContentArrangement, CellAlignment};
-use crate::style::Constraint::*;
+use crate::style::{ColumnConstraint, ContentArrangement, CellAlignment};
+use crate::style::ColumnConstraint::*;
 use crate::table::Table;
 
 /// This is used to store various styling options for a specific column
@@ -14,7 +14,7 @@ pub struct ColumnDisplayInfo {
     fixed: bool,
     pub width: u16,
     /// A constraint that should be considered during automatic
-    pub constraint: Option<Constraint>,
+    pub constraint: Option<ColumnConstraint>,
     /// Determine, whether this column should be hidden (ignored)
     pub hidden: bool,
     /// Determine, whether this column should be hidden (ignored)
@@ -63,7 +63,7 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
 /// Look at given constraints of a column and populate the ColumnDisplayInfo depending on those.
 fn evaluate_constraint(
     info: &mut ColumnDisplayInfo,
-    constraint: &Constraint,
+    constraint: &ColumnConstraint,
     table_width: Option<u16>,
 ) {
     match constraint {

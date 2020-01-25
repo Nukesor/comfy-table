@@ -1,4 +1,4 @@
-pub enum Constraint {
+pub enum ColumnConstraint {
     /// Enforce a fix width for a column.
     Width(u16),
     /// Specify the exact percentage, this column should in respect terminal width or

@@ -6,7 +6,7 @@ use ::strum::IntoEnumIterator;
 use crate::column::Column;
 use crate::row::{Row, ToRow};
 use crate::style::presets::ASCII_FULL;
-use crate::style::{Component, ContentArrangement};
+use crate::style::{TableComponent, ContentArrangement};
 use crate::utils::arrangement::arrange_content;
 use crate::utils::borders::draw_borders;
 use crate::utils::format::format_content;
@@ -14,7 +14,7 @@ use crate::utils::format::format_content;
 /// The representation of a table.
 pub struct Table {
     pub(crate) columns: Vec<Column>,
-    style: HashMap<Component, char>,
+    style: HashMap<TableComponent, char>,
     pub(crate) header: Option<Row>,
     pub(crate) rows: Vec<Row>,
     pub(crate) arrangement: ContentArrangement,
@@ -104,7 +104,7 @@ impl Table {
     /// This will be `Some(width)`, if the terminal width can be automatically detected or if the table width is set via [set_table_width](Table::set_table_width).
     ///
     /// If neither is not possible, `None` will be returned.\
-    /// This implies that both [Dynamic](ContentArrangement::Dynamic) and [Percentage](crate::style::column::Constraint::Percentage) won't work.
+    /// This implies that both [Dynamic](ContentArrangement::Dynamic) and [Percentage](crate::style::ColumnConstraint::Percentage) won't work.
     pub fn get_table_width(&self) -> Option<u16> {
         if let Some(width) = self.table_width {
             Some(width)
@@ -178,13 +178,13 @@ impl Table {
     /// Preset strings can be found in styling::presets::*
     ///
     /// Anyway, you can write your own preset strings and use them with this function.
-    /// The function expects a characters for components to be in the same order as in the [Component] enum.
+    /// The function expects a characters for components to be in the same order as in the [TableComponent] enum.
     ///
     /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all remaining components.
     ///
     /// If the string is too long, remaining charaacters will be simply ignored.
     pub fn load_preset(&mut self, preset: &str) {
-        let mut components = Component::iter();
+        let mut components = TableComponent::iter();
 
         for character in preset.chars() {
             if let Some(component) = components.next() {
@@ -216,7 +216,7 @@ impl Table {
     /// ```
 
     pub fn apply_modifier(&mut self, modifier: &str) -> &mut Self {
-        let mut components = Component::iter();
+        let mut components = TableComponent::iter();
 
         for character in modifier.chars() {
             // Skip spaces while applying modifiers.
@@ -235,7 +235,7 @@ impl Table {
     }
 
     /// Define the char that will be used to draw a specific component
-    /// Look at [Component] to see all stylable Components
+    /// Look at [TableComponent] to see all stylable components
     ///
     /// If `None` is supplied, the element won't be displayed.
     /// In case of a e.g. *BorderIntersection a whitespace will be used as placeholder,
@@ -249,7 +249,7 @@ impl Table {
     ///
     /// If in addition `TopLeftCorner`,`TopBorder` and `TopRightCorner` would be `None` as well,
     /// the first line wouldn't be displayed at all.
-    pub fn set_style(&mut self, component: Component, character: Option<char>) -> &mut Self {
+    pub fn set_style(&mut self, component: TableComponent, character: Option<char>) -> &mut Self {
         match character {
             Some(character) => {
                 self.style.insert(component, character);
@@ -261,7 +261,7 @@ impl Table {
     }
 
     /// Get a copy of the char that's currently used for drawing this component
-    pub fn get_style(&mut self, component: Component) -> Option<char> {
+    pub fn get_style(&mut self, component: TableComponent) -> Option<char> {
         match self.style.get(&component) {
             None => None,
             Some(character) => Some(*character),
@@ -279,14 +279,14 @@ impl Table {
     }
 
 
-    pub(crate) fn style_or_default(&self, component: Component) -> String {
+    pub(crate) fn style_or_default(&self, component: TableComponent) -> String {
         match self.style.get(&component) {
             None => " ".to_string(),
             Some(character) => character.to_string(),
         }
     }
 
-    pub(crate) fn style_exists(&self, component: Component) -> bool {
+    pub(crate) fn style_exists(&self, component: TableComponent) -> bool {
         self.style.get(&component).is_some()
     }
 

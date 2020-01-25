@@ -13,8 +13,8 @@ mod cell;
 mod column;
 
 pub use cell::CellAlignment;
-pub use table::{Component, ContentArrangement};
-pub use column::Constraint;
+pub use table::{TableComponent, ContentArrangement};
+pub use column::ColumnConstraint;
 
 /// Reexport for important crossterm enums
 pub use ::crossterm::style::Attribute;

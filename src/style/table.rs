@@ -38,7 +38,7 @@ pub enum ContentArrangement {
 /// +--+---+---+
 /// ```
 #[derive(Debug, PartialEq, Eq, Hash, EnumIter)]
-pub enum Component {
+pub enum TableComponent {
     LeftBorder,
     RightBorder,
     TopBorder,

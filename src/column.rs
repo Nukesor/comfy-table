@@ -1,4 +1,4 @@
-use crate::style::{Constraint, CellAlignment};
+use crate::style::{ColumnConstraint, CellAlignment};
 
 /// The Column struct exists for styling purposes:
 ///
@@ -10,7 +10,7 @@ use crate::style::{Constraint, CellAlignment};
 /// As a result columns can only be modified after the table is populated by some data.
 ///
 /// ```
-/// use comfy_table::{Table, Constraint, CellAlignment};
+/// use comfy_table::{Table, ColumnConstraint, CellAlignment};
 ///
 /// let mut table = Table::new();
 /// table.set_header(&vec!["one", "two"]);
@@ -18,7 +18,7 @@ use crate::style::{Constraint, CellAlignment};
 /// let mut column = table.get_column_mut(1).expect("This should be column two");
 ///
 /// // Set the max width for all cells of this column to 20 characters.
-/// column.set_constraint(Constraint::MaxWidth(20));
+/// column.set_constraint(ColumnConstraint::MaxWidth(20));
 ///
 /// // Set the left padding to 5 spaces and the right padding to 1 space
 /// column.set_padding((5, 1));
@@ -35,7 +35,7 @@ pub struct Column {
     /// Define the cell alligment for all cells of this column
     pub(crate) cell_alignment: Option<CellAlignment>,
     pub(crate) max_content_width: u16,
-    pub(crate) constraint: Option<Constraint>,
+    pub(crate) constraint: Option<ColumnConstraint>,
 }
 
 impl Column {
@@ -66,14 +66,14 @@ impl Column {
     /// Set the constraint for this column. \
     /// Constraints allow to influence the auto-adjustment behavior of columns. \
     /// This can be useful to counter undesired auto-adjustment of content in tables.
-    pub fn set_constraint(&mut self, constraint: Constraint) -> &mut Self {
+    pub fn set_constraint(&mut self, constraint: ColumnConstraint) -> &mut Self {
         self.constraint = Some(constraint);
 
         self
     }
 
     /// Get the constraint that is used for this column.
-    pub fn get_constraint(&mut self) -> Option<&Constraint> {
+    pub fn get_constraint(&mut self) -> Option<&ColumnConstraint> {
         self.constraint.as_ref()
     }
 
