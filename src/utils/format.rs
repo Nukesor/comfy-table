@@ -2,7 +2,7 @@ use ::crossterm::style::style;
 
 use crate::cell::Cell;
 use crate::row::Row;
-use crate::style::cell::CellAlignment;
+use crate::style::CellAlignment;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
 

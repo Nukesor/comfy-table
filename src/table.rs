@@ -6,7 +6,7 @@ use ::strum::IntoEnumIterator;
 use crate::column::Column;
 use crate::row::{Row, ToRow};
 use crate::style::presets::ASCII_FULL;
-use crate::style::table::{Component, ContentArrangement};
+use crate::style::{Component, ContentArrangement};
 use crate::utils::arrangement::arrange_content;
 use crate::utils::borders::draw_borders;
 use crate::utils::format::format_content;

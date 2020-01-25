@@ -6,13 +6,11 @@ pub mod presets;
 /// For instance, the [UTF8_ROUND_CORNERS](modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
 pub mod modifiers;
 
-/// Everything about styling tables.
-pub mod table;
+mod table;
 
-/// Cell Alignment
-pub mod cell;
+mod cell;
 
-pub mod column;
+mod column;
 
 pub use cell::CellAlignment;
 pub use table::{Component, ContentArrangement};

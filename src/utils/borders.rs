@@ -1,4 +1,4 @@
-use crate::style::table::Component;
+use crate::style::Component;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
 

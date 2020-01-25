@@ -1,6 +1,6 @@
 use ::crossterm::style::{Attribute, Color};
 
-use crate::style::cell::CellAlignment;
+use crate::style::CellAlignment;
 
 /// The representation of a single cell in a table row.
 /// Each cell contains a string, which will later be displayed at the respective row/column.
@@ -41,7 +41,7 @@ impl Cell {
     ///
     /// Setting this overwrites alignment settings of the Column for this specific Cell.
     /// ```
-    /// use comfy_table::style::cell::CellAlignment;
+    /// use comfy_table::style::CellAlignment;
     /// use comfy_table::cell::Cell;
     ///
     /// let mut cell = Cell::new("Some content")

@@ -1,8 +1,6 @@
 use crate::column::Column;
-use crate::style::cell::CellAlignment;
-use crate::style::column::Constraint;
-use crate::style::column::Constraint::*;
-use crate::style::table::ContentArrangement;
+use crate::style::{Constraint, ContentArrangement, CellAlignment};
+use crate::style::Constraint::*;
 use crate::table::Table;
 
 /// This is used to store various styling options for a specific column

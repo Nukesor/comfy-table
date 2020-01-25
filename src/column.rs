@@ -1,5 +1,4 @@
-use crate::style::cell::CellAlignment;
-use crate::style::column::Constraint;
+use crate::style::{Constraint, CellAlignment};
 
 /// The Column struct exists for styling purposes:
 ///
