@@ -16,6 +16,7 @@ travis-ci = { repository = "nukesor/comfy-table", branch = "master" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
+atty = "^0.2"
 crossterm = "^0.14"
 strum = "^0.17"
 strum_macros = "^0.17"

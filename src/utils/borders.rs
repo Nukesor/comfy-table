@@ -1,34 +1,35 @@
-use crate::style::table::{Component, TableStyle};
+use crate::table::Table;
+use crate::style::table::Component;
 use crate::utils::arrangement::ColumnDisplayInfo;
 
 pub fn draw_borders(
+    table: &Table,
     rows: Vec<Vec<Vec<String>>>,
-    table_style: &TableStyle,
     display_info: &Vec<ColumnDisplayInfo>,
 ) -> Vec<String> {
     let mut lines = Vec::new();
-    if should_draw_top_border(table_style) {
-        lines.push(draw_top_border(table_style, display_info));
+    if should_draw_top_border(table) {
+        lines.push(draw_top_border(table, display_info));
     }
 
-    lines.append(&mut draw_rows(rows, table_style, display_info));
+    lines.append(&mut draw_rows(rows, table, display_info));
 
-    if should_draw_bottom_border(table_style) {
-        lines.push(draw_bottom_border(table_style, display_info));
+    if should_draw_bottom_border(table) {
+        lines.push(draw_bottom_border(table, display_info));
     }
 
     lines
 }
 
-fn draw_top_border(table_style: &TableStyle, display_info: &Vec<ColumnDisplayInfo>) -> String {
-    let left_corner = table_style.style_or_default(Component::TopLeftCorner);
-    let top_border = table_style.style_or_default(Component::TopBorder);
-    let border_intersection = table_style.style_or_default(Component::TopBorderIntersections);
-    let right_corner = table_style.style_or_default(Component::TopRightCorner);
+fn draw_top_border(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> String {
+    let left_corner = table.style_or_default(Component::TopLeftCorner);
+    let top_border = table.style_or_default(Component::TopBorder);
+    let border_intersection = table.style_or_default(Component::TopBorderIntersections);
+    let right_corner = table.style_or_default(Component::TopRightCorner);
 
     let mut line = String::new();
     // We only need the top left corner, if we need to draw a left border
-    if should_draw_left_border(table_style) {
+    if should_draw_left_border(table) {
         line += &left_corner;
     }
 
@@ -43,7 +44,7 @@ fn draw_top_border(table_style: &TableStyle, display_info: &Vec<ColumnDisplayInf
     }
 
     // We only need the top right corner, if we need to draw a right border
-    if should_draw_right_border(table_style) {
+    if should_draw_right_border(table) {
         line += &right_corner;
     }
 
@@ -52,7 +53,7 @@ fn draw_top_border(table_style: &TableStyle, display_info: &Vec<ColumnDisplayInf
 
 fn draw_rows(
     rows: Vec<Vec<Vec<String>>>,
-    table_style: &TableStyle,
+    table: &Table,
     display_info: &Vec<ColumnDisplayInfo>,
 ) -> Vec<String> {
     let mut lines = Vec::new();
@@ -61,20 +62,20 @@ fn draw_rows(
     while let Some((row_index, row)) = row_iter.next() {
         // Concatenate the line parts and insert the vertical borders if needed
         for line_parts in row.iter() {
-            lines.push(embed_line(line_parts, table_style));
+            lines.push(embed_line(line_parts, table));
         }
 
         // Draw the horizontal header line if desired, otherwise continue to the next iteration
-        if row_index == 0 && table_style.has_header {
-            if should_draw_header(table_style) {
-                lines.push(draw_horizontal_lines(table_style, display_info, true));
+        if row_index == 0 && table.header.is_some() {
+            if should_draw_header(table) {
+                lines.push(draw_horizontal_lines(table, display_info, true));
             }
             continue;
         }
 
         // Draw a horizontal line, if we desired and if we aren't in the last row of the table.
-        if row_iter.peek().is_some() && should_draw_horizontal_lines(table_style) {
-            lines.push(draw_horizontal_lines(table_style, display_info, false));
+        if row_iter.peek().is_some() && should_draw_horizontal_lines(table) {
+            lines.push(draw_horizontal_lines(table, display_info, false));
         }
     }
 
@@ -82,22 +83,22 @@ fn draw_rows(
 }
 
 // Takes the parts of a single line, surrounds them with borders and adds vertical lines.
-fn embed_line(line_parts: &Vec<String>, table_style: &TableStyle) -> String {
-    let vertical_lines = table_style.style_or_default(Component::VerticalLines);
-    let left_border = table_style.style_or_default(Component::LeftBorder);
-    let right_border = table_style.style_or_default(Component::RightBorder);
+fn embed_line(line_parts: &Vec<String>, table: &Table) -> String {
+    let vertical_lines = table.style_or_default(Component::VerticalLines);
+    let left_border = table.style_or_default(Component::LeftBorder);
+    let right_border = table.style_or_default(Component::RightBorder);
 
     let mut line = String::new();
-    if should_draw_left_border(table_style) {
+    if should_draw_left_border(table) {
         line += &left_border;
     }
 
     let mut part_iter = line_parts.iter().peekable();
     while let Some(part) = part_iter.next() {
         line += part;
-        if should_draw_vertical_lines(table_style) && part_iter.peek().is_some() {
+        if should_draw_vertical_lines(table) && part_iter.peek().is_some() {
             line += &vertical_lines;
-        } else if should_draw_right_border(table_style) && !part_iter.peek().is_some() {
+        } else if should_draw_right_border(table) && !part_iter.peek().is_some() {
             line += &right_border;
         }
     }
@@ -107,29 +108,29 @@ fn embed_line(line_parts: &Vec<String>, table_style: &TableStyle) -> String {
 
 // The horizontal line that separates between rows.
 fn draw_horizontal_lines(
-    table_style: &TableStyle,
+    table: &Table,
     display_info: &Vec<ColumnDisplayInfo>,
     header: bool,
 ) -> String {
     let (left_intersection, horizontal_lines, middle_intersection, right_intersection) = if header {
         (
-            table_style.style_or_default(Component::LeftHeaderIntersection),
-            table_style.style_or_default(Component::HeaderLines),
-            table_style.style_or_default(Component::MiddleHeaderIntersections),
-            table_style.style_or_default(Component::RightHeaderIntersection),
+            table.style_or_default(Component::LeftHeaderIntersection),
+            table.style_or_default(Component::HeaderLines),
+            table.style_or_default(Component::MiddleHeaderIntersections),
+            table.style_or_default(Component::RightHeaderIntersection),
         )
     } else {
         (
-            table_style.style_or_default(Component::LeftBorderIntersections),
-            table_style.style_or_default(Component::HorizontalLines),
-            table_style.style_or_default(Component::MiddleIntersections),
-            table_style.style_or_default(Component::RightBorderIntersections),
+            table.style_or_default(Component::LeftBorderIntersections),
+            table.style_or_default(Component::HorizontalLines),
+            table.style_or_default(Component::MiddleIntersections),
+            table.style_or_default(Component::RightBorderIntersections),
         )
     };
 
     let mut line = String::new();
     // We only need the bottom left corner, if we need to draw a left border
-    if should_draw_left_border(table_style) {
+    if should_draw_left_border(table) {
         line += &left_intersection;
     }
 
@@ -144,22 +145,22 @@ fn draw_horizontal_lines(
     }
 
     // We only need the bottom right corner, if we need to draw a right border
-    if should_draw_right_border(table_style) {
+    if should_draw_right_border(table) {
         line += &right_intersection;
     }
 
     line
 }
 
-fn draw_bottom_border(table_style: &TableStyle, display_info: &Vec<ColumnDisplayInfo>) -> String {
-    let left_corner = table_style.style_or_default(Component::BottomLeftCorner);
-    let bottom_border = table_style.style_or_default(Component::BottomBorder);
-    let middle_intersection = table_style.style_or_default(Component::BottomBorderIntersections);
-    let right_corner = table_style.style_or_default(Component::BottomRightCorner);
+fn draw_bottom_border(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> String {
+    let left_corner = table.style_or_default(Component::BottomLeftCorner);
+    let bottom_border = table.style_or_default(Component::BottomBorder);
+    let middle_intersection = table.style_or_default(Component::BottomBorderIntersections);
+    let right_corner = table.style_or_default(Component::BottomRightCorner);
 
     let mut line = String::new();
     // We only need the bottom left corner, if we need to draw a left border
-    if should_draw_left_border(table_style) {
+    if should_draw_left_border(table) {
         line += &left_corner;
     }
 
@@ -174,18 +175,18 @@ fn draw_bottom_border(table_style: &TableStyle, display_info: &Vec<ColumnDisplay
     }
 
     // We only need the bottom right corner, if we need to draw a right border
-    if should_draw_right_border(table_style) {
+    if should_draw_right_border(table) {
         line += &right_corner;
     }
 
     line
 }
 
-fn should_draw_top_border(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::TopLeftCorner)
-        || table_style.style_exists(Component::TopBorder)
-        || table_style.style_exists(Component::TopBorderIntersections)
-        || table_style.style_exists(Component::TopRightCorner)
+fn should_draw_top_border(table: &Table) -> bool {
+    if table.style_exists(Component::TopLeftCorner)
+        || table.style_exists(Component::TopBorder)
+        || table.style_exists(Component::TopBorderIntersections)
+        || table.style_exists(Component::TopRightCorner)
     {
         return true;
     }
@@ -193,11 +194,11 @@ fn should_draw_top_border(table_style: &TableStyle) -> bool {
     false
 }
 
-fn should_draw_bottom_border(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::BottomLeftCorner)
-        || table_style.style_exists(Component::BottomBorder)
-        || table_style.style_exists(Component::BottomBorderIntersections)
-        || table_style.style_exists(Component::BottomRightCorner)
+fn should_draw_bottom_border(table: &Table) -> bool {
+    if table.style_exists(Component::BottomLeftCorner)
+        || table.style_exists(Component::BottomBorder)
+        || table.style_exists(Component::BottomBorderIntersections)
+        || table.style_exists(Component::BottomRightCorner)
     {
         return true;
     }
@@ -205,12 +206,12 @@ fn should_draw_bottom_border(table_style: &TableStyle) -> bool {
     false
 }
 
-fn should_draw_left_border(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::TopLeftCorner)
-        || table_style.style_exists(Component::LeftBorder)
-        || table_style.style_exists(Component::LeftBorderIntersections)
-        || table_style.style_exists(Component::LeftHeaderIntersection)
-        || table_style.style_exists(Component::BottomLeftCorner)
+fn should_draw_left_border(table: &Table) -> bool {
+    if table.style_exists(Component::TopLeftCorner)
+        || table.style_exists(Component::LeftBorder)
+        || table.style_exists(Component::LeftBorderIntersections)
+        || table.style_exists(Component::LeftHeaderIntersection)
+        || table.style_exists(Component::BottomLeftCorner)
     {
         return true;
     }
@@ -218,12 +219,12 @@ fn should_draw_left_border(table_style: &TableStyle) -> bool {
     false
 }
 
-fn should_draw_right_border(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::TopRightCorner)
-        || table_style.style_exists(Component::RightBorder)
-        || table_style.style_exists(Component::RightBorderIntersections)
-        || table_style.style_exists(Component::RightHeaderIntersection)
-        || table_style.style_exists(Component::BottomRightCorner)
+fn should_draw_right_border(table: &Table) -> bool {
+    if table.style_exists(Component::TopRightCorner)
+        || table.style_exists(Component::RightBorder)
+        || table.style_exists(Component::RightBorderIntersections)
+        || table.style_exists(Component::RightHeaderIntersection)
+        || table.style_exists(Component::BottomRightCorner)
     {
         return true;
     }
@@ -231,11 +232,11 @@ fn should_draw_right_border(table_style: &TableStyle) -> bool {
     false
 }
 
-fn should_draw_horizontal_lines(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::LeftBorderIntersections)
-        || table_style.style_exists(Component::HorizontalLines)
-        || table_style.style_exists(Component::MiddleIntersections)
-        || table_style.style_exists(Component::RightBorderIntersections)
+fn should_draw_horizontal_lines(table: &Table) -> bool {
+    if table.style_exists(Component::LeftBorderIntersections)
+        || table.style_exists(Component::HorizontalLines)
+        || table.style_exists(Component::MiddleIntersections)
+        || table.style_exists(Component::RightBorderIntersections)
     {
         return true;
     }
@@ -243,12 +244,12 @@ fn should_draw_horizontal_lines(table_style: &TableStyle) -> bool {
     false
 }
 
-fn should_draw_vertical_lines(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::TopBorderIntersections)
-        || table_style.style_exists(Component::MiddleHeaderIntersections)
-        || table_style.style_exists(Component::VerticalLines)
-        || table_style.style_exists(Component::MiddleIntersections)
-        || table_style.style_exists(Component::BottomBorderIntersections)
+fn should_draw_vertical_lines(table: &Table) -> bool {
+    if table.style_exists(Component::TopBorderIntersections)
+        || table.style_exists(Component::MiddleHeaderIntersections)
+        || table.style_exists(Component::VerticalLines)
+        || table.style_exists(Component::MiddleIntersections)
+        || table.style_exists(Component::BottomBorderIntersections)
     {
         return true;
     }
@@ -256,11 +257,11 @@ fn should_draw_vertical_lines(table_style: &TableStyle) -> bool {
     false
 }
 
-fn should_draw_header(table_style: &TableStyle) -> bool {
-    if table_style.style_exists(Component::LeftHeaderIntersection)
-        || table_style.style_exists(Component::HeaderLines)
-        || table_style.style_exists(Component::MiddleHeaderIntersections)
-        || table_style.style_exists(Component::RightHeaderIntersection)
+fn should_draw_header(table: &Table) -> bool {
+    if table.style_exists(Component::LeftHeaderIntersection)
+        || table.style_exists(Component::HeaderLines)
+        || table.style_exists(Component::MiddleHeaderIntersections)
+        || table.style_exists(Component::RightHeaderIntersection)
     {
         return true;
     }
