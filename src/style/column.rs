@@ -1,3 +1,5 @@
+/// Constraints can be added to (columns)[crate::Column].\
+/// They allow some control over the automatic content arrangement process. \
 pub enum ColumnConstraint {
     /// Enforce a fix width for a column.
     Width(u16),

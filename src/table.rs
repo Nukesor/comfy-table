@@ -68,6 +68,10 @@ impl Table {
         self
     }
 
+    pub fn get_header(&self) -> Option<&Row> {
+        self.header.as_ref()
+    }
+
     /// Add a new row to the table.
     /// ```
     /// use comfy_table::{Table, Row};
@@ -85,11 +89,6 @@ impl Table {
 
         self
     }
-
-    pub fn get_header(&self) -> Option<&Row> {
-        self.header.as_ref()
-    }
-
     /// Enforce a max width that should be used in combination with [dynamic content arrangement](ContentArrangement::Dynamic).
     /// This is usually not necessary, if you plan to output your table to a tty, since the
     /// terminal width can be automatically determined.
@@ -114,6 +113,20 @@ impl Table {
         } else {
             None
         }
+    }
+
+    /// Specify how comfy_table should arrange the content in your table.
+    ///
+    /// ```
+    /// use comfy_table::{Table, ContentArrangement};
+    ///
+    /// let mut table = Table::new();
+    /// table.set_content_arrangement(ContentArrangement::Dynamic);
+    /// ```
+    pub fn set_content_arrangement(&mut self, arrangement: ContentArrangement) -> &mut Self {
+        self.arrangement = arrangement;
+
+        self
     }
 
     /// Force formatting output as if started on a tty.\

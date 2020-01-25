@@ -1,16 +1,24 @@
 use ::strum_macros::EnumIter;
 
+/// Specify how comfy_table should arrange the content in your table.
+///
+/// ```
+/// use comfy_table::{Table, ContentArrangement};
+///
+/// let mut table = Table::new();
+/// table.set_content_arrangement(ContentArrangement::Dynamic);
+/// ```
 pub enum ContentArrangement {
-    /// Don't do any automatic width calculation.
-    /// Table with this mode might overflow and look ugly, if content gets too long.
+    /// Don't do any automatic content arrangement. \
+    /// Table with this mode might become wider than your output and look ugly. \
     /// Constraints on columns are still respected.
     Disabled,
-    /// Automatically determine the width of columns in regard to terminal width and content length.
-    /// With this mode, the content in cells will wrap automatically and comfy-table tries to determine
-    /// the best column layout for the given content.
+    /// Automatically determine the width of columns in regard to terminal width and content length. \
+    /// With this mode, the content in cells will wrap automatically to get the  the best column layout
+    /// for the given content. \
     /// Constraints on columns are still respected.
     ///
-    /// **Warning:** If terminal width cannot be determined and no table_width is set via [crate::table::Table::set_table_width]
+    /// **Warning:** If terminal width cannot be determined and no table_width is set via [set_table_width](crate::table::Table::set_table_width)
     /// this option won't work and [ContentArrangement::Disabled] will be used as a fallback.
     Dynamic,
     // /// Same as [ContentArrangement::Dynamic], but the full width of the terminal will always be used.
