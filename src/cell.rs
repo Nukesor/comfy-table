@@ -2,7 +2,6 @@ use ::crossterm::style::{Attribute, Color};
 
 use crate::style::cell::CellAlignment;
 
-
 /// The representation of a single cell in a table row.
 /// Each cell contains a string, which will later be displayed at the respective row/column.
 #[derive(Clone)]
@@ -111,7 +110,6 @@ impl Cell {
     }
 }
 
-
 /// Allow the conversion of a type to a vector of cells.
 /// By default this is implemented for all types implementing
 /// IntoIterator where the iterated Item type implements ToString.
@@ -125,9 +123,7 @@ where
     T::Item: ToCell,
 {
     fn to_cells(self) -> Vec<Cell> {
-        self.into_iter()
-            .map(|item| item.to_cell())
-            .collect()
+        self.into_iter().map(|item| item.to_cell()).collect()
     }
 }
 

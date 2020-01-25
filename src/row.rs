@@ -1,6 +1,5 @@
-use ::std::slice::Iter;
 use crate::cell::{Cell, ToCells};
-
+use ::std::slice::Iter;
 
 /// [Row] represents a row of a table.
 /// Each row contains an amount of [Cell]s
@@ -49,7 +48,6 @@ impl Row {
 
         self
     }
-
 
     /// Get the longest content width for all cells of this row
     pub(crate) fn max_content_widths(&self) -> Vec<usize> {

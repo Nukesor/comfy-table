@@ -1,5 +1,5 @@
-use crate::table::Table;
 use crate::style::table::Component;
+use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
 
 pub fn draw_borders(

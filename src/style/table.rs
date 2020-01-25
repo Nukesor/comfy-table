@@ -1,6 +1,5 @@
 use ::strum_macros::EnumIter;
 
-
 pub enum ContentArrangement {
     /// Don't do any automatic width calculation.
     /// Table with this mode might overflow and look ugly, if content gets too long.

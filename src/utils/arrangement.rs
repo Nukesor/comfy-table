@@ -63,7 +63,11 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
 }
 
 /// Look at given constraints of a column and populate the ColumnDisplayInfo depending on those.
-fn evaluate_constraint(info: &mut ColumnDisplayInfo, constraint: &Constraint, table_width: Option<u16>) {
+fn evaluate_constraint(
+    info: &mut ColumnDisplayInfo,
+    constraint: &Constraint,
+    table_width: Option<u16>,
+) {
     match constraint {
         Hidden => info.hidden = true,
         Width(width) => {
@@ -98,25 +102,25 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 }
 
 fn automatic_arrangement(infos: &mut Vec<ColumnDisplayInfo>, table_width: Option<u16>) {
-//    let mut remaining_width = table_width;
-//    for column in table.columns.iter_mut() {
-//        // A fix width is enforced for this column
-//        if let Some(constraint) = column.get_constraint().clone() {
-//            match constraint {
-//                Width(width) => {
-//                    remaining_width -= width;
-//                }
-//                Ignore => (),
-//                Percentage(percentage) => {
-//                    let width = table_width * 100/percentage;
-//                    remaining_width -= width;
-//                }
-//                _ => ()
-//            }
-//        } else if column.max_content_width < default_column_width {
-//            let width = column.max_content_width;
-//        }
-//    }
+    //    let mut remaining_width = table_width;
+    //    for column in table.columns.iter_mut() {
+    //        // A fix width is enforced for this column
+    //        if let Some(constraint) = column.get_constraint().clone() {
+    //            match constraint {
+    //                Width(width) => {
+    //                    remaining_width -= width;
+    //                }
+    //                Ignore => (),
+    //                Percentage(percentage) => {
+    //                    let width = table_width * 100/percentage;
+    //                    remaining_width -= width;
+    //                }
+    //                _ => ()
+    //            }
+    //        } else if column.max_content_width < default_column_width {
+    //            let width = column.max_content_width;
+    //        }
+    //    }
 }
 
 #[cfg(test)]

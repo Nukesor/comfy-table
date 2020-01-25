@@ -1,15 +1,15 @@
-use ::std::slice::{Iter, IterMut};
-use ::std::collections::HashMap;
-use ::strum::IntoEnumIterator;
 use ::crossterm::terminal::size;
+use ::std::collections::HashMap;
+use ::std::slice::{Iter, IterMut};
+use ::strum::IntoEnumIterator;
 
 use crate::column::Column;
 use crate::row::{Row, ToRow};
-use crate::style::table::{ContentArrangement, Component};
+use crate::style::presets::ASCII_FULL;
+use crate::style::table::{Component, ContentArrangement};
 use crate::utils::arrangement::arrange_content;
 use crate::utils::borders::draw_borders;
 use crate::utils::format::format_content;
-use crate::style::presets::ASCII_FULL;
 
 /// The representation of a table.
 pub struct Table {
@@ -133,9 +133,7 @@ impl Table {
     pub fn is_tty(&self) -> bool {
         match self.tty {
             Some(is_tty) => is_tty,
-            None => {
-                atty::is(atty::Stream::Stdout)
-            }
+            None => atty::is(atty::Stream::Stdout),
         }
     }
 
@@ -252,14 +250,14 @@ impl Table {
         }
     }
 
-    pub (crate)fn style_or_default(&self, component: Component) -> String {
+    pub(crate) fn style_or_default(&self, component: Component) -> String {
         match self.style.get(&component) {
             None => " ".to_string(),
             Some(character) => character.to_string(),
         }
     }
 
-    pub (crate)fn style_exists(&self, component: Component) -> bool {
+    pub(crate) fn style_exists(&self, component: Component) -> bool {
         self.style.get(&component).is_some()
     }
 
