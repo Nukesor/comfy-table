@@ -33,18 +33,18 @@ pub fn format_content(
     // Format table header if it exists
     match table.get_header() {
         Some(header) => {
-            table_content.push(format_row(header, display_info));
+            table_content.push(format_row(header, display_info, table));
         }
         None => (),
     }
 
     for row in table.rows.iter() {
-        table_content.push(format_row(row, display_info));
+        table_content.push(format_row(row, display_info, table));
     }
     table_content
 }
 
-pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<String>> {
+pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>, table: &Table) -> Vec<Vec<String>> {
     // The content of this specific row
     let mut temp_row_content = Vec::new();
     let mut max_content_lines = 0;
@@ -75,11 +75,11 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<S
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if line.len() as u16 > info.width {
-                let mut splitted = split_line(line.clone(), &info, cell);
+                let mut splitted = split_line(line.clone(), &info, cell, table);
                 cell_content.append(&mut splitted);
             } else {
                 let mut line = align_line(line.clone(), info, cell);
-                if true {
+                if table.is_tty() {
                     line = style_line(line, cell);
                 }
                 cell_content.push(line);
@@ -138,7 +138,7 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>) -> Vec<Vec<S
 /// This function tries to do this in a smart way, by taking the content's deliminator
 /// splitting it at these deliminators and reconnecting them until a line is full.
 /// Splitting of parts only occurs if the part doesn't fit in a single line by itself.
-pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell) -> Vec<String> {
+pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &Table) -> Vec<String> {
     let mut lines = Vec::new();
     let padding = info.padding.0 + info.padding.1;
     let content_width = info.width - padding;
@@ -207,7 +207,7 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell) -> Vec<St
         .iter()
         .map(|line| align_line(line.to_string(), info, cell))
         .map(|line| {
-            if true {
+            if table.is_tty() {
                 return style_line(line, cell);
             }
             line

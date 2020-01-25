@@ -37,4 +37,18 @@ fn styled_table() {
 |                     |\u{1b}[38;5;14m multi line stuff     \u{1b}[0m|                               |
 +---------------------+----------------------+-------------------------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
+
+    table.force_no_tty();
+    println!("{}", table.to_string());
+    let expected = "
++---------------------+----------------------+-------------------------------+
+| Header1             | Header2              | Header3                       |
++============================================================================+
+| This is a bold text | This is a green text | This one has black background |
+|---------------------+----------------------+-------------------------------|
+| Blinking boiii      | Now                  | COMBINE ALL THE THINGS        |
+|                     | add some             |                               |
+|                     | multi line stuff     |                               |
++---------------------+----------------------+-------------------------------+";
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
