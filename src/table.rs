@@ -1,5 +1,7 @@
+use ::std::slice::{Iter, IterMut};
 use ::std::collections::HashMap;
 use ::strum::IntoEnumIterator;
+use ::crossterm::terminal::size;
 
 use crate::column::Column;
 use crate::row::{Row, ToRow};
@@ -17,7 +19,7 @@ pub struct Table {
     pub(crate) rows: Vec<Row>,
     pub(crate) arrangement: ContentArrangement,
     tty: Option<bool>,
-    max_content_width: Option<u16>,
+    table_width: Option<u16>,
 }
 
 impl ToString for Table {
@@ -39,7 +41,7 @@ impl Table {
             rows: Vec::new(),
             arrangement: ContentArrangement::Disabled,
             tty: None,
-            max_content_width: None,
+            table_width: None,
             style: HashMap::new(),
         };
 
@@ -73,8 +75,35 @@ impl Table {
         self.header.as_ref()
     }
 
-    /// Force formatting output as if
-    /// I don't expect
+    /// Enforce a max width that should be used in combination with dynamic content arrangement [ContentArrangement::Dynamic].
+    /// This is usually not necessary, if you plan to output your table to a tty, since the
+    /// terminal width can be automatically determined.
+    pub fn set_table_width(&mut self, table_width: u16) -> &mut Self {
+        self.table_width = Some(table_width);
+
+        self
+    }
+
+    /// Get the expected width of the table.
+    /// This will be `Some`, if the terminal width can be automatically detected or if the table width is set via [Table::set_table_width].
+    /// If neither is not possible, `None` will be returned.
+    /// This implies that both [ContentArrangement::Dynamic] and [crate::style::column::Constraint::Percentage] won't work.
+    pub fn get_table_width(&self) -> Option<u16> {
+        if let Some(width) = self.table_width {
+            Some(width)
+        } else if self.is_tty() {
+            let (table_width, _) = size().unwrap();
+            Some(table_width)
+        } else {
+            None
+        }
+    }
+
+    /// Force formatting output as if started on a tty.
+    /// This is useful if you want to generate styled terminal output in a non-tty environment.
+    ///
+    /// If you are not on a tty and want to use dynamic content arrangement [ContentArrangement::Dynamic],
+    /// you need to set the width of your desired table manually with [Table::set_table_width].
     pub fn force_tty(&mut self) -> &mut Self {
         self.tty = Some(true);
 
@@ -87,11 +116,11 @@ impl Table {
     ///
     /// This disables:
     ///
-    /// - Automatic max_width lookup from the current tty
+    /// - Automatic table_width lookup from the current tty
     /// - Styling and attributes on cells
     ///
     /// If you use the dynamic content arrangement mode (ContentArrangement::Dynamic),
-    /// you need to set the width of your desired table manually with [Table::set_max_width].
+    /// you need to set the width of your desired table manually with [Table::set_table_width].
     pub fn force_no_tty(&mut self) -> &mut Self {
         self.tty = Some(false);
 
@@ -110,33 +139,24 @@ impl Table {
         }
     }
 
+    /// Reference to a specific column
     pub fn get_column(&self, index: usize) -> Option<&Column> {
         self.columns.get(index)
     }
 
+    /// Mutable reference to a specific column
     pub fn get_column_mut(&mut self, index: usize) -> Option<&mut Column> {
         self.columns.get_mut(index)
     }
 
-    /// Autogenerate new columns, if a row is added with more cells than existing columns
-    fn autogenerate_columns(&mut self, row: &Row) {
-        if row.cell_count() > self.columns.len() {
-            for index in self.columns.len()..row.cell_count() {
-                self.columns.push(Column::new(index));
-            }
-        }
+    /// Iterator over all columns
+    pub fn column_iter(&mut self) -> Iter<Column> {
+        self.columns.iter()
     }
 
-    /// Update the max_content_width for all columns depending on the new row
-    fn adjust_max_column_widths(&mut self, row: &Row) {
-        let max_widths = row.max_content_widths();
-        for (index, width) in max_widths.iter().enumerate() {
-            // We expect this column to exist, since we autoenerate columns just before calling this function
-            let mut column = self.columns.get_mut(index).unwrap();
-            if column.max_content_width < *width as u16 {
-                column.max_content_width = *width as u16;
-            }
-        }
+    /// Mutable iterator over all columns
+    pub fn column_iter_mut(&mut self) -> IterMut<Column> {
+        self.columns.iter_mut()
     }
 
     /// Return a vector representing the maximum amount of characters in any line of this column.
@@ -224,7 +244,7 @@ impl Table {
         self
     }
 
-    /// Get a copy of the char currently used for drawing a specific component
+    /// Get a copy of the char that's currently used for drawing this component
     pub fn get_style(&mut self, component: Component) -> Option<char> {
         match self.style.get(&component) {
             None => None,
@@ -243,7 +263,26 @@ impl Table {
         self.style.get(&component).is_some()
     }
 
+    /// Autogenerate new columns, if a row is added with more cells than existing columns
+    fn autogenerate_columns(&mut self, row: &Row) {
+        if row.cell_count() > self.columns.len() {
+            for index in self.columns.len()..row.cell_count() {
+                self.columns.push(Column::new(index));
+            }
+        }
+    }
 
+    /// Update the max_content_width for all columns depending on the new row
+    fn adjust_max_column_widths(&mut self, row: &Row) {
+        let max_widths = row.max_content_widths();
+        for (index, width) in max_widths.iter().enumerate() {
+            // We expect this column to exist, since we autoenerate columns just before calling this function
+            let mut column = self.columns.get_mut(index).unwrap();
+            if column.max_content_width < *width as u16 {
+                column.max_content_width = *width as u16;
+            }
+        }
+    }
 }
 
 #[cfg(test)]

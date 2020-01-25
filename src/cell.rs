@@ -2,41 +2,6 @@ use ::crossterm::style::{Attribute, Color};
 
 use crate::style::cell::CellAlignment;
 
-/// Allow the conversion of a type to a vector of cells.
-/// By default this is implemented for all types implementing
-/// IntoIterator where the iterated Item type implements ToString.
-/// E.g. a Vec<i32> works
-pub trait ToCells {
-    fn to_cells(&mut self) -> Vec<Cell>;
-}
-
-impl<T: Clone + IntoIterator> ToCells for T
-where
-    T::Item: ToCell,
-{
-    fn to_cells(&mut self) -> Vec<Cell> {
-        self.clone()
-            .into_iter()
-            .map(|item| item.to_cell())
-            .collect()
-    }
-}
-
-pub trait ToCell {
-    fn to_cell(self) -> Cell;
-}
-
-impl<T: ToString> ToCell for T {
-    fn to_cell(self) -> Cell {
-        Cell::new(self.to_string())
-    }
-}
-
-impl ToCell for Cell {
-    fn to_cell(self) -> Cell {
-        self
-    }
-}
 
 /// The representation of a single cell in a table row.
 /// Each cell contains a string, which will later be displayed at the respective row/column.
@@ -142,6 +107,42 @@ impl Cell {
     pub fn add_attributes(mut self, mut attribute: Vec<Attribute>) -> Self {
         self.attributes.append(&mut attribute);
 
+        self
+    }
+}
+
+
+/// Allow the conversion of a type to a vector of cells.
+/// By default this is implemented for all types implementing
+/// IntoIterator where the iterated Item type implements ToString.
+/// E.g. a Vec<i32> works
+pub trait ToCells {
+    fn to_cells(self) -> Vec<Cell>;
+}
+
+impl<T: IntoIterator> ToCells for T
+where
+    T::Item: ToCell,
+{
+    fn to_cells(self) -> Vec<Cell> {
+        self.into_iter()
+            .map(|item| item.to_cell())
+            .collect()
+    }
+}
+
+pub trait ToCell {
+    fn to_cell(self) -> Cell;
+}
+
+impl<T: ToString> ToCell for T {
+    fn to_cell(self) -> Cell {
+        Cell::new(self.to_string())
+    }
+}
+
+impl ToCell for Cell {
+    fn to_cell(self) -> Cell {
         self
     }
 }

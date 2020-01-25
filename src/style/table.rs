@@ -10,6 +10,9 @@ pub enum ContentArrangement {
     /// With this mode, the content in cells will wrap automatically and comfy-table tries to determine
     /// the best column layout for the given content.
     /// Constraints on columns are still respected.
+    ///
+    /// **Warning:** If terminal width cannot be determined and no table_width is set via [crate::table::Table::set_table_width]
+    /// this option won't work and [ContentArrangement::Disabled] will be used as a fallback.
     Dynamic,
     // /// Same as [ContentArrangement::Dynamic], but the full width of the terminal will always be used.
     // /// Use this, if you want tables to use as much space as possible.

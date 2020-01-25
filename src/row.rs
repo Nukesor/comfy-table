@@ -1,22 +1,9 @@
+use ::std::slice::Iter;
 use crate::cell::{Cell, ToCells};
 
-pub trait ToRow {
-    fn to_row(self) -> Row;
-}
 
-impl<T: ToCells> ToRow for T {
-    fn to_row(mut self) -> Row {
-        Row::from(self.to_cells())
-    }
-}
-
-// This is somewhat expensive, but convenient
-impl ToRow for Row {
-    fn to_row(self) -> Row {
-        self
-    }
-}
-
+/// [Row] represents a row of a table.
+/// Each row contains an amount of [Cell]s
 #[derive(Clone)]
 pub struct Row {
     /// Index of the row. This will be set as soon as the row is added to the table
@@ -32,15 +19,40 @@ impl Row {
         }
     }
 
-    pub fn from<T: ToCells>(mut cells: T) -> Row {
+    /// Create a Row from any `Iter<T: ToCell>`
+    /// ```
+    /// use comfy_table::{Row, Cell};
+    ///
+    /// let row = Row::from(vec!["One", "Two", "Three",]);
+    /// let row = Row::from(vec![
+    ///    Cell::new("One"),
+    ///    Cell::new("Two"),
+    ///    Cell::new("Three"),
+    /// ]);
+    /// ```
+    pub fn from<T: ToCells>(cells: T) -> Row {
         Row {
             index: None,
             cells: cells.to_cells(),
         }
     }
 
+    /// Add a cell to the row
+    /// ```
+    /// use comfy_table::{Row, Cell};
+    ///
+    /// let mut row = Row::new();
+    /// row.add_cell(Cell::new("One"));
+    /// ```
+    pub fn add_cell(&mut self, cell: Cell) -> &mut Self {
+        self.cells.push(cell);
+
+        self
+    }
+
+
     /// Get the longest content width for all cells of this row
-    pub fn max_content_widths(&self) -> Vec<usize> {
+    pub(crate) fn max_content_widths(&self) -> Vec<usize> {
         // Iterate over all cells
         self.cells
             .iter()
@@ -59,6 +71,28 @@ impl Row {
     /// Return the amount of cells on this row.
     pub fn cell_count(&self) -> usize {
         self.cells.len()
+    }
+
+    /// An iterator over all cells of this row
+    pub fn cell_iter(&self) -> Iter<Cell> {
+        self.cells.iter()
+    }
+}
+
+pub trait ToRow {
+    fn to_row(self) -> Row;
+}
+
+impl<T: ToCells> ToRow for T {
+    fn to_row(self) -> Row {
+        Row::from(self.to_cells())
+    }
+}
+
+// This is somewhat expensive, but convenient
+impl ToRow for Row {
+    fn to_row(self) -> Row {
+        self
     }
 }
 

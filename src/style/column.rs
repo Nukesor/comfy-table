@@ -1,7 +1,9 @@
 pub enum Constraint {
     /// Enforce a fix width for a column.
     Width(u16),
-    /// Specify the exact percentage, this column should in respect to terminal width.
+    /// Specify the exact percentage, this column should in respect terminal width or
+    /// the fix value set with [crate::table::Table::set_table_width].
+    /// **Warning:** This option will be ignored, if the width cannot be determined!
     Percentage(u16),
     /// Specify a min amount of characters per line for a column.
     MinWidth(u16),

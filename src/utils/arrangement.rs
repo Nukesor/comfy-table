@@ -1,5 +1,3 @@
-use ::crossterm::terminal::size;
-
 use crate::column::Column;
 use crate::style::cell::CellAlignment;
 use crate::style::column::Constraint;
@@ -42,13 +40,12 @@ impl ColumnDisplayInfo {
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
 pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
-    let (term_width, _) = size().unwrap();
-
+    let table_width = table.get_table_width();
     let mut display_infos = Vec::new();
     for column in table.columns.iter() {
         let mut info = ColumnDisplayInfo::new(column);
         if let Some(constraint) = column.constraint.as_ref() {
-            evaluate_constraint(&mut info, constraint, term_width);
+            evaluate_constraint(&mut info, constraint, table_width);
         }
 
         display_infos.push(info);
@@ -57,14 +54,16 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     match &table.arrangement {
         ContentArrangement::Disabled => disabled_arrangement(&mut display_infos),
         _ => (),
-        //        ContentArrangement::Automatic => automatic_arrangement(&mut display_infos, term_width),
+        ContentArrangement::Dynamic => {
+            automatic_arrangement(&mut display_infos, table_width);
+        }
     }
 
     display_infos
 }
 
 /// Look at given constraints of a column and populate the ColumnDisplayInfo depending on those.
-fn evaluate_constraint(info: &mut ColumnDisplayInfo, constraint: &Constraint, term_width: u16) {
+fn evaluate_constraint(info: &mut ColumnDisplayInfo, constraint: &Constraint, table_width: Option<u16>) {
     match constraint {
         Hidden => info.hidden = true,
         Width(width) => {
@@ -72,9 +71,11 @@ fn evaluate_constraint(info: &mut ColumnDisplayInfo, constraint: &Constraint, te
             info.fixed = true;
         }
         Percentage(percent) => {
-            let width = term_width * percent / 100;
-            info.width = width;
-            info.fixed = true;
+            if let Some(table_width) = table_width {
+                let width = table_width * percent / 100;
+                info.width = width;
+                info.fixed = true;
+            }
         }
         ContentWidth => {
             info.width = info.max_content_width + info.padding.0 + info.padding.1;
@@ -96,8 +97,8 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
     }
 }
 
-//fn automatic_arrangement(infos: &mut Vec<ColumnDisplayInfo>, term_width: u16) {
-//    let mut remaining_width = term_width;
+fn automatic_arrangement(infos: &mut Vec<ColumnDisplayInfo>, table_width: Option<u16>) {
+//    let mut remaining_width = table_width;
 //    for column in table.columns.iter_mut() {
 //        // A fix width is enforced for this column
 //        if let Some(constraint) = column.get_constraint().clone() {
@@ -107,7 +108,7 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 //                }
 //                Ignore => (),
 //                Percentage(percentage) => {
-//                    let width = term_width * 100/percentage;
+//                    let width = table_width * 100/percentage;
 //                    remaining_width -= width;
 //                }
 //                _ => ()
@@ -116,7 +117,7 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 //            let width = column.max_content_width;
 //        }
 //    }
-//}
+}
 
 #[cfg(test)]
 mod tests {
