@@ -51,6 +51,14 @@ impl Table {
     }
 
     /// Set the header row of the table. This is usually the title of each column.
+    /// ```
+    /// use comfy_table::{Table, Row};
+    ///
+    /// let mut table = Table::new();
+    /// let header = Row::from(vec!["Header One", "Header Two"]);
+    /// table.set_header(header);
+    /// ```
+
     pub fn set_header<T: ToRow>(&mut self, row: T) -> &mut Self {
         let row = row.to_row();
         self.autogenerate_columns(&row);
@@ -61,6 +69,13 @@ impl Table {
     }
 
     /// Add a new row to the table.
+    /// ```
+    /// use comfy_table::{Table, Row};
+    ///
+    /// let mut table = Table::new();
+    /// let row = Row::from(vec!["One", "Two"]);
+    /// table.add_row(row);
+    /// ```
     pub fn add_row<T: ToRow>(&mut self, row: T) -> &mut Self {
         let mut row = row.to_row();
         self.autogenerate_columns(&row);
@@ -75,7 +90,7 @@ impl Table {
         self.header.as_ref()
     }
 
-    /// Enforce a max width that should be used in combination with dynamic content arrangement [ContentArrangement::Dynamic].
+    /// Enforce a max width that should be used in combination with [dynamic content arrangement](ContentArrangement::Dynamic).
     /// This is usually not necessary, if you plan to output your table to a tty, since the
     /// terminal width can be automatically determined.
     pub fn set_table_width(&mut self, table_width: u16) -> &mut Self {
@@ -85,9 +100,11 @@ impl Table {
     }
 
     /// Get the expected width of the table.
-    /// This will be `Some`, if the terminal width can be automatically detected or if the table width is set via [Table::set_table_width].
-    /// If neither is not possible, `None` will be returned.
-    /// This implies that both [ContentArrangement::Dynamic] and [crate::style::column::Constraint::Percentage] won't work.
+    ///
+    /// This will be `Some(width)`, if the terminal width can be automatically detected or if the table width is set via [set_table_width](Table::set_table_width).
+    ///
+    /// If neither is not possible, `None` will be returned.\
+    /// This implies that both [Dynamic](ContentArrangement::Dynamic) and [Percentage](crate::style::column::Constraint::Percentage) won't work.
     pub fn get_table_width(&self) -> Option<u16> {
         if let Some(width) = self.table_width {
             Some(width)
@@ -99,11 +116,11 @@ impl Table {
         }
     }
 
-    /// Force formatting output as if started on a tty.
-    /// This is useful if you want to generate styled terminal output in a non-tty environment.
+    /// Force formatting output as if started on a tty.\
+    /// This is useful if you want to generate styled terminal output in a non-tty environment.\
     ///
     /// If you are not on a tty and want to use dynamic content arrangement [ContentArrangement::Dynamic],
-    /// you need to set the width of your desired table manually with [Table::set_table_width].
+    /// you need to set the width of your desired table manually with [set_table_width](Table::set_table_width).
     pub fn force_tty(&mut self) -> &mut Self {
         self.tty = Some(true);
 
@@ -119,8 +136,8 @@ impl Table {
     /// - Automatic table_width lookup from the current tty
     /// - Styling and attributes on cells
     ///
-    /// If you use the dynamic content arrangement mode (ContentArrangement::Dynamic),
-    /// you need to set the width of your desired table manually with [Table::set_table_width].
+    /// If you use the [dynamic content arrangement](ContentArrangement::Dynamic),
+    /// you need to set the width of your desired table manually with [set_table_width](Table::set_table_width).
     pub fn force_no_tty(&mut self) -> &mut Self {
         self.tty = Some(false);
 
@@ -157,16 +174,6 @@ impl Table {
         self.columns.iter_mut()
     }
 
-    /// Return a vector representing the maximum amount of characters in any line of this column.
-    /// This is mostly needed for internal testing and formatting, but it can be interesting
-    /// if you want to check how wide the longest line for each column is during runtime.
-    pub fn column_max_content_widths(&self) -> Vec<u16> {
-        self.columns
-            .iter()
-            .map(|column| column.max_content_width)
-            .collect()
-    }
-
     /// This function creates a TableStyle from a given preset string.
     /// Preset strings can be found in styling::presets::*
     ///
@@ -198,12 +205,23 @@ impl Table {
 
     /// Modify a preset with a modifier string from [modifiers](crate::style::modifiers).
     /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
+    /// ```
+    /// use comfy_table::Table;
+    /// use comfy_table::style::presets::UTF8_FULL;
+    /// use comfy_table::style::modifiers::UTF8_ROUND_CORNERS;
+    ///
+    /// let mut table = Table::new();
+    /// table.load_preset(UTF8_FULL);
+    /// table.apply_modifier(UTF8_ROUND_CORNERS);
+    /// ```
+
     pub fn apply_modifier(&mut self, modifier: &str) -> &mut Self {
         let mut components = Component::iter();
 
         for character in modifier.chars() {
             // Skip spaces while applying modifiers.
             if character == ' ' {
+                components.next();
                 continue;
             }
             if let Some(component) = components.next() {
@@ -249,6 +267,17 @@ impl Table {
             Some(character) => Some(*character),
         }
     }
+
+    /// Return a vector representing the maximum amount of characters in any line of this column. \
+    /// This is mostly needed for internal testing and formatting, but can be interesting
+    /// if you want to see the widths of the longest lines for each column.
+    pub fn column_max_content_widths(&self) -> Vec<u16> {
+        self.columns
+            .iter()
+            .map(|column| column.max_content_width)
+            .collect()
+    }
+
 
     pub(crate) fn style_or_default(&self, component: Component) -> String {
         match self.style.get(&component) {
