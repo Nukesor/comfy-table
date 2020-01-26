@@ -18,5 +18,6 @@ jobs:
 
     - run: cargo build
     - run: cargo test --verbose
+    - run: cargo install cargo-tarpaulin
     - run: cargo tarpaulin --out Xml
     - run: bash <(curl -s https://codecov.io/bash)

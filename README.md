@@ -91,7 +91,7 @@ fn main() {
 }
 ```
 Create a table with UTF8 styling, that automatically wraps content to maintain a given table width.
-If the table width isn't explicitely set, the terminal size will be used, this is executed in a terminal.
+If the table width isn't explicitely set, the terminal size will be used, if this is executed in a terminal.
 
 ```text,ignore
 ┌────────────┬────────────┬────────────┐
