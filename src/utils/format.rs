@@ -174,17 +174,27 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &T
             current_line += " ";
             current_line += next;
             // Already push the next line, if there isn't space for more than to chars
-            if current_line.chars().count() >= content_width as usize - 2 {
+            if current_line.chars().count() as i32 >= content_width as i32 - 2 {
                 lines.push(current_line);
                 current_line = String::new();
             }
         // The next word/section doesn't fit
         } else {
+            let remaining_width = content_width as i32 - current_line.chars().count() as i32;
+
+            // The current line is already full.
+            // Put the next part back on the stack and push the current line
+            if remaining_width <= 2 {
+                splitted.push(next);
+
+                // Push the finished line, and start a new one
+                lines.push(current_line);
+                current_line = String::new();
+            }
             // The word is longer than the specified content_width
             // Split the word, push the remaining string back on the stack
-            let remaining_width = content_width as usize - current_line.chars().count();
-            if next_length as u16 > content_width {
-                let (next, remaining) = next.split_at(remaining_width - 1);
+            else if next_length as u16 > content_width {
+                let (next, remaining) = next.split_at(remaining_width as usize - 1);
                 current_line += " ";
                 current_line += next;
                 splitted.push(remaining);
@@ -272,12 +282,12 @@ pub fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
 pub fn style_line(line: String, cell: &Cell) -> String {
     let mut content = style(line);
 
-    // Apply frontend color
+    // Apply text color
     if let Some(color) = cell.fg {
         content = content.with(color);
     }
 
-    // Apply backend color
+    // Apply background color
     if let Some(color) = cell.bg {
         content = content.on(color);
     }

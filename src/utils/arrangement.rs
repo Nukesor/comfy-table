@@ -15,7 +15,7 @@ pub struct ColumnDisplayInfo {
     /// The max amount of characters over all lines in this column
     max_content_width: u16,
     /// The actual allowed content width after arrangement
-    pub content_width: u16,
+    content_width: u16,
     /// Flag that determines, if the content_width for this column
     /// has already been freezed.
     fixed: bool,
@@ -48,6 +48,12 @@ impl ColumnDisplayInfo {
     }
 
     pub fn set_content_width(&mut self, width: u16) {
+        // Don't allow content widths of 0.
+        if width == 0 {
+            self.content_width = 1;
+
+            return;
+        }
         self.content_width = width;
     }
 

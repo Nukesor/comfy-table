@@ -212,7 +212,7 @@ impl Table {
     /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all remaining components.
     ///
     /// If the string is too long, remaining charaacters will be simply ignored.
-    pub fn load_preset(&mut self, preset: &str) {
+    pub fn load_preset(&mut self, preset: &str) -> &mut Self {
         let mut components = TableComponent::iter();
 
         for character in preset.chars() {
@@ -230,6 +230,8 @@ impl Table {
                 break;
             }
         }
+
+        self
     }
 
     /// Modify a preset with a modifier string from [modifiers](crate::style::modifiers).

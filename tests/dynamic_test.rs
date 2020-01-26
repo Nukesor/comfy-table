@@ -3,20 +3,19 @@ use comfy_table::{Table, ContentArrangement};
 #[test]
 fn simple_dynamic_table() {
     let mut table = Table::new();
-    table.set_header(&vec!["Header1", "Header2", "Head"]);
-    table.set_content_arrangement(ContentArrangement::Dynamic);
-    table.set_table_width(25);
-
-    table.add_row(&vec![
-        "This is a very long line with a lot of text",
-        "This is anotherverylongtextwithlongwords text",
-        "smol",
-    ]);
-    table.add_row(&vec![
-        "This is another text",
-        "Now let's\nadd a really long line in the middle of the cell \n and add more multi line stuff",
-        "smol",
-    ]);
+    table.set_header(&vec!["Header1", "Header2", "Head"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(25)
+        .add_row(&vec![
+            "This is a very long line with a lot of text",
+            "This is anotherverylongtextwithlongwords text",
+            "smol",
+        ])
+        .add_row(&vec![
+            "This is another text",
+            "Now let's\nadd a really long line in the middle of the cell \n and add more multi line stuff",
+            "smol",
+        ]);
 
     println!("{}", table.to_string());
     let expected = "
@@ -35,16 +34,16 @@ fn simple_dynamic_table() {
 |        | text  |      |
 |--------+-------+------|
 | This   | Now   | smol |
-| is ano | let's |      |
+| is ano | let\'s |      |
 | ther   | add a |      |
 | text   | reall |      |
 |        | y     |      |
 |        | long  |      |
 |        | line  |      |
 |        | in    |      |
-|        | the m |      |
-|        | iddle |      |
-|        | of    |      |
+|        | the   |      |
+|        | middl |      |
+|        | e of  |      |
 |        | the   |      |
 |        | cell  |      |
 |        | and   |      |
