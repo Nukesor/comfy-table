@@ -8,7 +8,7 @@
 [![Patreon](https://github.com/Nukesor/images/blob/master/patreon-donate-blue.svg)](https://www.patreon.com/nukesor)
 [![Paypal](https://github.com/Nukesor/images/blob/master/paypal-donate-blue.svg)](https://www.paypal.me/arnebeer/)
 
-![comfy-table](https://raw.githubusercontent.com/Nukesor/images/master/comfy-table.gif)
+![comfy-table](https://raw.githubusercontent.com/Nukesor/images/master/comfy_table.gif)
 
 Comfy-table tries to provide utility for building beautiful tables, while being easy to use.
 
