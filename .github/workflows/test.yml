@@ -21,8 +21,5 @@ jobs:
         rust-version: ${{ matrix.rust }}
     - uses: actions/checkout@v1
 
-    - name: Build
-      run: cargo build
-
-    - name: Run tests
-      run: cargo test --verbose
+    - run: cargo build
+    - run: cargo test --verbose

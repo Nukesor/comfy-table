@@ -16,12 +16,7 @@ jobs:
         rust-version: nightly
     - uses: actions/checkout@v1
 
-    - name: Build
-      run: cargo build
-
-    - name: Run tests
-      run: cargo test --verbose
-
-    - name: Send code covarage
+    - run: cargo build
+    - run: cargo test --verbose
     - run: cargo tarpaulin --out Xml
     - run: bash <(curl -s https://codecov.io/bash)
