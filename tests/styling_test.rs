@@ -4,6 +4,7 @@ use comfy_table::prelude::*;
 #[test]
 fn styled_table() {
     let mut table = Table::new();
+    table.force_tty();
     table.set_header(vec![
         Cell::new("Header1").add_attribute(Attribute::Bold),
         Cell::new("Header2").fg(Color::Green),
