@@ -26,3 +26,9 @@ jobs:
 
     - name: Run tests
       run: cargo test --verbose
+
+    - name: Send code covarage
+    - run: |
+        cargo tarpaulin --out Xml
+        bash <(curl -s https://codecov.io/bash)
+      if: matrix.os == 'ubuntu-latest' && matrix.rust == 'nightly'
