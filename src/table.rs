@@ -1,3 +1,4 @@
+use ::std::fmt;
 use ::crossterm::terminal::size;
 use ::std::collections::HashMap;
 use ::std::iter::IntoIterator;
@@ -24,13 +25,13 @@ pub struct Table {
     enforce_styling: bool,
 }
 
-impl ToString for Table {
-    fn to_string(&self) -> String {
+impl fmt::Display for Table {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let display_info = arrange_content(self);
         let content = format_content(&self, &display_info);
         let lines = draw_borders(&self, content, &display_info);
 
-        lines.join("\n")
+        write!(f, "{}", lines.join("\n"))
     }
 }
 
