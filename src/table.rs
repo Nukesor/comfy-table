@@ -18,8 +18,9 @@ pub struct Table {
     pub(crate) header: Option<Row>,
     pub(crate) rows: Vec<Row>,
     pub(crate) arrangement: ContentArrangement,
-    tty: Option<bool>,
+    no_tty: bool,
     table_width: Option<u16>,
+    enforce_styling: bool
 }
 
 impl ToString for Table {
@@ -40,9 +41,10 @@ impl Table {
             header: None,
             rows: Vec::new(),
             arrangement: ContentArrangement::Disabled,
-            tty: None,
+            no_tty: false,
             table_width: None,
             style: HashMap::new(),
+            enforce_styling: false,
         };
 
         table.load_preset(ASCII_FULL);
@@ -129,17 +131,6 @@ impl Table {
         self
     }
 
-    /// Force formatting output as if started on a tty.\
-    /// This is useful if you want to generate styled terminal output in a non-tty environment.\
-    ///
-    /// If you are not on a tty and want to use dynamic content arrangement [ContentArrangement::Dynamic],
-    /// you need to set the width of your desired table manually with [set_table_width](Table::set_table_width).
-    pub fn force_tty(&mut self) -> &mut Self {
-        self.tty = Some(true);
-
-        self
-    }
-
     /// In case you are sure you don't want export tables to a tty
     /// or you experience problems with tty checking code, you can
     /// enforce a non_tty mode.
@@ -147,12 +138,12 @@ impl Table {
     /// This disables:
     ///
     /// - Automatic table_width lookup from the current tty
-    /// - Styling and attributes on cells
+    /// - Styling and attributes on cells (unless you [Table::enforce_styling])
     ///
     /// If you use the [dynamic content arrangement](ContentArrangement::Dynamic),
     /// you need to set the width of your desired table manually with [set_table_width](Table::set_table_width).
     pub fn force_no_tty(&mut self) -> &mut Self {
-        self.tty = Some(false);
+        self.no_tty = true;
 
         self
     }
@@ -161,10 +152,35 @@ impl Table {
     /// This function respects the [Table::force_no_tty] and [Table::force_tty] functions.
     /// Otherwise we try to automatically determine, if we are on a tty.
     pub fn is_tty(&self) -> bool {
-        match self.tty {
-            Some(is_tty) => is_tty,
-            None => atty::is(atty::Stream::Stdout),
+        if self.no_tty {
+            return false;
         }
+
+        atty::is(atty::Stream::Stdout)
+    }
+
+    /// Enforce terminal styling. Only useful if you forcefully disabled tty,
+    /// but still want those fancy terminal styles.
+    /// ```
+    /// use comfy_table::Table;
+    ///
+    /// let mut table = Table::new();
+    /// table.force_no_tty()
+    ///     .enforce_styling();
+    /// ```
+    pub fn enforce_styling(&mut self) -> &mut Self {
+        self.enforce_styling = true;
+
+        self
+    }
+
+    /// Enforce terminal styling. Only useful if you forcefully disabled tty,
+    /// but still want those fancy terminal styles.
+    pub fn should_style(&self) -> bool {
+        if self.enforce_styling {
+            return true
+        }
+        self.is_tty()
     }
 
     /// Reference to a specific column

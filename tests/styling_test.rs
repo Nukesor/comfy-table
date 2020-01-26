@@ -1,10 +1,8 @@
 use ::crossterm::style::{Attribute, Color};
 use comfy_table::prelude::*;
 
-#[test]
-fn styled_table() {
+fn get_preset_table() -> Table {
     let mut table = Table::new();
-    table.force_tty();
     table.set_header(vec![
         Cell::new("Header1").add_attribute(Attribute::Bold),
         Cell::new("Header2").fg(Color::Green),
@@ -26,6 +24,14 @@ fn styled_table() {
             .add_attribute(Attribute::SlowBlink),
     ]);
 
+    table
+}
+
+#[test]
+fn styled_table() {
+    let mut table = get_preset_table();
+    table.force_no_tty()
+        .enforce_styling();
     println!("{}", table.to_string());
     let expected = "
 +---------------------+----------------------+-------------------------------+
@@ -38,8 +44,13 @@ fn styled_table() {
 |                     |\u{1b}[38;5;14m multi line stuff     \u{1b}[0m|                               |
 +---------------------+----------------------+-------------------------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
 
+#[test]
+fn no_style_styled_table() {
+    let mut table = get_preset_table();
     table.force_no_tty();
+
     println!("{}", table.to_string());
     let expected = "
 +---------------------+----------------------+-------------------------------+

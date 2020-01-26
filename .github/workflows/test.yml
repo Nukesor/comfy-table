@@ -25,4 +25,4 @@ jobs:
       run: cargo build
 
     - name: Run tests
-      run: cargo test --verbose
+      run: RUST_BACKTRACE=1 cargo test --verbose

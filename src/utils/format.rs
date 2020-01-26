@@ -79,7 +79,7 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>, table: &Tabl
                 cell_content.append(&mut splitted);
             } else {
                 let mut line = align_line(line.clone(), info, cell);
-                if table.is_tty() {
+                if table.should_style() {
                     line = style_line(line, cell);
                 }
                 cell_content.push(line);
@@ -211,7 +211,7 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &T
         .iter()
         .map(|line| align_line(line.to_string(), info, cell))
         .map(|line| {
-            if table.is_tty() {
+            if table.should_style() {
                 return style_line(line, cell);
             }
             line
