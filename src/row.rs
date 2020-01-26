@@ -87,7 +87,6 @@ impl<T: ToCells> ToRow for T {
     }
 }
 
-// This is somewhat expensive, but convenient
 impl ToRow for Row {
     fn to_row(self) -> Row {
         self
@@ -112,4 +111,23 @@ mod tests {
 
         assert_eq!(max_content_widths, vec![0, 4, 5, 6, 11]);
     }
+
+    #[test]
+    fn test_some_functions() {
+        let cells = vec![
+            "one",
+            "two",
+            "three",
+        ];
+        let mut row = Row::new();
+        for cell in cells.iter() {
+            row.add_cell(Cell::new(cell));
+        }
+
+        let mut cell_content_iter = cells.iter();
+        for cell in row.cell_iter() {
+            assert_eq!(cell.get_content(), cell_content_iter.next().unwrap().to_string());
+        }
+    }
+
 }

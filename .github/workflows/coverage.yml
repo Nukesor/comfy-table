@@ -23,6 +23,6 @@ jobs:
 
     - uses: codecov/codecov-action@v1
       with:
-        token: ${{ secrets.CODECOV_TOKEN }} #required
+        token: ${{ secrets.CODECOV_TOKEN }}
         file: ./cobertura.xml
         fail_ci_if_error: true

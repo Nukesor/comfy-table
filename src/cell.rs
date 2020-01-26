@@ -142,3 +142,16 @@ impl ToCell for Cell {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_column_generation() {
+        let content = "This is\nsome multiline\nstring".to_string();
+        let cell = Cell::new(content.clone());
+
+        assert_eq!(cell.get_content(), content);
+    }
+}

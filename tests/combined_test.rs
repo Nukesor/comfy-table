@@ -24,8 +24,10 @@ fn get_preset_table() -> Table {
             Cell::new("COMBINE ALL THE THINGS")
             .fg(Color::Green)
             .bg(Color::Black)
-            .add_attribute(Attribute::Bold)
-            .add_attribute(Attribute::SlowBlink),
+            .add_attributes(vec![
+                Attribute::Bold,
+                Attribute::SlowBlink,
+            ])
         ]);
 
     table
