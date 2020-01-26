@@ -20,4 +20,9 @@ jobs:
     - run: cargo test --verbose
     - run: cargo install cargo-tarpaulin
     - run: cargo tarpaulin --out Xml
-    - run: bash <(curl -s https://codecov.io/bash)
+
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }} #required
+        file: ./cobertura.xml
+        fail_ci_if_error: true
