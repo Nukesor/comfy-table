@@ -1,0 +1,27 @@
+name: Coverage
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  coverage:
+    name: Create coverage statistics
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: nightly
+    - uses: actions/checkout@v1
+
+    - name: Build
+      run: cargo build
+
+    - name: Run tests
+      run: cargo test --verbose
+
+    - name: Send code covarage
+    - run: cargo tarpaulin --out Xml
+    - run: bash <(curl -s https://codecov.io/bash)
