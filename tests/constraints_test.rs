@@ -1,3 +1,4 @@
+use pretty_assertions::assert_eq;
 use comfy_table::prelude::*;
 
 fn get_max_min_table() -> Table {

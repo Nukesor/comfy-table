@@ -437,5 +437,7 @@ mod tests {
         // Now add a row that has column lines. The max content width shouldn't change
         table.add_row(&vec!["", "", "shorter"]);
         assert_eq!(table.column_max_content_widths(), vec![4, 5, 22]);
+
+        println!("{}", table);
     }
 }

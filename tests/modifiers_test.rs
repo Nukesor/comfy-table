@@ -1,3 +1,5 @@
+use pretty_assertions::assert_eq;
+
 use comfy_table::prelude::*;
 use comfy_table::style::modifiers::*;
 use comfy_table::style::presets::*;

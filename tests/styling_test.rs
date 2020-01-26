@@ -1,5 +1,7 @@
-use ::crossterm::style::{Attribute, Color};
+use pretty_assertions::assert_eq;
+
 use comfy_table::prelude::*;
+use comfy_table::style::{Attribute, Color};
 use comfy_table::style::presets::UTF8_FULL;
 
 fn get_preset_table() -> Table {
