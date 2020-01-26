@@ -12,8 +12,8 @@
 
 Comfy-table tries to provide utility for building beautiful tables, while being easy to use.
 
-**Warning:** This library is quite young and very actively maintained. There may be still some bugs, event though I'm continuously writing tests to cover all features.
-If you find anything, please create an issue and I'll try to fix it as soon as possible.
+**Warning:** This library is quite young and very actively developed. There still may be some bugs, event though I'm continuously writing tests to cover all features.
+If you find anything, please create an issue. I'll then try to fix them as soon as possible.
 
 
 Features:
