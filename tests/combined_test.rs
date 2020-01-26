@@ -33,8 +33,7 @@ fn get_preset_table() -> Table {
 #[test]
 fn combined_features() {
     let mut table = get_preset_table();
-    table.force_no_tty()
-        .enforce_styling();
+    table.force_no_tty().enforce_styling();
     println!("{}", table.to_string());
     let expected = "
 ┌─────────────────────┬────────────────────────────┬───────────────────────────┐

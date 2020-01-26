@@ -4,13 +4,13 @@ use comfy_table::style::presets::UTF8_FULL;
 
 fn get_preset_table() -> Table {
     let mut table = Table::new();
-    table.load_preset(UTF8_FULL)
+    table
+        .load_preset(UTF8_FULL)
         .set_header(vec![
             Cell::new("Header1").add_attribute(Attribute::Bold),
             Cell::new("Header2").fg(Color::Green),
             Cell::new("Header3").bg(Color::Black),
         ])
-
         .add_row(vec![
             Cell::new("This is a bold text").add_attribute(Attribute::Bold),
             Cell::new("This is a green text").fg(Color::Green),
@@ -20,10 +20,10 @@ fn get_preset_table() -> Table {
             Cell::new("Blinking boiii").add_attribute(Attribute::SlowBlink),
             Cell::new("Now\nadd some\nmulti line stuff").fg(Color::Cyan),
             Cell::new("COMBINE ALL THE THINGS")
-            .fg(Color::Green)
-            .bg(Color::Black)
-            .add_attribute(Attribute::Bold)
-            .add_attribute(Attribute::SlowBlink),
+                .fg(Color::Green)
+                .bg(Color::Black)
+                .add_attribute(Attribute::Bold)
+                .add_attribute(Attribute::SlowBlink),
         ]);
 
     table
@@ -32,8 +32,7 @@ fn get_preset_table() -> Table {
 #[test]
 fn styled_table() {
     let mut table = get_preset_table();
-    table.force_no_tty()
-        .enforce_styling();
+    table.force_no_tty().enforce_styling();
     println!("{}", table.to_string());
     let expected = "
 ┌─────────────────────┬──────────────────────┬───────────────────────────────┐

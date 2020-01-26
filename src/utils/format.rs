@@ -44,7 +44,11 @@ pub fn format_content(
     table_content
 }
 
-pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>, table: &Table) -> Vec<Vec<String>> {
+pub fn format_row(
+    row: &Row,
+    display_info: &Vec<ColumnDisplayInfo>,
+    table: &Table,
+) -> Vec<Vec<String>> {
     // The content of this specific row
     let mut temp_row_content = Vec::new();
     let mut max_content_lines = 0;
@@ -138,7 +142,12 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>, table: &Tabl
 /// This function tries to do this in a smart way, by taking the content's deliminator
 /// splitting it at these deliminators and reconnecting them until a line is full.
 /// Splitting of parts only occurs if the part doesn't fit in a single line by itself.
-pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &Table) -> Vec<String> {
+pub fn split_line(
+    line: String,
+    info: &ColumnDisplayInfo,
+    cell: &Cell,
+    table: &Table,
+) -> Vec<String> {
     let mut lines = Vec::new();
     let content_width = info.content_width();
 
@@ -260,7 +269,7 @@ pub fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> St
         }
         CellAlignment::Center => {
             let left_padding = (remaining as f32 / 2f32).ceil() as usize;
-            let right_padding = (remaining  as f32/ 2f32).floor() as usize;
+            let right_padding = (remaining as f32 / 2f32).floor() as usize;
             line = " ".repeat(left_padding) + &line + &" ".repeat(right_padding);
         }
     }

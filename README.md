@@ -12,9 +12,24 @@
 
 Comfy-table tries to provide utility for building beautiful tables, while being easy to use.
 
+**Warning:** This library is quite young and very actively maintained. There may be still some bugs, event though I'm continuously writing tests to cover all features.
+If you find anything, please create an issue and I'll try to fix it as soon as possible.
+
+
 Features:
 
 - Automatic arrangement content to a specific width.
 - Styling options for terminals.
 - Cross plattform (Linux, macOS, Windows)
 - Every part of the table can be customized
+
+
+## Examples
+
+If you're looking for examples, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).\
+There is a test for almost every feature including a visual view for each resulting table.
+
+
+## Feedback
+
+This is my first Rust library! If you have some suggestions on how to improve this library please create an issue. I'm always open to constructive criticism and eager to learn how to do this properly!

@@ -1,15 +1,17 @@
 use crate::column::Column;
-use crate::style::{ColumnConstraint, ContentArrangement, CellAlignment};
 use crate::style::ColumnConstraint::*;
+use crate::style::{CellAlignment, ColumnConstraint, ContentArrangement};
 use crate::table::Table;
 use crate::utils::borders::{
-    should_draw_left_border,
-    should_draw_right_border,
-    should_draw_vertical_lines,
+    should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
 };
 
-/// This is used to store various styling options for a specific column.
-/// The struct is only created temporarily during the drawing process.
+/// This struct is ONLY used during when calling table.to_string()
+/// It's used to store intermediate results, information on how to
+/// arrange the table and other convenience variables for calculating
+/// a lot of stuff.
+/// This also exists to prevent changes on the original
+/// Column struct while preparing to print the table as a string.
 pub struct ColumnDisplayInfo {
     pub padding: (u16, u16),
     /// The max amount of characters over all lines in this column
@@ -84,7 +86,13 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     let mut display_infos = Vec::new();
     for column in table.columns.iter() {
         let mut info = ColumnDisplayInfo::new(column);
-        if let Some(constraint) = column.constraint.as_ref() {
+
+        // We don't want to look at hidden columns at ALL
+        // Simply don't add it to the display_infos, since we don't use the
+        // original Columns any longer after this point.
+        if let Some(ColumnConstraint::Hidden) = column.constraint.as_ref() {
+            continue;
+        } else if let Some(constraint) = column.constraint.as_ref() {
             evaluate_constraint(&mut info, constraint, table_width);
         }
 
@@ -149,10 +157,21 @@ fn evaluate_constraint(
 /// to the respective max content width.
 fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
     for info in infos.iter_mut() {
-        if !info.fixed {
-            info.set_content_width(info.max_content_width);
-            info.fixed = true;
+        // The size has already been fixed by a constraint
+        if info.fixed {
+            continue;
         }
+
+        if let Some(ColumnConstraint::MaxWidth(max_width)) = info.constraint {
+            if max_width < info.max_width() {
+                let width = info.without_padding(max_width);
+                info.set_content_width(width);
+                info.fixed = true;
+                continue;
+            }
+        }
+        info.set_content_width(info.max_content_width);
+        info.fixed = true;
     }
 }
 
@@ -206,8 +225,13 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     while found_smaller {
         found_smaller = false;
         let remaining_columns = infos.len() - checked.len();
-        let average_space = remaining_width / remaining_columns as i32;
 
+        // There are no columns left to check. Proceed to the next step
+        if remaining_columns == 0 {
+            break;
+        }
+
+        let average_space = remaining_width / remaining_columns as i32;
         // We have no space left, the terminal is either tiny or the other columns are huge.
         if average_space <= 0 {
             break;
@@ -216,16 +240,14 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         for (id, info) in infos.iter_mut().enumerate() {
             // We already checked this column, skip it
             if checked.contains(&id) {
-                continue
+                continue;
             }
 
             // The column has a smaller MaxWidth Constraint than the average remaining space
             // and a higher max_content_width than it's constraint.
             // Fix the column width to max_width and mark it as checked.
             if let Some(ColumnConstraint::MaxWidth(max_width)) = info.constraint {
-                if max_width as i32 <= average_space &&
-                    info.max_width() >= max_width {
-
+                if max_width as i32 <= average_space && info.max_width() >= max_width {
                     let width = info.without_padding(max_width);
                     info.set_content_width(width);
                     info.fixed = true;
@@ -254,7 +276,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     let remaining_columns = infos.len() - checked.len();
     // We already managed to fix all.
     if remaining_columns == 0 {
-        return
+        return;
     }
 
     // If we have less than one space per remaining column, give at least
@@ -273,7 +295,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     for (id, info) in infos.iter_mut().enumerate() {
         // We already checked this column, skip it
         if checked.contains(&id) {
-            continue
+            continue;
         }
         // Distribute the excess until nothing is left
         let mut width = if excess > 0 {

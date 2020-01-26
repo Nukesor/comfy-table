@@ -12,7 +12,7 @@ pub mod prelude {
     pub use crate::column::Column;
     pub use crate::row::Row;
     pub use crate::style::CellAlignment;
-    pub use crate::table::Table;
     pub use crate::style::ColumnConstraint;
     pub use crate::style::ContentArrangement;
+    pub use crate::table::Table;
 }

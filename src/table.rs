@@ -1,12 +1,13 @@
 use ::crossterm::terminal::size;
 use ::std::collections::HashMap;
+use ::std::iter::IntoIterator;
 use ::std::slice::{Iter, IterMut};
 use ::strum::IntoEnumIterator;
 
 use crate::column::Column;
 use crate::row::{Row, ToRow};
 use crate::style::presets::ASCII_FULL;
-use crate::style::{TableComponent, ContentArrangement};
+use crate::style::{ColumnConstraint, ContentArrangement, TableComponent};
 use crate::utils::arrangement::arrange_content;
 use crate::utils::borders::draw_borders;
 use crate::utils::format::format_content;
@@ -20,7 +21,7 @@ pub struct Table {
     pub(crate) arrangement: ContentArrangement,
     no_tty: bool,
     table_width: Option<u16>,
-    enforce_styling: bool
+    enforce_styling: bool,
 }
 
 impl ToString for Table {
@@ -178,29 +179,40 @@ impl Table {
     /// but still want those fancy terminal styles.
     pub fn should_style(&self) -> bool {
         if self.enforce_styling {
-            return true
+            return true;
         }
         self.is_tty()
     }
 
-    /// Reference to a specific column
-    pub fn get_column(&self, index: usize) -> Option<&Column> {
-        self.columns.get(index)
-    }
+    /// Convenience method to set a [ColumnConstraint] for all columns at once.
+    /// Simply pass any iterable with ColumnConstraints.
+    /// If more Constraints are passed than there are Columns, these Constraints will be ignored
+    /// ```
+    /// use comfy_table::{Table, ColumnConstraint, ContentArrangement};
+    /// let mut table = Table::new();
+    /// table.add_row(&vec!["one", "two", "three"])
+    ///     .set_content_arrangement(ContentArrangement::Dynamic)
+    ///     .set_constraints(vec![
+    ///         ColumnConstraint::MaxWidth(15),
+    ///         ColumnConstraint::MinWidth(20),
+    ///         ColumnConstraint::Width(40),
+    /// ]);
+    /// ```
+    pub fn set_constraints<T: IntoIterator<Item = ColumnConstraint>>(
+        &mut self,
+        constraints: T,
+    ) -> &mut Self {
+        let mut constraints = constraints.into_iter();
+        let mut column_iter = self.column_iter_mut();
+        while let Some(column) = column_iter.next() {
+            if let Some(constraint) = constraints.next() {
+                column.set_constraint(constraint);
+            } else {
+                break;
+            }
+        }
 
-    /// Mutable reference to a specific column
-    pub fn get_column_mut(&mut self, index: usize) -> Option<&mut Column> {
-        self.columns.get_mut(index)
-    }
-
-    /// Iterator over all columns
-    pub fn column_iter(&mut self) -> Iter<Column> {
-        self.columns.iter()
-    }
-
-    /// Mutable iterator over all columns
-    pub fn column_iter_mut(&mut self) -> IterMut<Column> {
-        self.columns.iter_mut()
+        self
     }
 
     /// This function creates a TableStyle from a given preset string.
@@ -319,6 +331,46 @@ impl Table {
         self
     }
 
+    /// Reference to a specific column
+    pub fn get_column(&self, index: usize) -> Option<&Column> {
+        self.columns.get(index)
+    }
+
+    /// Mutable reference to a specific column
+    pub fn get_column_mut(&mut self, index: usize) -> Option<&mut Column> {
+        self.columns.get_mut(index)
+    }
+
+    /// Iterator over all columns
+    pub fn column_iter(&mut self) -> Iter<Column> {
+        self.columns.iter()
+    }
+
+    /// Mutable iterator over all columns
+    /// ```
+    /// use comfy_table::{Table, ColumnConstraint};
+    /// let mut table = Table::new();
+    /// table.add_row(&vec!["First", "Second", "Third"]);
+    ///
+    /// // Add a ColumnConstraint to each column (left->right)
+    /// // first -> min width of 10
+    /// // second -> max width of 8
+    /// // third -> fixed width of 10
+    /// let constraints = vec![
+    ///     ColumnConstraint::MinWidth(10),
+    ///     ColumnConstraint::MaxWidth(8),
+    ///     ColumnConstraint::Width(10),
+    /// ];
+    ///
+    /// // Add the constraints to their respective column
+    /// for (column_index, column) in table.column_iter_mut().enumerate() {
+    ///     let constraint = constraints.get(column_index).unwrap();
+    ///     column.set_constraint(*constraint);
+    /// }
+    /// ```
+    pub fn column_iter_mut(&mut self) -> IterMut<Column> {
+        self.columns.iter_mut()
+    }
 
     /// Return a vector representing the maximum amount of characters in any line of this column. \
     /// This is mostly needed for internal testing and formatting, but can be interesting
@@ -329,7 +381,6 @@ impl Table {
             .map(|column| column.max_content_width)
             .collect()
     }
-
 
     pub(crate) fn style_or_default(&self, component: TableComponent) -> String {
         match self.style.get(&component) {

@@ -1,4 +1,4 @@
-use comfy_table::{Table, ContentArrangement};
+use comfy_table::{ContentArrangement, Table};
 
 #[test]
 fn simple_dynamic_table() {

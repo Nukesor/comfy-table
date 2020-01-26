@@ -1,4 +1,4 @@
-use crate::style::{ColumnConstraint, CellAlignment};
+use crate::style::{CellAlignment, ColumnConstraint};
 
 /// The Column struct exists for styling purposes:
 ///
@@ -26,7 +26,6 @@ use crate::style::{ColumnConstraint, CellAlignment};
 /// // Align content in all cells of this column to the center of the cell.
 /// column.set_cell_alignment(CellAlignment::Center);
 /// ```
-
 pub struct Column {
     /// The index of the column
     pub index: usize,
@@ -73,7 +72,7 @@ impl Column {
     }
 
     /// Get the constraint that is used for this column.
-    pub fn get_constraint(&mut self) -> Option<&ColumnConstraint> {
+    pub fn get_constraint(&self) -> Option<&ColumnConstraint> {
         self.constraint.as_ref()
     }
 
