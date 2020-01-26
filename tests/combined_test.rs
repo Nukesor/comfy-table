@@ -10,7 +10,7 @@ fn get_preset_table() -> Table {
         .set_header(vec![
             Cell::new("Header1").add_attribute(Attribute::Bold),
             Cell::new("Header2").fg(Color::Green),
-            Cell::new("Header3").bg(Color::Black),
+            Cell::new("Header3"),
         ])
         .add_row(vec![
             Cell::new("This is a bold text").add_attribute(Attribute::Bold),
@@ -38,7 +38,7 @@ fn combined_features() {
     println!("{}", table.to_string());
     let expected = "
 ┌─────────────────────┬────────────────────────────┬───────────────────────────┐
-│\u{1b}[1m Header1             \u{1b}[0m┆\u{1b}[38;5;10m Header2                    \u{1b}[0m┆\u{1b}[48;5;0m Header3                   \u{1b}[0m│
+│\u{1b}[1m Header1             \u{1b}[0m┆\u{1b}[38;5;10m Header2                    \u{1b}[0m┆ Header3                   │
 ╞═════════════════════╪════════════════════════════╪═══════════════════════════╡
 │\u{1b}[1m This is a bold text \u{1b}[0m┆\u{1b}[38;5;10m This is a green text       \u{1b}[0m┆\u{1b}[48;5;0m This one has black        \u{1b}[0m│
 │                     ┆                            ┆\u{1b}[48;5;0m background                \u{1b}[0m│
