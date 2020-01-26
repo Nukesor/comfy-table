@@ -37,7 +37,7 @@ fn draw_top_border(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> Stri
     // Also add the border intersections, if we haven't arrived at the last element yet
     let mut iter = display_info.iter().peekable();
     while let Some(info) = iter.next() {
-        line += &top_border.repeat(info.width as usize);
+        line += &top_border.repeat(info.width() as usize);
         if iter.peek().is_some() {
             line += &border_intersection;
         }
@@ -138,7 +138,7 @@ fn draw_horizontal_lines(
     // Also add the border intersections, if we haven't arrived at the last element yet
     let mut iter = display_info.iter().peekable();
     while let Some(info) = iter.next() {
-        line += &horizontal_lines.repeat(info.width as usize);
+        line += &horizontal_lines.repeat(info.width() as usize);
         if iter.peek().is_some() {
             line += &middle_intersection;
         }
@@ -168,7 +168,7 @@ fn draw_bottom_border(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> S
     // Also add the border intersections, if we haven't arrived at the last element yet
     let mut iter = display_info.iter().peekable();
     while let Some(info) = iter.next() {
-        line += &bottom_border.repeat(info.width as usize);
+        line += &bottom_border.repeat(info.width() as usize);
         if iter.peek().is_some() {
             line += &middle_intersection;
         }

@@ -61,7 +61,7 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>, table: &Tabl
         let cell = if let Some(cell) = cell_iter.next() {
             cell
         } else {
-            cell_content.push(" ".repeat(info.width as usize));
+            cell_content.push(" ".repeat(info.width() as usize));
             temp_row_content.push(cell_content);
             continue;
         };
@@ -125,7 +125,7 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>, table: &Tabl
                 Some(content) => line.push(content.clone()),
                 // The current cell doesn't have content for this line.
                 // Fill with a placeholder (empty spaces)
-                None => line.push(" ".repeat(info.width as usize)),
+                None => line.push(" ".repeat(info.width() as usize)),
             }
         }
         row_content.push(line);

@@ -3,7 +3,7 @@ use comfy_table::{Table, ContentArrangement};
 #[test]
 fn simple_dynamic_table() {
     let mut table = Table::new();
-    table.set_header(&vec!["Header1", "Header2", "Header3"]);
+    table.set_header(&vec!["Header1", "Header2", "Head"]);
     table.set_content_arrangement(ContentArrangement::Dynamic);
     table.set_table_width(25);
 
@@ -20,39 +20,39 @@ fn simple_dynamic_table() {
 
     println!("{}", table.to_string());
     let expected = "
-+-------+-------+-------+
-| Heade | Heade | Heade |
-| r1    | r2    | r3    |
++--------+-------+------+
+| Header | Heade | Head |
+| 1      | r2    |      |
 +=======================+
-| This  | This  | smol  |
-| is a  | is an |       |
-| very  | other |       |
-| long  | veryl |       |
-| line  | ongte |       |
-| with  | xtwit |       |
-| a lot | hlong |       |
-| of    | words |       |
-| text  | text  |       |
-|-------+-------+-------|
-| This  | Now   | smol  |
-| is an | let's |       |
-| other | add a |       |
-| text  | reall |       |
-|       | y     |       |
-|       | long  |       |
-|       | line  |       |
-|       | in    |       |
-|       | the m |       |
-|       | iddle |       |
-|       | of    |       |
-|       | the   |       |
-|       | cell  |       |
-|       | and   |       |
-|       | add   |       |
-|       | more  |       |
-|       | multi |       |
-|       | line  |       |
-|       | stuff |       |
-+-------+-------+-------+";
+| This   | This  | smol |
+| is a   | is an |      |
+| very   | other |      |
+| long   | veryl |      |
+| line   | ongte |      |
+| with a | xtwit |      |
+| lot of | hlong |      |
+| text   | words |      |
+|        | text  |      |
+|--------+-------+------|
+| This   | Now   | smol |
+| is ano | let's |      |
+| ther   | add a |      |
+| text   | reall |      |
+|        | y     |      |
+|        | long  |      |
+|        | line  |      |
+|        | in    |      |
+|        | the m |      |
+|        | iddle |      |
+|        | of    |      |
+|        | the   |      |
+|        | cell  |      |
+|        | and   |      |
+|        | add   |      |
+|        | more  |      |
+|        | multi |      |
+|        | line  |      |
+|        | stuff |      |
++--------+-------+------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

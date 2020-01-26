@@ -14,10 +14,11 @@ pub struct ColumnDisplayInfo {
     pub padding: (u16, u16),
     /// The max amount of characters over all lines in this column
     max_content_width: u16,
-    /// Determine, whether the width attribute should be used.
-    /// If true, the column has fixed width.
+    /// The actual allowed content width after arrangement
+    pub content_width: u16,
+    /// Flag that determines, if the content_width for this column
+    /// has already been freezed.
     fixed: bool,
-    pub width: u16,
     /// A constraint that should be considered during automatic
     pub constraint: Option<ColumnConstraint>,
     /// Determine, whether this column should be hidden (ignored)
@@ -31,21 +32,42 @@ impl ColumnDisplayInfo {
         ColumnDisplayInfo {
             padding: column.padding,
             max_content_width: column.max_content_width,
-            width: 0,
+            content_width: 0,
             fixed: false,
             constraint: None::<ColumnConstraint>,
             hidden: false,
             cell_alignment: column.cell_alignment,
         }
     }
+    pub fn padding_width(&self) -> u16 {
+        self.padding.0 + self.padding.1
+    }
 
     pub fn content_width(&self) -> u16 {
-        let padding = self.padding.0 + self.padding.1;
-        // Default to 1. We don't allow negative width
-        if self.width <= padding {
+        self.content_width
+    }
+
+    pub fn set_content_width(&mut self, width: u16) {
+        self.content_width = width;
+    }
+
+    pub fn max_width(&self) -> u16 {
+        self.max_content_width + self.padding.0 + self.padding.1
+    }
+
+    pub fn width(&self) -> u16 {
+        self.content_width + self.padding.0 + self.padding.1
+    }
+
+    /// Return the remaining value after subtracting the padding width.
+    fn without_padding(&self, width: u16) -> u16 {
+        let padding = self.padding_width();
+        // Default minimum content width has to be 1
+        if padding >= width {
             return 1;
         }
-        self.width - padding
+
+        width - padding
     }
 }
 
@@ -88,18 +110,20 @@ fn evaluate_constraint(
     match constraint {
         Hidden => info.hidden = true,
         Width(width) => {
-            info.width = *width;
+            let width = info.without_padding(*width);
+            info.set_content_width(width);
             info.fixed = true;
         }
         Percentage(percent) => {
             if let Some(table_width) = table_width {
-                let width = table_width * percent / 100;
-                info.width = width;
+                let mut width = table_width * percent / 100;
+                width = info.without_padding(width as u16);
+                info.set_content_width(width);
                 info.fixed = true;
             }
         }
         ContentWidth => {
-            info.width = info.max_content_width + info.padding.0 + info.padding.1;
+            info.set_content_width(info.max_content_width);
             info.fixed = true;
         }
         MaxWidth(max_width) => info.constraint = Some(MaxWidth(*max_width)),
@@ -107,8 +131,9 @@ fn evaluate_constraint(
             // In case a min_width is specified, we can already fix the size of the column
             // right now (since we already know the max_content_width.
             if info.max_content_width <= *min_width {
+                let width = info.without_padding(*min_width);
+                info.set_content_width(width);
                 info.fixed = true;
-                info.width = *min_width;
             }
         }
     }
@@ -119,7 +144,7 @@ fn evaluate_constraint(
 fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
     for info in infos.iter_mut() {
         if !info.fixed {
-            info.width = info.max_content_width + info.padding.0 + info.padding.1;
+            info.set_content_width(info.max_content_width);
             info.fixed = true;
         }
     }
@@ -165,7 +190,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         // This info already has a fixed width (by Constraint)
         // Subtract width from remaining_width and add to checked.
         if info.fixed {
-            remaining_width -= info.width as i32;
+            remaining_width -= info.width() as i32;
             checked.push(id);
         }
     }
@@ -193,11 +218,13 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
             // Fix the column width to max_width and mark it as checked.
             if let Some(ColumnConstraint::MaxWidth(max_width)) = info.constraint {
                 if max_width as i32 <= average_space &&
-                    info.max_content_width >= max_width {
-                    info.width = max_width;
+                    info.max_width() >= max_width {
+
+                    let width = info.without_padding(max_width);
+                    info.set_content_width(width);
                     info.fixed = true;
 
-                    remaining_width -= info.width as i32;
+                    remaining_width -= info.width() as i32;
                     checked.push(id);
                     found_smaller = true;
                     continue;
@@ -206,11 +233,11 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
 
             // The column has a smaller max_content_width than the average space.
             // Fix the width to max_content_width and mark it as checked
-            if (info.max_content_width as i32) < average_space {
-                info.width = info.max_content_width;
+            if (info.max_width() as i32) < average_space {
+                info.set_content_width(info.max_content_width);
                 info.fixed = true;
 
-                remaining_width -= info.width as i32;
+                remaining_width -= info.width() as i32;
                 checked.push(id);
                 found_smaller = true;
             }
@@ -250,14 +277,9 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
             average_space
         };
 
-        // At least give padding + 1 size for a column.
-        // This only happens, if the user fucked up or if the terminal is suuuuuuper tiny.
-        let min_size = info.padding.0 + info.padding.1 + 1;
-        if width <= min_size {
-            width = min_size
-        }
+        width = info.without_padding(width);
 
-        info.width = width;
+        info.set_content_width(width);
         info.fixed = true;
     }
 }
@@ -281,7 +303,7 @@ mod tests {
         assert_eq!(max_widths, vec![4, 5, 6]);
 
         // In default mode without any constraints
-        let widths: Vec<u16> = display_infos.iter().map(|info| info.width).collect();
+        let widths: Vec<u16> = display_infos.iter().map(|info| info.width()).collect();
         assert_eq!(widths, vec![6, 7, 8]);
     }
 }
