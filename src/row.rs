@@ -2,7 +2,7 @@ use crate::cell::{Cell, ToCells};
 use ::std::slice::Iter;
 
 /// [Row] represents a row of a table.
-/// Each row contains an amount of [Cell]s and can be added to a [crate::Table].
+/// Each row contains an amount of [Cell]s and can be added to a [Table](crate::Table).
 #[derive(Clone)]
 pub struct Row {
     /// Index of the row. This will be set as soon as the row is added to the table

@@ -74,7 +74,7 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>, table: &Tabl
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if line.len() as u16 > info.width {
+            if (line.len() as u16) > info.content_width() {
                 let mut splitted = split_line(line.clone(), &info, cell, table);
                 cell_content.append(&mut splitted);
             } else {
@@ -140,8 +140,7 @@ pub fn format_row(row: &Row, display_info: &Vec<ColumnDisplayInfo>, table: &Tabl
 /// Splitting of parts only occurs if the part doesn't fit in a single line by itself.
 pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &Table) -> Vec<String> {
     let mut lines = Vec::new();
-    let padding = info.padding.0 + info.padding.1;
-    let content_width = info.width - padding;
+    let content_width = info.content_width();
 
     // Split the line by the given deliminator and turn the content into a stack.
     // Reverse it, since we want to push/pop without reversing the text.
@@ -159,7 +158,7 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &T
         // The line is empty try to add the next part
         if current_line.len() == 0 {
             // Next part fits in line. Add and continue
-            if next_length <= content_width as usize {
+            if next_length as u16 <= content_width {
                 current_line += next;
                 continue;
 
@@ -171,7 +170,7 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &T
             }
         }
         // The next word/section fits into the current line
-        else if added_length <= content_width as usize {
+        else if added_length as u16 <= content_width {
             current_line += " ";
             current_line += next;
             // Already push the next line, if there isn't space for more than to chars
@@ -182,9 +181,10 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &T
         // The next word/section doesn't fit
         } else {
             // The word is longer than the specified content_width
-            // Split  the word, push the remaining string back on the stack
-            if next_length > content_width as usize {
-                let (next, remaining) = next.split_at(current_length + 1);
+            // Split the word, push the remaining string back on the stack
+            let remaining_width = content_width as usize - current_line.chars().count();
+            if next_length as u16 > content_width {
+                let (next, remaining) = next.split_at(remaining_width - 1);
                 current_line += " ";
                 current_line += next;
                 splitted.push(remaining);
@@ -199,6 +199,10 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &T
                 current_line = next.to_string();
             }
         }
+    }
+
+    if current_line.len() != 0 {
+        lines.push(current_line);
     }
 
     // Iterate over all generated lines of this cell and align them
@@ -222,10 +226,8 @@ pub fn split_line(line: String, info: &ColumnDisplayInfo, cell: &Cell, table: &T
 /// This is needed, so we can simply insert it into the border frame later on.
 /// Padding is applied in this function as well.
 pub fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String {
-    let padding = info.padding.0 + info.padding.1;
-    let content_width = info.width - padding;
-
-    let remaining = content_width as f32 - line.chars().count() as f32;
+    let content_width = info.content_width();
+    let remaining = content_width - line.chars().count() as u16;
 
     // Determine the alignment of the column cells.
     // Cell settings overwrite the columns Alignment settings.
@@ -247,8 +249,8 @@ pub fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> St
             line = " ".repeat(remaining as usize) + &line;
         }
         CellAlignment::Center => {
-            let left_padding = (remaining / 2f32).ceil() as usize;
-            let right_padding = (remaining / 2f32).floor() as usize;
+            let left_padding = (remaining as f32 / 2f32).ceil() as usize;
+            let right_padding = (remaining  as f32/ 2f32).floor() as usize;
             line = " ".repeat(left_padding) + &line + &" ".repeat(right_padding);
         }
     }

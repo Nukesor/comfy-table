@@ -206,7 +206,7 @@ fn should_draw_bottom_border(table: &Table) -> bool {
     false
 }
 
-fn should_draw_left_border(table: &Table) -> bool {
+pub fn should_draw_left_border(table: &Table) -> bool {
     if table.style_exists(TableComponent::TopLeftCorner)
         || table.style_exists(TableComponent::LeftBorder)
         || table.style_exists(TableComponent::LeftBorderIntersections)
@@ -219,7 +219,7 @@ fn should_draw_left_border(table: &Table) -> bool {
     false
 }
 
-fn should_draw_right_border(table: &Table) -> bool {
+pub fn should_draw_right_border(table: &Table) -> bool {
     if table.style_exists(TableComponent::TopRightCorner)
         || table.style_exists(TableComponent::RightBorder)
         || table.style_exists(TableComponent::RightBorderIntersections)
@@ -244,7 +244,7 @@ fn should_draw_horizontal_lines(table: &Table) -> bool {
     false
 }
 
-fn should_draw_vertical_lines(table: &Table) -> bool {
+pub fn should_draw_vertical_lines(table: &Table) -> bool {
     if table.style_exists(TableComponent::TopBorderIntersections)
         || table.style_exists(TableComponent::MiddleHeaderIntersections)
         || table.style_exists(TableComponent::VerticalLines)
