@@ -139,7 +139,6 @@ fn evaluate_constraint(
                 let width = info.without_padding(*min_width);
                 info.set_content_width(width);
                 info.fixed = true;
-                println!("{}", width);
             }
         }
     }
