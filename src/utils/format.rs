@@ -70,11 +70,6 @@ pub fn format_row(
             continue;
         };
 
-        // We simply ignore hidden columns
-        if info.hidden {
-            continue;
-        }
-
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {

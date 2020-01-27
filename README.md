@@ -90,7 +90,7 @@ fn main() {
         ]);
 
     // Set the default alignment for the third column to right
-    let mut column = table.get_column_mut(2).expect("Our table has three columns");
+    let column = table.get_column_mut(2).expect("Our table has three columns");
     column.set_cell_alignment(CellAlignment::Right);
 
     println!("{}", table);

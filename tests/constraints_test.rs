@@ -173,10 +173,9 @@ fn constraints_bigger_than_table_width() {
 }
 
 #[test]
-/// Test correct usage of the Hidden and Percentage constraint.
-/// Hidden columns shouldn't be displayed and not be considered during arrangement
-/// Percentage allows to set a fixed width
-fn percentage_and_hidden() {
+/// Test correct usage of the Percentage constraint.
+/// Percentage allows to set a fixed width.
+fn percentage() {
     let mut table = get_max_min_table();
 
     // Set a percentage of 20% for the first column
@@ -187,20 +186,23 @@ fn percentage_and_hidden() {
         .set_table_width(30)
         .set_constraints(vec![
             ColumnConstraint::Percentage(20),
-            ColumnConstraint::Hidden,
         ]);
 
     println!("{}", table.to_string());
     let expected = "
-+------+---------------------+
-| smol | Header2             |
++------+----------+----------+
+| smol | Header2  | Header3  |
 +============================+
-| smol | This is another     |
-|      | text                |
-|------+---------------------|
-| smol | Now                 |
-|      | add some            |
-|      | multi line stuff    |
-+------+---------------------+";
+| smol | This is  | This is  |
+|      | another  | the      |
+|      | text     | third    |
+|      |          | text     |
+|------+----------+----------|
+| smol | Now      | This is  |
+|      | add some | awesome  |
+|      | multi    |          |
+|      | line     |          |
+|      | stuff    |          |
++------+----------+----------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

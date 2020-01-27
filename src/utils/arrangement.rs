@@ -23,9 +23,7 @@ pub struct ColumnDisplayInfo {
     fixed: bool,
     /// A constraint that should be considered during automatic
     pub constraint: Option<ColumnConstraint>,
-    /// Determine, whether this column should be hidden (ignored)
-    pub hidden: bool,
-    /// Determine, whether this column should be hidden (ignored)
+    /// The content alignment of cells in this column
     pub cell_alignment: Option<CellAlignment>,
 }
 
@@ -37,7 +35,6 @@ impl ColumnDisplayInfo {
             content_width: 0,
             fixed: false,
             constraint: None::<ColumnConstraint>,
-            hidden: false,
             cell_alignment: column.cell_alignment,
         }
     }
@@ -87,12 +84,7 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     for column in table.columns.iter() {
         let mut info = ColumnDisplayInfo::new(column);
 
-        // We don't want to look at hidden columns at ALL
-        // Simply don't add it to the display_infos, since we don't use the
-        // original Columns any longer after this point.
-        if let Some(ColumnConstraint::Hidden) = column.constraint.as_ref() {
-            continue;
-        } else if let Some(constraint) = column.constraint.as_ref() {
+        if let Some(constraint) = column.constraint.as_ref() {
             evaluate_constraint(&mut info, constraint, table_width);
         }
 
@@ -122,7 +114,6 @@ fn evaluate_constraint(
     table_width: Option<u16>,
 ) {
     match constraint {
-        Hidden => info.hidden = true,
         Width(width) => {
             let width = info.without_padding(*width);
             info.set_content_width(width);
@@ -148,6 +139,7 @@ fn evaluate_constraint(
                 let width = info.without_padding(*min_width);
                 info.set_content_width(width);
                 info.fixed = true;
+                println!("{}", width);
             }
         }
     }
@@ -157,7 +149,6 @@ fn evaluate_constraint(
 /// to the respective max content width.
 fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
     for info in infos.iter_mut() {
-        // The size has already been fixed by a constraint
         if info.fixed {
             continue;
         }
@@ -208,10 +199,6 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
 
     // Step 1. Remove all already fixed sizes from the remaining_width
     for (id, info) in infos.iter().enumerate() {
-        // Don't include hidden columns in the calculation
-        if info.hidden {
-            checked.push(id);
-        }
         // This info already has a fixed width (by Constraint)
         // Subtract width from remaining_width and add to checked.
         if info.fixed {

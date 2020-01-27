@@ -15,6 +15,4 @@ pub enum ColumnConstraint {
     /// Force the column to be as long as it's content.
     /// Use with caution! This can easily break your table, if the column's content is overly long.
     ContentWidth,
-    /// Hide this Column. It won't be displayed at all.
-    Hidden,
 }
