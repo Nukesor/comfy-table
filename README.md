@@ -28,7 +28,7 @@ Features:
 - I probably forgot some stuff...
 
 
-**Basic usage:**
+### A Basic Table
 ```rust
 use comfy_table::prelude::*;
 
@@ -66,7 +66,7 @@ This table will become as wide as your content, nothing fancy happening here.
 +----------------------+----------------------+------------------------+
 ```
 
-**A small taste of comfy-tables feature set:**
+### More Features
 ```rust
 use comfy_table::prelude::*;
 use comfy_table::style::presets::UTF8_FULL;
