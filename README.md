@@ -20,9 +20,12 @@ If you find anything, please create an issue. I'll then try to fix them as soon 
 Features:
 
 - Automatic arrangement content to a specific width.
-- Styling options for terminals.
-- Cross plattform (Linux, macOS, Windows)
-- Every part of the table can be customized
+- Content styling for terminals (Colors, Bold, Blinking, etc.).
+- Presets and preset modifiers to get you started.
+- Pretty much every part of the table is customizable (borders, lines, padding, alignment).
+- Width constraints on columns that allow some control over the automatic content arrangement.
+- Cross plattform (Linux, macOS, Windows).
+- I probably forgot some stuff...
 
 
 **Basic usage:**
@@ -32,13 +35,13 @@ use comfy_table::prelude::*;
 fn main() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",
         ])
-        .add_row(&vec![
+        .add_row(vec![
             "This is another text",
             "Now\nadd some\nmulti line stuff",
             "This is awesome",
@@ -63,8 +66,7 @@ This table will become as wide as your content, nothing fancy happening here.
 +----------------------+----------------------+------------------------+
 ```
 
-
-**Advanced usage:**
+**A small taste of comfy-tables feature set:**
 ```rust
 use comfy_table::prelude::*;
 use comfy_table::style::presets::UTF8_FULL;
@@ -75,34 +77,41 @@ fn main() {
         .load_preset(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(40)
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
-            "This is a text",
-            "This is another text",
-            "This is the third text",
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
+            Cell::new("Center aligned").set_alignment(CellAlignment::Center),
+            Cell::new("This is another text"),
+            Cell::new("This is the third text"),
         ])
-        .add_row(&vec![
+        .add_row(vec![
             "This is another text",
             "Now\nadd some\nmulti line stuff",
             "This is awesome",
         ]);
 
+    // Set the default alignment for the third column to right
+    let mut column = table.get_column_mut(2).expect("Our table has three columns");
+    column.set_cell_alignment(CellAlignment::Right);
+
     println!("{}", table);
 }
 ```
-Create a table with UTF8 styling, that automatically wraps content to maintain a given table width.
+Create a table with UTF8 styling, that automatically wraps content to maintain a given table width.\
 If the table width isn't explicitely set, the terminal size will be used, if this is executed in a terminal.
+
+Additionally we set the default alignment for the right column to `Right` and the Alignment of the left top cell to `Center`.
+
 
 ```text,ignore
 ┌────────────┬────────────┬────────────┐
-│ Header1    ┆ Header2    ┆ Header3    │
+│ Header1    ┆ Header2    ┆    Header3 │
 ╞════════════╪════════════╪════════════╡
-│ This is a  ┆ This is    ┆ This is    │
-│ text       ┆ another    ┆ the third  │
-│            ┆ text       ┆ text       │
+│  This is a ┆ This is    ┆    This is │
+│    text    ┆ another    ┆  the third │
+│            ┆ text       ┆       text │
 ├╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤
-│ This is    ┆ Now        ┆ This is    │
-│ another    ┆ add some   ┆ awesome    │
+│ This is    ┆ Now        ┆    This is │
+│ another    ┆ add some   ┆    awesome │
 │ text       ┆ multi line ┆            │
 │            ┆ stuff      ┆            │
 └────────────┴────────────┴────────────┘
