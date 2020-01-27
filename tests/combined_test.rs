@@ -20,7 +20,7 @@ fn get_preset_table() -> Table {
         ])
         .add_row(vec![
             Cell::new("Blinky boi").add_attribute(Attribute::SlowBlink),
-            Cell::new("This table's content is dynamically arranged. The table is exactly 80 characters wide.\nHere comes a reallylongwordthatshouldbewrappedautomatically"),
+            Cell::new("This table's content is dynamically arranged. The table is exactly 80 characters wide.\nHere comes a reallylongwordthatshoulddynamicallywrap"),
             Cell::new("COMBINE ALL THE THINGS")
             .fg(Color::Green)
             .bg(Color::Black)
@@ -50,8 +50,7 @@ fn combined_features() {
 │                     ┆ table is exactly 80        ┆                           │
 │                     ┆ characters wide.           ┆                           │
 │                     ┆ Here comes a reallylongwor ┆                           │
-│                     ┆ dthatshouldbewrappedautoma ┆                           │
-│                     ┆ tically                    ┆                           │
+│                     ┆ dthatshoulddynamicallywrap ┆                           │
 └─────────────────────┴────────────────────────────┴───────────────────────────┘";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

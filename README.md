@@ -19,11 +19,11 @@ If you find anything, please create an issue. I'll then try to fix them as soon 
 
 Features:
 
-- Automatic arrangement content to a specific width.
+- Dynamic arrangement content to a specific width.
 - Content styling for terminals (Colors, Bold, Blinking, etc.).
 - Presets and preset modifiers to get you started.
 - Pretty much every part of the table is customizable (borders, lines, padding, alignment).
-- Width constraints on columns that allow some control over the automatic content arrangement.
+- Constraints on columns that allow some additional control over how to arrange content.
 - Cross plattform (Linux, macOS, Windows).
 - I probably forgot some stuff...
 
@@ -70,11 +70,13 @@ This table will become as wide as your content, nothing fancy happening here.
 ```rust
 use comfy_table::prelude::*;
 use comfy_table::style::presets::UTF8_FULL;
+use comfy_table::style::modifiers::UTF8_ROUND_CORNERS;
 
 fn main() {
     let mut table = Table::new();
     table
         .load_preset(UTF8_FULL)
+        .apply_modifier(UTF8_ROUND_CORNERS)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(40)
         .set_header(vec!["Header1", "Header2", "Header3"])
@@ -96,14 +98,15 @@ fn main() {
     println!("{}", table);
 }
 ```
-Create a table with UTF8 styling, that automatically wraps content to maintain a given table width.\
+Create a table with UTF8 styling, and apply a modifier, which gives the table round corners.\
+Additionall the content will dynamically wrap to maintain a given table width.\
 If the table width isn't explicitely set, the terminal size will be used, if this is executed in a terminal.
 
-Additionally we set the default alignment for the right column to `Right` and the Alignment of the left top cell to `Center`.
+On top of this, we set the default alignment for the right column to `Right` and the Alignment of the left top cell to `Center`.
 
 
 ```text,ignore
-┌────────────┬────────────┬────────────┐
+╭────────────┬────────────┬────────────╮
 │ Header1    ┆ Header2    ┆    Header3 │
 ╞════════════╪════════════╪════════════╡
 │  This is a ┆ This is    ┆    This is │
@@ -114,8 +117,46 @@ Additionally we set the default alignment for the right column to `Right` and th
 │ another    ┆ add some   ┆    awesome │
 │ text       ┆ multi line ┆            │
 │            ┆ stuff      ┆            │
-└────────────┴────────────┴────────────┘
+╰────────────┴────────────┴────────────╯
 ```
+
+### Styling
+```rust
+use comfy_table::prelude::*;
+use comfy_table::style::{Attribute, Color};
+use comfy_table::style::presets::UTF8_FULL;
+
+fn main() {
+    let mut table = Table::new();
+    table.load_preset(UTF8_FULL)
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(80)
+        .set_header(vec![
+            Cell::new("Header1").add_attribute(Attribute::Bold),
+            Cell::new("Header2").fg(Color::Green),
+            Cell::new("Header3"),
+        ])
+        .add_row(vec![
+            Cell::new("This is a bold text").add_attribute(Attribute::Bold),
+            Cell::new("This is a green text").fg(Color::Green),
+            Cell::new("This one has black background").bg(Color::Black),
+        ])
+        .add_row(vec![
+            Cell::new("Blinky boi").add_attribute(Attribute::SlowBlink),
+            Cell::new("This table's content is dynamically arranged. The table is exactly 80 characters wide.\nHere comes a reallylongwordthatshoulddynamicallywrap"),
+            Cell::new("COMBINE ALL THE THINGS")
+            .fg(Color::Green)
+            .bg(Color::Black)
+            .add_attributes(vec![
+                Attribute::Bold,
+                Attribute::SlowBlink,
+            ])
+        ]);
+
+    println!("{}", table);
+}
+```
+This code generates the table that can be seen at the top of this Readme.
 
 
 ## More Examples

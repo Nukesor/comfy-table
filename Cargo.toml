@@ -1,6 +1,6 @@
 [package]
 name = "comfy-table"
-description = "A easy to use, automatically wrapping and highly configurable commandline table builder library."
+description = "A easy to use, dynamically wrapping and highly configurable commandline table builder library."
 version = "0.0.3"
 authors = ["Arne Beer <contact@arne.beer>"]
 homepage = "https://github.com/nukesor/comfy-table"

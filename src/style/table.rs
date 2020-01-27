@@ -9,12 +9,12 @@ use ::strum_macros::EnumIter;
 /// table.set_content_arrangement(ContentArrangement::Dynamic);
 /// ```
 pub enum ContentArrangement {
-    /// Don't do any automatic content arrangement. \
+    /// Don't do any content arrangement. \
     /// Tables with this mode might become wider than your output and look ugly. \
     /// Constraints on columns are still respected.
     Disabled,
-    /// Automatically determine the width of columns in regard to terminal width and content length. \
-    /// With this mode, the content in cells will wrap automatically to get the  the best column layout
+    /// Dynamically determine the width of columns in regard to terminal width and content length. \
+    /// With this mode, the content in cells will wrap dynamically to get the  the best column layout
     /// for the given content. \
     /// Constraints on columns are still respected.
     ///

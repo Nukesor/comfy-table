@@ -6,7 +6,7 @@ use crate::style::{CellAlignment, ColumnConstraint};
 /// 2. Constraints on how wide this column shall be
 /// 3. Default alignment for cells in this column
 ///
-/// Columns are automatically generated when adding rows or a header to a table.\
+/// Columns are generated when adding rows or a header to a table.\
 /// As a result columns can only be modified after the table is populated by some data.
 ///
 /// ```

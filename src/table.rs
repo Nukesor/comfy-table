@@ -104,7 +104,7 @@ impl Table {
 
     /// Get the expected width of the table.
     ///
-    /// This will be `Some(width)`, if the terminal width can be automatically detected or if the table width is set via [set_table_width](Table::set_table_width).
+    /// This will be `Some(width)`, if the terminal width can be detected or if the table width is set via [set_table_width](Table::set_table_width).
     ///
     /// If neither is not possible, `None` will be returned.\
     /// This implies that both [Dynamic](ContentArrangement::Dynamic) and [Percentage](crate::style::ColumnConstraint::Percentage) won't work.
@@ -139,7 +139,7 @@ impl Table {
     ///
     /// This disables:
     ///
-    /// - Automatic table_width lookup from the current tty
+    /// - table_width lookup from the current tty
     /// - Styling and attributes on cells (unless you [Table::enforce_styling])
     ///
     /// If you use the [dynamic content arrangement](ContentArrangement::Dynamic),
@@ -152,7 +152,7 @@ impl Table {
 
     /// Returns whether the table will be handled as if it's printed to a tty.
     /// This function respects the [Table::force_no_tty] and [Table::force_tty] functions.
-    /// Otherwise we try to automatically determine, if we are on a tty.
+    /// Otherwise we try to determine, if we are on a tty.
     pub fn is_tty(&self) -> bool {
         if self.no_tty {
             return false;

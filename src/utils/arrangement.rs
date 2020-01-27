@@ -21,7 +21,7 @@ pub struct ColumnDisplayInfo {
     /// Flag that determines, if the content_width for this column
     /// has already been freezed.
     fixed: bool,
-    /// A constraint that should be considered during automatic
+    /// A constraint that should be considered during dynamic arrangement
     pub constraint: Option<ColumnConstraint>,
     /// The content alignment of cells in this column
     pub cell_alignment: Option<CellAlignment>,
@@ -114,12 +114,26 @@ fn evaluate_constraint(
     table_width: Option<u16>,
 ) {
     match constraint {
+        ContentWidth => {
+            info.set_content_width(info.max_content_width);
+            info.fixed = true;
+        }
         Width(width) => {
             let width = info.without_padding(*width);
             info.set_content_width(width);
             info.fixed = true;
         }
-        Percentage(percent) => {
+        MinWidth(min_width) => {
+            // In case a min_width is specified, we can already fix the size of the column
+            // right now (since we already know the max_content_width.
+            if info.max_width() <= *min_width {
+                let width = info.without_padding(*min_width);
+                info.set_content_width(width);
+                info.fixed = true;
+            }
+        }
+        MaxWidth(max_width) => info.constraint = Some(MaxWidth(*max_width)),
+       Percentage(percent) => {
             if let Some(table_width) = table_width {
                 let mut width = table_width * percent / 100;
                 width = info.without_padding(width as u16);
@@ -127,24 +141,27 @@ fn evaluate_constraint(
                 info.fixed = true;
             }
         }
-        ContentWidth => {
-            info.set_content_width(info.max_content_width);
-            info.fixed = true;
-        }
-        MaxWidth(max_width) => info.constraint = Some(MaxWidth(*max_width)),
-        MinWidth(min_width) => {
-            // In case a min_width is specified, we can already fix the size of the column
-            // right now (since we already know the max_content_width.
-            if info.max_content_width <= *min_width {
-                let width = info.without_padding(*min_width);
-                info.set_content_width(width);
-                info.fixed = true;
+       MinPercentage(percent) => {
+            if let Some(table_width) = table_width {
+                let min_width = table_width * percent / 100;
+                if info.max_width() <= min_width {
+                    let width = info.without_padding(min_width);
+                    info.set_content_width(width);
+                    info.fixed = true;
+                }
             }
         }
+       MaxPercentage(percent) => {
+            if let Some(table_width) = table_width {
+                let max_width = table_width * percent / 100;
+                info.constraint = Some(MaxWidth(max_width));
+            }
+        }
+
     }
 }
 
-/// If automatic arrangement is disabled, simply set the width of all columns
+/// If dynamic arrangement is disabled, simply set the width of all columns
 /// to the respective max content width.
 fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
     for info in infos.iter_mut() {
