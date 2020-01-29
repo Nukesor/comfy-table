@@ -43,7 +43,7 @@ pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "  -- ==  --  --    ";
 
 /// The UTF8 enabled version of the default style for tables.
-/// Quite beautiful isn't it?
+/// Quite beautiful isn't it? It's drawn with UTF8's box drawing characters.
 /// ```text
 /// ┌───────┬───────┐
 /// │ Hello │ there │
@@ -55,6 +55,17 @@ pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "  -- ==  --  --    ";
 /// ```
 pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐└┘";
 
+
+/// Default UTF8 style, but without any borders
+/// ```text
+///  Hello │ there
+/// ═══════╪═══════
+///  a     ┆ b
+/// ╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌
+///  c     ┆ d
+/// ```
+pub const UTF8_NO_BORDERS: &str = "     ═╪ ┆╌┼        ";
+
 /// Just like the UTF8 FULL version, but without vertical/horizontal middle lines.
 /// ```text
 /// ┌───────────────┐
@@ -65,3 +76,17 @@ pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐
 /// └───────────────┘
 /// ```
 pub const UTF8_BORDERS_ONLY: &str = "││──╞══╡     ──┌┐└┘";
+
+
+/// Only display vertical lines
+///
+/// ```text
+/// ───────────────
+///  Hello   there
+/// ═══════════════
+///  a       b
+/// ───────────────
+///  c       d
+/// ───────────────
+/// ```
+pub const UTF8_HORIZONTAL_BORDERS_ONLY: &str = "  ── ══  ──  ──    ";

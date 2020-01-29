@@ -76,6 +76,24 @@ fn utf8_full() {
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
+
+#[test]
+fn utf8_no_borders() {
+    let mut table = get_preset_table();
+    table.load_preset(UTF8_NO_BORDERS);
+    let expected = concat!(
+        " Header1 ┆ Header2 ┆ Header3   \n",
+        "═════════╪═════════╪═══════════\n",
+        " One One ┆ One Two ┆ One Three \n",
+        "╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌\n",
+        " One One ┆ One Two ┆ One Three ",
+    );
+    println!("{}", table.to_string());
+    assert_eq!(&table.to_string(), expected);
+}
+
+
+
 #[test]
 fn utf8_borders_only() {
     let mut table = get_preset_table();
@@ -90,4 +108,21 @@ fn utf8_borders_only() {
 
     println!("{}", table.to_string());
     assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
+fn utf8_horizontal_borders_only() {
+    let mut table = get_preset_table();
+    table.load_preset(UTF8_HORIZONTAL_BORDERS_ONLY);
+    let expected = concat!(
+        "───────────────────────────────\n",
+        " Header1   Header2   Header3   \n",
+        "═══════════════════════════════\n",
+        " One One   One Two   One Three \n",
+        "───────────────────────────────\n",
+        " One One   One Two   One Three \n",
+        "───────────────────────────────",
+    );
+    println!("{}", table.to_string());
+    assert_eq!(&table.to_string(), expected);
 }

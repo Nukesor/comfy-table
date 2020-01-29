@@ -15,7 +15,7 @@ fn get_preset_table() -> Table {
 }
 
 #[test]
-fn utf8_full() {
+fn utf8_round_corners() {
     let mut table = get_preset_table();
     table
         .load_preset(UTF8_FULL)
