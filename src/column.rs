@@ -76,9 +76,36 @@ impl Column {
         self.constraint.as_ref()
     }
 
+    /// Remove any constraint on this column
+    pub fn remove_constraint(&mut self) -> &mut Self{
+        self.constraint = None;
+
+        self
+    }
+
     /// Set the alignment for content inside of cells for this column. \
     /// **Note:** Alignment on a cell will always overwrite the column's setting.
     pub fn set_cell_alignment(&mut self, alignment: CellAlignment) {
         self.cell_alignment = Some(alignment);
+    }
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_column() {
+        let mut column = Column::new(0);
+        column.set_padding((0, 0));
+        assert_eq!(column.get_max_content_width(), 0);
+
+        column.set_constraint(ColumnConstraint::ContentWidth);
+        assert_eq!(column.get_constraint(), Some(&ColumnConstraint::ContentWidth));
+
+        column.remove_constraint();
+        assert_eq!(column.get_constraint(), None);
     }
 }
