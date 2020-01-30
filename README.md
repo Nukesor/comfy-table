@@ -30,7 +30,7 @@ Features:
 
 ### A Basic Table
 ```rust
-use comfy_table::prelude::*;
+use comfy_table::Table;
 
 fn main() {
     let mut table = Table::new();
@@ -68,9 +68,9 @@ This table will become as wide as your content, nothing fancy happening here.
 
 ### More Features
 ```rust
-use comfy_table::prelude::*;
-use comfy_table::style::presets::UTF8_FULL;
-use comfy_table::style::modifiers::UTF8_ROUND_CORNERS;
+use comfy_table::*;
+use comfy_table::presets::UTF8_FULL;
+use comfy_table::modifiers::UTF8_ROUND_CORNERS;
 
 fn main() {
     let mut table = Table::new();
@@ -122,9 +122,8 @@ On top of this, we set the default alignment for the right column to `Right` and
 
 ### Styling
 ```rust
-use comfy_table::prelude::*;
-use comfy_table::style::{Attribute, Color};
-use comfy_table::style::presets::UTF8_FULL;
+use comfy_table::*;
+use comfy_table::presets::UTF8_FULL;
 
 fn main() {
     let mut table = Table::new();

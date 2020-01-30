@@ -1,6 +1,6 @@
 use crate::style::{CellAlignment, ColumnConstraint};
 
-/// The Column struct exists for styling purposes:
+/// A representation of a table's column. Useful for styling and specifying constraints how big a column should be.
 ///
 /// 1. Content padding for cells in this column
 /// 2. Constraints on how wide this column shall be

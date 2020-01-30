@@ -2,8 +2,7 @@ use ::crossterm::style::{Attribute, Color};
 
 use crate::style::CellAlignment;
 
-/// The representation of a single cell in a table row.
-/// Each cell contains a string, which will later be displayed at the respective row/column.
+/// A stylable table cell with content.
 #[derive(Clone)]
 pub struct Cell {
     /// Content is a list of strings.
@@ -41,8 +40,8 @@ impl Cell {
     ///
     /// Setting this overwrites alignment settings of the Column for this specific Cell.
     /// ```
-    /// use comfy_table::style::CellAlignment;
-    /// use comfy_table::cell::Cell;
+    /// use comfy_table::CellAlignment;
+    /// use comfy_table::Cell;
     ///
     /// let mut cell = Cell::new("Some content")
     ///     .set_alignment(CellAlignment::Center);
@@ -57,8 +56,8 @@ impl Cell {
     /// comfy-table uses [Crossterm Colors](crossterm::style::Color).
     /// Look at their documentation for all possible Colors.
     /// ```
-    /// use comfy_table::style::Color;
-    /// use comfy_table::cell::Cell;
+    /// use comfy_table::Color;
+    /// use comfy_table::Cell;
     ///
     /// let mut cell = Cell::new("Some content")
     ///     .fg(Color::Red);
@@ -73,8 +72,8 @@ impl Cell {
     /// comfy-table uses [Crossterm Colors](crossterm::style::Color).
     /// Look at their documentation for all possible Colors.
     /// ```
-    /// use comfy_table::style::Color;
-    /// use comfy_table::cell::Cell;
+    /// use comfy_table::Color;
+    /// use comfy_table::Cell;
     ///
     /// let mut cell = Cell::new("Some content")
     ///     .bg(Color::Red);
@@ -90,8 +89,8 @@ impl Cell {
     /// comfy-table uses [Crossterm Attributes](crossterm::style::Attribute).
     /// Look at their documentation for all possible Attributes.
     /// ```
-    /// use comfy_table::style::Attribute;
-    /// use comfy_table::cell::Cell;
+    /// use comfy_table::Attribute;
+    /// use comfy_table::Cell;
     ///
     /// let mut cell = Cell::new("Some content")
     ///     .add_attribute(Attribute::Bold);

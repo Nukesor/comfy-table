@@ -1,5 +1,4 @@
-use comfy_table::prelude::*;
-use comfy_table::style::{Attribute, Color};
+use comfy_table::*;
 use comfy_table::style::presets::UTF8_FULL;
 
 fn main() {

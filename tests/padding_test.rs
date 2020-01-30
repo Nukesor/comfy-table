@@ -1,6 +1,7 @@
 use pretty_assertions::assert_eq;
 
-use comfy_table::prelude::*;
+use comfy_table::*;
+
 #[test]
 fn missing_column_table() {
     let mut table = Table::new();

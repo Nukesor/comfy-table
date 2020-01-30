@@ -1,6 +1,6 @@
 use pretty_assertions::assert_eq;
 
-use comfy_table::prelude::*;
+use comfy_table::*;
 
 #[test]
 /// Cell alignment can be specified on Columns and Cells

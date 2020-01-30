@@ -1,9 +1,9 @@
-/// This module contains some styling presets for tables.
-/// Every preset has an example. \
+/// This module provides styling presets for tables.
+/// Every preset has an example preview.
 pub mod presets;
 
-/// This module contains some constants, which can be used to modify certain parts of a preset.\
-/// For instance, the [UTF8_ROUND_CORNERS](modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
+/// Contains modifiers, that can be used to alter certain parts of a preset.\
+/// For instance, the [UTF8_ROUND_CORNERS](modifiers::UTF8_ROUND_CORNERS) replaces all corners with round UTF8 box corners.
 pub mod modifiers;
 
 mod table;
@@ -16,7 +16,7 @@ pub use cell::CellAlignment;
 pub use column::ColumnConstraint;
 pub use table::{ContentArrangement, TableComponent};
 
-/// Reexport for important crossterm enums
+/// Attributes used for styling cell content. Reexport of crossterm's [Attributes](crossterm::style::Attribute) enum.
 pub use ::crossterm::style::Attribute;
-/// Reexport for important crossterm enums
+/// Colors used for styling cell content. Reexport of crossterm's [Color](crossterm::style::Color) enum.
 pub use ::crossterm::style::Color;

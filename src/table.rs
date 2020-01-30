@@ -13,7 +13,7 @@ use crate::utils::arrangement::arrange_content;
 use crate::utils::borders::draw_borders;
 use crate::utils::format::format_content;
 
-/// The representation of a table.
+/// A table containing rows of cells.
 pub struct Table {
     pub(crate) columns: Vec<Column>,
     style: HashMap<TableComponent, char>,
@@ -251,8 +251,8 @@ impl Table {
     /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
     /// ```
     /// use comfy_table::Table;
-    /// use comfy_table::style::presets::UTF8_FULL;
-    /// use comfy_table::style::modifiers::UTF8_ROUND_CORNERS;
+    /// use comfy_table::presets::UTF8_FULL;
+    /// use comfy_table::modifiers::UTF8_ROUND_CORNERS;
     ///
     /// let mut table = Table::new();
     /// table.load_preset(UTF8_FULL);
@@ -296,8 +296,8 @@ impl Table {
     ///
     /// ```
     /// use comfy_table::Table;
-    /// use comfy_table::style::presets::UTF8_FULL;
-    /// use comfy_table::style::TableComponent::*;
+    /// use comfy_table::presets::UTF8_FULL;
+    /// use comfy_table::TableComponent::*;
     ///
     /// let mut table = Table::new();
     /// // Load the UTF8_FULL preset

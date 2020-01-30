@@ -1,5 +1,5 @@
 use pretty_assertions::assert_eq;
-use comfy_table::prelude::*;
+use comfy_table::*;
 
 fn get_max_min_table() -> Table {
     let mut table = Table::new();

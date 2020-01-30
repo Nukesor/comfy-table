@@ -1,18 +1,12 @@
-pub mod cell;
-pub mod column;
-pub mod row;
-pub mod style;
-pub mod table;
+mod cell;
+mod column;
+mod row;
+mod table;
 mod utils;
+mod style;
 
-pub use prelude::*;
-
-pub mod prelude {
-    pub use crate::cell::Cell;
-    pub use crate::column::Column;
-    pub use crate::row::Row;
-    pub use crate::style::CellAlignment;
-    pub use crate::style::ColumnConstraint;
-    pub use crate::style::ContentArrangement;
-    pub use crate::table::Table;
-}
+pub use crate::cell::Cell;
+pub use crate::column::Column;
+pub use crate::row::Row;
+pub use style::*;
+pub use crate::table::Table;
