@@ -1,6 +1,6 @@
 [package]
 name = "comfy-table"
-description = "A easy to use, dynamically wrapping and highly configurable commandline table builder library."
+description = "An easy to use library for building beautiful tables with automatic content wrapping"
 version = "0.0.5"
 authors = ["Arne Beer <contact@arne.beer>"]
 homepage = "https://github.com/nukesor/comfy-table"
@@ -13,9 +13,7 @@ edition = "2018"
 build = "build.rs"
 
 [badges]
-travis-ci = { repository = "nukesor/comfy-table", branch = "master" }
 maintenance = { status = "actively-developed" }
-
 
 [dependencies]
 atty = "^0.2"
