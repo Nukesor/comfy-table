@@ -19,7 +19,7 @@ If you find anything, please create an issue. I'll then try to fix them as soon 
 
 Features:
 
-- Dynamic arrangement content to a specific width.
+- Dynamic arrangement of content to a specific width.
 - Content styling for terminals (Colors, Bold, Blinking, etc.).
 - Presets and preset modifiers to get you started.
 - Pretty much every part of the table is customizable (borders, lines, padding, alignment).
