@@ -1,0 +1,4 @@
+ignore:
+  - "examples"
+  - "proptest_regressions"
+  - "tests"
