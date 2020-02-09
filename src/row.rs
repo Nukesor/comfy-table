@@ -58,7 +58,7 @@ impl Row {
                 // Each entry represents the longest string width for a cell.
                 cell.content
                     .iter()
-                    .map(|string| string.len())
+                    .map(|string| string.chars().count())
                     .max()
                     .unwrap_or(0)
             })

@@ -42,14 +42,12 @@ fn columns_and_rows() -> impl Strategy<Value = (Vec<Vec<String>>, Vec<ColumnCons
     dimensions().prop_flat_map(|(column_count, row_count)| {
         let mut rows = Vec::new();
         let mut alignments = Vec::new();
-        for _i in 0..row_count  {
-            let mut cells = Vec::new();
+        for _i in 0..row_count {
             for _j in 0..column_count {
-                cells.push(".*");
                 alignments.push(cell_alignment());
             }
-            rows.push(cells);
-        };
+            rows.push(::proptest::collection::vec(".*", 0..column_count as usize));
+        }
         let mut constraints = Vec::new();
         for _i in 0..column_count {
             constraints.push(column_constraint());
@@ -63,6 +61,7 @@ fn columns_and_rows() -> impl Strategy<Value = (Vec<Vec<String>>, Vec<ColumnCons
 prop_compose! {
     fn table()
         (arrangement in content_arrangement(),
+        table_width in 0..500u16,
         (rows, constraints, alignments) in columns_and_rows()) -> Table {
         let mut table = Table::new();
 
@@ -78,9 +77,9 @@ prop_compose! {
             table.add_row(row);
         }
 
-        table.set_constraints(constraints);
-
-        table.set_content_arrangement(arrangement)
+        table.set_constraints(constraints)
+            .set_table_width(table_width)
+            .set_content_arrangement(arrangement)
             .load_preset(UTF8_FULL)
             .apply_modifier(UTF8_ROUND_CORNERS);
         table
@@ -89,6 +88,11 @@ prop_compose! {
 
 
 proptest! {
+    #![proptest_config({
+        let mut config = ProptestConfig::with_cases(1000);
+        config.max_shrink_iters = 16000;
+        config
+    })]
     #[test]
     fn random_tables(table in table()) {
         let formatted = table.to_string();

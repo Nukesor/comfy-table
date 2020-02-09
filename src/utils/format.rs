@@ -52,7 +52,6 @@ pub fn format_row(
 ) -> Vec<Vec<String>> {
     // The content of this specific row
     let mut temp_row_content = Vec::new();
-    let mut max_content_lines = 0;
 
     let mut cell_iter = row.cells.iter();
     // Now iterate over all cells and handle them according to their alignment
@@ -74,7 +73,7 @@ pub fn format_row(
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if (line.len() as u16) > info.content_width() {
+            if (line.chars().count() as u16) > info.content_width() {
                 let mut splitted = split_line(line.clone(), &info, cell, table);
                 cell_content.append(&mut splitted);
             } else {
@@ -84,11 +83,6 @@ pub fn format_row(
                 }
                 cell_content.push(line);
             }
-        }
-
-        // Calculate the maximum amount of lines on this row.
-        if cell_content.len() > max_content_lines {
-            max_content_lines = cell_content.len();
         }
 
         temp_row_content.push(cell_content);
@@ -188,7 +182,7 @@ pub fn split_line(
             }
         // The next word/section doesn't fit
         } else {
-            let remaining_width = content_width as i32 - current_line.chars().count() as i32;
+            let remaining_width = content_width as i32 - current_line.chars().count() as i32 - 1;
 
             // The current line is already full.
             // Put the next part back on the stack and push the current line
@@ -203,7 +197,7 @@ pub fn split_line(
             // Split the word, push the remaining string back on the stack
             else if next_length as u16 > content_width {
                 let mut next: Vec<char> = next.chars().collect();
-                let remaining = next.split_off(content_width as usize);
+                let remaining = next.split_off((remaining_width) as usize);
 
                 current_line += " ";
                 current_line += &String::from_iter(next);
@@ -224,6 +218,7 @@ pub fn split_line(
     if current_line.len() != 0 {
         lines.push(current_line);
     }
+
 
     // Iterate over all generated lines of this cell and align them
     // If cell styling should be applied, do this here as well.

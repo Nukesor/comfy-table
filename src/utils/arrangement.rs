@@ -12,6 +12,7 @@ use crate::utils::borders::{
 /// a lot of stuff.
 /// This also exists to prevent changes on the original
 /// Column struct while preparing to print the table as a string.
+#[derive(Debug)]
 pub struct ColumnDisplayInfo {
     pub padding: (u16, u16),
     /// The max amount of characters over all lines in this column
@@ -133,7 +134,7 @@ fn evaluate_constraint(
             }
         }
         MaxWidth(max_width) => info.constraint = Some(MaxWidth(*max_width)),
-       Percentage(percent) => {
+        Percentage(percent) => {
             if let Some(table_width) = table_width {
                 let mut width = table_width * percent / 100;
                 width = info.without_padding(width as u16);
@@ -141,7 +142,7 @@ fn evaluate_constraint(
                 info.fixed = true;
             }
         }
-       MinPercentage(percent) => {
+        MinPercentage(percent) => {
             if let Some(table_width) = table_width {
                 let min_width = table_width * percent / 100;
                 if info.max_width() <= min_width {
@@ -151,7 +152,7 @@ fn evaluate_constraint(
                 }
             }
         }
-       MaxPercentage(percent) => {
+        MaxPercentage(percent) => {
             if let Some(table_width) = table_width {
                 let max_width = table_width * percent / 100;
                 info.constraint = Some(MaxWidth(max_width));
