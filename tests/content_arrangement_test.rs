@@ -26,17 +26,18 @@ fn simple_dynamic_table() {
 | 1      | r2    |      |
 +=======================+
 | This   | This  | smol |
-| is a   | is an |      |
-| very   | other |      |
-| long   | veryl |      |
-| line   | ongte |      |
-| with a | xtwit |      |
-| lot of | hlong |      |
-| text   | words |      |
+| is a   | is    |      |
+| very   | anoth |      |
+| long   | erver |      |
+| line   | ylong |      |
+| with a | textw |      |
+| lot of | ithlo |      |
+| text   | ngwor |      |
+|        | ds    |      |
 |        | text  |      |
 |--------+-------+------|
 | This   | Now   | smol |
-| is ano | let\'s |      |
+| is ano | let's |      |
 | ther   | add a |      |
 | text   | reall |      |
 |        | y     |      |
