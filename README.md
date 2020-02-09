@@ -160,7 +160,8 @@ This code generates the table that can be seen at the top of this Readme.
 
 ## More Examples
 
-If you're looking for examples, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).\
+There is an example folder containing the **Styling** example above.
+If you're looking for more examples, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).\
 There is a test for almost every feature including a visual view for each resulting table.
 
 

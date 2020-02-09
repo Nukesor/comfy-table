@@ -1,4 +1,5 @@
 use ::crossterm::style::style;
+use ::std::iter::FromIterator;
 
 use crate::cell::Cell;
 use crate::row::Row;
@@ -148,7 +149,9 @@ pub fn split_line(
 
     // Split the line by the given deliminator and turn the content into a stack.
     // Reverse it, since we want to push/pop without reversing the text.
-    let mut splitted = line.split(' ').collect::<Vec<&str>>();
+    // Also clone it and convert it into a Vec<String>. Otherwise we get some burrowing problems
+    // due to early drops of borrowed values that need to be inserted into `Vec<&str>`
+    let mut splitted = line.split(' ').map(|part| part.to_string()).collect::<Vec<String>>();
     splitted.reverse();
 
     let mut current_line = String::new();
@@ -163,20 +166,21 @@ pub fn split_line(
         if current_line.len() == 0 {
             // Next part fits in line. Add and continue
             if next_length as u16 <= content_width {
-                current_line += next;
+                current_line += &next;
                 continue;
 
             // It doesn't fit, split it and put the remaining part back on the stack.
             } else {
-                let (next, remaining) = next.split_at(content_width as usize);
-                splitted.push(remaining);
-                lines.push(next.to_string());
+                let mut next: Vec<char> = next.chars().collect();
+                let remaining = next.split_off(content_width as usize);
+                splitted.push(String::from_iter(remaining));
+                lines.push(String::from_iter(next));
             }
         }
         // The next word/section fits into the current line
         else if added_length as u16 <= content_width {
             current_line += " ";
-            current_line += next;
+            current_line += &next;
             // Already push the next line, if there isn't space for more than to chars
             if current_line.chars().count() as i32 >= content_width as i32 - 2 {
                 lines.push(current_line);
@@ -198,10 +202,12 @@ pub fn split_line(
             // The word is longer than the specified content_width
             // Split the word, push the remaining string back on the stack
             else if next_length as u16 > content_width {
-                let (next, remaining) = next.split_at(remaining_width as usize - 1);
+                let mut next: Vec<char> = next.chars().collect();
+                let remaining = next.split_off(content_width as usize);
+
                 current_line += " ";
-                current_line += next;
-                splitted.push(remaining);
+                current_line += &String::from_iter(next);
+                splitted.push(String::from_iter(remaining));
 
                 // Push the finished line, and start a new one
                 lines.push(current_line);

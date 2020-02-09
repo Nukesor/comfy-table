@@ -14,6 +14,7 @@ use crate::utils::borders::draw_borders;
 use crate::utils::format::format_content;
 
 /// A table containing rows of cells.
+#[derive(Debug)]
 pub struct Table {
     pub(crate) columns: Vec<Column>,
     style: HashMap<TableComponent, char>,

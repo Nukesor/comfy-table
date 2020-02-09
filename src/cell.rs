@@ -3,7 +3,7 @@ use ::crossterm::style::{Attribute, Color};
 use crate::style::CellAlignment;
 
 /// A stylable table cell with content.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Cell {
     /// Content is a list of strings.
     /// This is done to handle newlines more easily.

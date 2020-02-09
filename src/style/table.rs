@@ -8,6 +8,7 @@ use ::strum_macros::EnumIter;
 /// let mut table = Table::new();
 /// table.set_content_arrangement(ContentArrangement::Dynamic);
 /// ```
+#[derive(Clone, Debug)]
 pub enum ContentArrangement {
     /// Don't do any content arrangement. \
     /// Tables with this mode might become wider than your output and look ugly. \

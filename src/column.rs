@@ -26,6 +26,7 @@ use crate::style::{CellAlignment, ColumnConstraint};
 /// // Align content in all cells of this column to the center of the cell.
 /// column.set_cell_alignment(CellAlignment::Center);
 /// ```
+#[derive(Debug)]
 pub struct Column {
     /// The index of the column
     pub index: usize,
