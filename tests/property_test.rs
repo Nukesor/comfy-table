@@ -118,7 +118,7 @@ prop_compose! {
 
 proptest! {
     #![proptest_config({
-        let mut config = ProptestConfig::with_cases(1000);
+        let mut config = ProptestConfig::with_cases(512);
         config.max_shrink_iters = 16000;
         config
     })]

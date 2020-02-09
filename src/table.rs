@@ -235,11 +235,11 @@ impl Table {
                 // If we want to override the default preset, we need to remove
                 // this component from the HashMap in case we find a whitespace.
                 if character == ' ' {
-                    self.style.remove(&component);
+                    self.remove_style(component);
                     continue;
                 }
 
-                self.style.insert(component, character);
+                self.set_style(component, character);
             } else {
                 break;
             }
@@ -270,7 +270,7 @@ impl Table {
                 continue;
             }
             if let Some(component) = components.next() {
-                self.style.insert(component, character);
+                self.set_style(component, character);
             } else {
                 break;
             }
@@ -317,6 +317,14 @@ impl Table {
     }
 
     /// Get a copy of the char that's currently used for drawing this component
+    /// ```
+    /// use comfy_table::Table;
+    /// use comfy_table::TableComponent::*;
+    ///
+    /// let mut table = Table::new();
+    /// assert_eq!(table.get_style(TopLeftCorner), Some('+'));
+    /// ```
+
     pub fn get_style(&mut self, component: TableComponent) -> Option<char> {
         match self.style.get(&component) {
             None => None,
