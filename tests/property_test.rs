@@ -72,7 +72,7 @@ fn columns_and_rows() -> impl Strategy<Value = (
 prop_compose! {
     fn table()
         (arrangement in content_arrangement(),
-        table_width in 0..500u16,
+        table_width in 0..1000u16,
         (rows, constraints, cell_alignments, column_alignments) in columns_and_rows()) -> Table {
         let mut table = Table::new();
 

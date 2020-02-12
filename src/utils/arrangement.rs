@@ -136,7 +136,7 @@ fn evaluate_constraint(
         MaxWidth(max_width) => info.constraint = Some(MaxWidth(*max_width)),
         Percentage(percent) => {
             if let Some(table_width) = table_width {
-                let mut width = table_width * percent / 100;
+                let mut width = (table_width as i32 * *percent as i32 / 100) as u16;
                 width = info.without_padding(width as u16);
                 info.set_content_width(width);
                 info.fixed = true;
@@ -144,7 +144,7 @@ fn evaluate_constraint(
         }
         MinPercentage(percent) => {
             if let Some(table_width) = table_width {
-                let min_width = table_width * percent / 100;
+                let min_width = (table_width as i32 * *percent as i32 / 100) as u16;
                 if info.max_width() <= min_width {
                     let width = info.without_padding(min_width);
                     info.set_content_width(width);
@@ -154,7 +154,7 @@ fn evaluate_constraint(
         }
         MaxPercentage(percent) => {
             if let Some(table_width) = table_width {
-                let max_width = table_width * percent / 100;
+                let max_width = (table_width as i32 * *percent as i32 / 100) as u16;
                 info.constraint = Some(MaxWidth(max_width));
             }
         }
