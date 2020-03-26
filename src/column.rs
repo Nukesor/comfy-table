@@ -59,8 +59,15 @@ impl Column {
     }
 
     /// Get the width in characters of the widest line in this column.
+    /// This doesn't include padding yet!
     pub fn get_max_content_width(&self) -> u16 {
         self.max_content_width
+    }
+
+    /// Get the maximum possible width for this column.
+    /// This means widest line in this column + padding
+    pub fn get_max_width(&self) -> u16 {
+        self.max_content_width + self.padding.0 + self.padding.1
     }
 
     /// Set the constraint for this column. \
