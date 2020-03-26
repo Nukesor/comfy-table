@@ -59,6 +59,21 @@ fn ascii_horizontal_borders_only() {
     assert_eq!(&table.to_string(), expected);
 }
 
+
+#[test]
+fn ascii_markdown() {
+    let mut table = get_preset_table();
+    table.load_preset(ASCII_MARKDOWN);
+    let expected = "
+| Header1 | Header2 | Header3   |
+|---------|---------|-----------|
+| One One | One Two | One Three |
+| One One | One Two | One Three |";
+
+    println!("{}", table.to_string());
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
 #[test]
 fn utf8_full() {
     let mut table = get_preset_table();

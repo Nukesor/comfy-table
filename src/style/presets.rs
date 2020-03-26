@@ -42,6 +42,17 @@ pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 /// ```
 pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "  -- ==  --  --    ";
 
+/// Markdown like table styles
+/// ```text
+/// ---------------
+///  Hello   there
+/// ===============
+///  a       b
+///  c       d
+/// ---------------
+/// ```
+pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
+
 /// The UTF8 enabled version of the default style for tables.
 /// Quite beautiful isn't it? It's drawn with UTF8's box drawing characters.
 /// ```text
