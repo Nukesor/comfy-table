@@ -248,6 +248,33 @@ impl Table {
         self
     }
 
+    /// Returns the current style as a preset string.
+    /// A pure convenience method, so you're not force to fiddle with those preset strings.
+    ///
+    /// ```
+    ///    use comfy_table::Table;
+    ///    use comfy_table::presets::UTF8_FULL;
+    ///
+    ///    let mut table = Table::new();
+    ///    table.load_preset(UTF8_FULL);
+    ///
+    ///    assert_eq!(UTF8_FULL, table.current_style_as_preset())
+    /// ```
+    pub fn current_style_as_preset(&mut self) -> String {
+        let components = TableComponent::iter();
+        let mut preset_string = String::new();
+
+        for component in components {
+            match self.get_style(component) {
+                None => preset_string.push(' '),
+                Some(character) => preset_string.push(character),
+            }
+        }
+
+        preset_string
+    }
+
+
     /// Modify a preset with a modifier string from [modifiers](crate::style::modifiers).
     /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
     /// ```
