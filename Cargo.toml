@@ -17,7 +17,7 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 atty = "^0.2"
-crossterm = "^0.16"
+crossterm = "^0.17"
 strum = "^0.18"
 strum_macros = "^0.18"
 
