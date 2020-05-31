@@ -113,11 +113,7 @@ mod tests {
 
     #[test]
     fn test_some_functions() {
-        let cells = vec![
-            "one",
-            "two",
-            "three",
-        ];
+        let cells = vec!["one", "two", "three"];
         let mut row = Row::new();
         for cell in cells.iter() {
             row.add_cell(Cell::new(cell));
@@ -125,8 +121,10 @@ mod tests {
 
         let mut cell_content_iter = cells.iter();
         for cell in row.cell_iter() {
-            assert_eq!(cell.get_content(), cell_content_iter.next().unwrap().to_string());
+            assert_eq!(
+                cell.get_content(),
+                cell_content_iter.next().unwrap().to_string()
+            );
         }
     }
-
 }

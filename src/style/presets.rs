@@ -66,7 +66,6 @@ pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
 /// ```
 pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐└┘";
 
-
 /// Default UTF8 style, but without any borders
 /// ```text
 ///  Hello │ there
@@ -87,7 +86,6 @@ pub const UTF8_NO_BORDERS: &str = "     ═╪ ┆╌┼        ";
 /// └───────────────┘
 /// ```
 pub const UTF8_BORDERS_ONLY: &str = "││──╞══╡     ──┌┐└┘";
-
 
 /// Only display vertical lines
 ///

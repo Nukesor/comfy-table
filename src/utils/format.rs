@@ -145,7 +145,10 @@ pub fn split_line(
     // Reverse it, since we want to push/pop without reversing the text.
     // Also clone it and convert it into a Vec<String>. Otherwise we get some burrowing problems
     // due to early drops of borrowed values that need to be inserted into `Vec<&str>`
-    let mut splitted = line.split(' ').map(|part| part.to_string()).collect::<Vec<String>>();
+    let mut splitted = line
+        .split(' ')
+        .map(|part| part.to_string())
+        .collect::<Vec<String>>();
     splitted.reverse();
 
     let mut current_line = String::new();
@@ -218,7 +221,6 @@ pub fn split_line(
     if current_line.len() != 0 {
         lines.push(current_line);
     }
-
 
     // Iterate over all generated lines of this cell and align them
     // If cell styling should be applied, do this here as well.

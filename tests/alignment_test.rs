@@ -19,11 +19,7 @@ fn cell_alignment() {
             Cell::new("Left").set_alignment(CellAlignment::Left),
             Cell::new("Center").set_alignment(CellAlignment::Center),
         ])
-        .add_row(vec![
-            "Left",
-            "Center",
-            "Right",
-        ]);
+        .add_row(vec!["Left", "Center", "Right"]);
 
     let alignment = vec![
         CellAlignment::Left,

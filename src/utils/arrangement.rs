@@ -158,7 +158,6 @@ fn evaluate_constraint(
                 info.constraint = Some(MaxWidth(max_width));
             }
         }
-
     }
 }
 

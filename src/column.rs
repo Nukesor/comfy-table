@@ -85,7 +85,7 @@ impl Column {
     }
 
     /// Remove any constraint on this column
-    pub fn remove_constraint(&mut self) -> &mut Self{
+    pub fn remove_constraint(&mut self) -> &mut Self {
         self.constraint = None;
 
         self
@@ -98,8 +98,6 @@ impl Column {
     }
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -111,7 +109,10 @@ mod tests {
         assert_eq!(column.get_max_content_width(), 0);
 
         column.set_constraint(ColumnConstraint::ContentWidth);
-        assert_eq!(column.get_constraint(), Some(&ColumnConstraint::ContentWidth));
+        assert_eq!(
+            column.get_constraint(),
+            Some(&ColumnConstraint::ContentWidth)
+        );
 
         column.remove_constraint();
         assert_eq!(column.get_constraint(), None);

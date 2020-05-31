@@ -1,6 +1,6 @@
-use ::std::fmt;
 use ::crossterm::terminal::size;
 use ::std::collections::HashMap;
+use ::std::fmt;
 use ::std::iter::IntoIterator;
 use ::std::slice::{Iter, IterMut};
 use ::strum::IntoEnumIterator;
@@ -273,7 +273,6 @@ impl Table {
 
         preset_string
     }
-
 
     /// Modify a preset with a modifier string from [modifiers](crate::style::modifiers).
     /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.

@@ -1,36 +1,35 @@
-use comfy_table::*;
-use comfy_table::presets::UTF8_FULL;
-use comfy_table::modifiers::UTF8_ROUND_CORNERS;
 use ::proptest::prelude::*;
+use comfy_table::modifiers::UTF8_ROUND_CORNERS;
+use comfy_table::presets::UTF8_FULL;
+use comfy_table::*;
 
 fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
-  prop_oneof![
-    Just(ContentArrangement::Disabled),
-    Just(ContentArrangement::Dynamic),
-  ]
+    prop_oneof![
+        Just(ContentArrangement::Disabled),
+        Just(ContentArrangement::Dynamic),
+    ]
 }
 
 fn cell_alignment() -> impl Strategy<Value = Option<CellAlignment>> {
-  prop_oneof![
-    Just(None),
-    Just(Some(CellAlignment::Left)),
-    Just(Some(CellAlignment::Right)),
-    Just(Some(CellAlignment::Center)),
-  ]
+    prop_oneof![
+        Just(None),
+        Just(Some(CellAlignment::Left)),
+        Just(Some(CellAlignment::Right)),
+        Just(Some(CellAlignment::Center)),
+    ]
 }
 
-
 fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
-  prop_oneof![
-    Just(None),
-    Just(Some(ColumnConstraint::ContentWidth)),
-    any::<u16>().prop_map(|width| {Some(ColumnConstraint::Width(width))}),
-    any::<u16>().prop_map(|width| {Some(ColumnConstraint::MinWidth(width))}),
-    any::<u16>().prop_map(|width| {Some(ColumnConstraint::MaxWidth(width))}),
-    (0u16..100u16).prop_map(|percentage| {Some(ColumnConstraint::Percentage(percentage))}),
-    (0u16..100u16).prop_map(|percentage| {Some(ColumnConstraint::MinPercentage(percentage))}),
-    (0u16..100u16).prop_map(|percentage| {Some(ColumnConstraint::MaxPercentage(percentage))}),
-  ]
+    prop_oneof![
+        Just(None),
+        Just(Some(ColumnConstraint::ContentWidth)),
+        any::<u16>().prop_map(|width| { Some(ColumnConstraint::Width(width)) }),
+        any::<u16>().prop_map(|width| { Some(ColumnConstraint::MinWidth(width)) }),
+        any::<u16>().prop_map(|width| { Some(ColumnConstraint::MaxWidth(width)) }),
+        (0u16..100u16).prop_map(|percentage| { Some(ColumnConstraint::Percentage(percentage)) }),
+        (0u16..100u16).prop_map(|percentage| { Some(ColumnConstraint::MinPercentage(percentage)) }),
+        (0u16..100u16).prop_map(|percentage| { Some(ColumnConstraint::MaxPercentage(percentage)) }),
+    ]
 }
 
 prop_compose! {
@@ -40,12 +39,14 @@ prop_compose! {
    }
 }
 
-fn columns_and_rows() -> impl Strategy<Value = (
-    Vec<Vec<String>>,
-    Vec<Option<ColumnConstraint>>,
-    Vec<Option<CellAlignment>>,
-    Vec<Option<CellAlignment>>
-)> {
+fn columns_and_rows() -> impl Strategy<
+    Value = (
+        Vec<Vec<String>>,
+        Vec<Option<ColumnConstraint>>,
+        Vec<Option<CellAlignment>>,
+        Vec<Option<CellAlignment>>,
+    ),
+> {
     dimensions().prop_flat_map(|(column_count, row_count)| {
         let mut rows = Vec::new();
         let mut cell_alignments = Vec::new();
@@ -67,7 +68,6 @@ fn columns_and_rows() -> impl Strategy<Value = (
         (rows, constraints, cell_alignments, column_alignments)
     })
 }
-
 
 prop_compose! {
     fn table()
@@ -114,7 +114,6 @@ prop_compose! {
         table
     }
 }
-
 
 proptest! {
     #![proptest_config({

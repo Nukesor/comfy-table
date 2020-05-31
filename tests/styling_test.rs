@@ -1,7 +1,7 @@
 use pretty_assertions::assert_eq;
 
-use comfy_table::*;
 use comfy_table::presets::UTF8_FULL;
+use comfy_table::*;
 
 fn get_preset_table() -> Table {
     let mut table = Table::new();

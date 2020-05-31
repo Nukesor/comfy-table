@@ -1,7 +1,7 @@
 use pretty_assertions::assert_eq;
 
-use comfy_table::*;
 use comfy_table::presets::*;
+use comfy_table::*;
 
 fn get_preset_table() -> Table {
     let mut table = Table::new();
@@ -59,7 +59,6 @@ fn ascii_horizontal_borders_only() {
     assert_eq!(&table.to_string(), expected);
 }
 
-
 #[test]
 fn ascii_markdown() {
     let mut table = get_preset_table();
@@ -91,7 +90,6 @@ fn utf8_full() {
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
-
 #[test]
 fn utf8_no_borders() {
     let mut table = get_preset_table();
@@ -106,8 +104,6 @@ fn utf8_no_borders() {
     println!("{}", table.to_string());
     assert_eq!(&table.to_string(), expected);
 }
-
-
 
 #[test]
 fn utf8_borders_only() {

@@ -1,5 +1,5 @@
-use pretty_assertions::assert_eq;
 use comfy_table::*;
+use pretty_assertions::assert_eq;
 
 fn get_max_min_table() -> Table {
     let mut table = Table::new();
@@ -184,9 +184,7 @@ fn percentage() {
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(40)
-        .set_constraints(vec![
-            ColumnConstraint::Percentage(20),
-        ]);
+        .set_constraints(vec![ColumnConstraint::Percentage(20)]);
 
     println!("{}", table.to_string());
     let expected = "
@@ -203,8 +201,7 @@ fn percentage() {
 +--------+--------------+--------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 
-    table.set_table_width(40)
-    .set_constraints(vec![
+    table.set_table_width(40).set_constraints(vec![
         ColumnConstraint::MinPercentage(40),
         ColumnConstraint::MaxPercentage(30),
         ColumnConstraint::Percentage(30),
