@@ -8,17 +8,16 @@ on:
 
 jobs:
   test:
-    name: Tests for ${{ matrix.os }} on ${{ matrix.os }}
+    name: Tests for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        rust: [stable, nightly]
 
     steps:
     - uses: hecrj/setup-rust-action@v1
       with:
-        rust-version: ${{ matrix.rust }}
+        rust-version: stable
     - uses: actions/checkout@v1
 
     - run: cargo build
