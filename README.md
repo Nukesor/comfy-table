@@ -14,7 +14,6 @@
 
 Comfy-table tries to provide utility for building beautiful tables, while being easy to use.
 
-
 Features:
 
 - Dynamic arrangement of content to a specific width.
@@ -25,8 +24,8 @@ Features:
 - Cross plattform (Linux, macOS, Windows).
 - I probably forgot some stuff...
 
-
 ### A Basic Table
+
 ```rust
 use comfy_table::Table;
 
@@ -65,6 +64,7 @@ This table will become as wide as your content, nothing fancy happening here.
 ```
 
 ### More Features
+
 ```rust
 use comfy_table::*;
 use comfy_table::presets::UTF8_FULL;
@@ -96,6 +96,7 @@ fn main() {
     println!("{}", table);
 }
 ```
+
 Create a table with UTF8 styling, and apply a modifier, which gives the table round corners.\
 Additionall the content will dynamically wrap to maintain a given table width.\
 If the table width isn't explicitely set, the terminal size will be used, if this is executed in a terminal.
@@ -119,6 +120,7 @@ On top of this, we set the default alignment for the right column to `Right` and
 ```
 
 ### Styling
+
 ```rust
 use comfy_table::*;
 use comfy_table::presets::UTF8_FULL;
@@ -153,15 +155,18 @@ fn main() {
     println!("{}", table);
 }
 ```
-This code generates the table that can be seen at the top of this Readme.
 
+This code generates the table that can be seen at the top of this Readme.
 
 ## More Examples
 
-There is an example folder containing the **Styling** example above.
-If you're looking for more examples, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).\
-There is a test for almost every feature including a visual view for each resulting table.
+There is an example folder containing a few examples.
+To run an example, run it with `run --example`. E.g.:
 
+``` cargo run --example readme_table ```
+
+If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).\
+There is a test for almost every feature including a visual view for each resulting table.
 
 ## Feedback
 
