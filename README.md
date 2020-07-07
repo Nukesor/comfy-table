@@ -24,6 +24,25 @@ Features:
 - Cross plattform (Linux, macOS, Windows).
 - I probably forgot some stuff...
 
+### Guide-lines:
+
+Comfy-table is supposed to be minimalistic.
+A fixed set of features that just work, for a simple use-case:
+
+- Normal tables (columns, rows, one cell per column/row).
+- Dynamic adjustment of content to a given width.
+- Some kind of manual intervention in the adjustmen process.
+
+If you come up with an idea or an improvement, that fits into the current scope of the project, feel free to create an issue :)!
+
+Some things however will most likely not be added to the project, since they drastically increase the complexity of the library or are only used by a very small number of people.
+
+Such features are:
+
+- Nested tables
+- Cells that span over multiple columns/rows
+
+
 ### A Basic Table
 
 ```rust
