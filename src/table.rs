@@ -1,8 +1,10 @@
-use ::crossterm::terminal::size;
 use ::std::collections::HashMap;
 use ::std::fmt;
 use ::std::iter::IntoIterator;
 use ::std::slice::{Iter, IterMut};
+
+use ::crossterm::terminal::size;
+use ::crossterm::tty::IsTty;
 use ::strum::IntoEnumIterator;
 
 use crate::column::Column;
@@ -159,7 +161,7 @@ impl Table {
             return false;
         }
 
-        atty::is(atty::Stream::Stdout)
+        return ::std::io::stdout().is_tty();
     }
 
     /// Enforce terminal styling. Only useful if you forcefully disabled tty,

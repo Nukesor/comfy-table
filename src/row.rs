@@ -18,7 +18,7 @@ impl Row {
     }
 
     /// Create a Row from any `Iter<T: ToCell>`
-    /// ```
+    /// ```rust
     /// use comfy_table::{Row, Cell};
     ///
     /// let row = Row::from(vec!["One", "Two", "Three",]);
@@ -36,7 +36,7 @@ impl Row {
     }
 
     /// Add a cell to the row
-    /// ```
+    /// ```rust
     /// use comfy_table::{Row, Cell};
     ///
     /// let mut row = Row::new();
