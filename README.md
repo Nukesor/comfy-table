@@ -22,16 +22,15 @@ Features:
 - Pretty much every part of the table is customizable (borders, lines, padding, alignment).
 - Constraints on columns that allow some additional control over how to arrange content.
 - Cross plattform (Linux, macOS, Windows).
-- I probably forgot some stuff...
 
-### Guide-lines:
+## Guide-lines
 
 Comfy-table is supposed to be minimalistic.
 A fixed set of features that just work, for a simple use-case:
 
 - Normal tables (columns, rows, one cell per column/row).
-- Dynamic adjustment of content to a given width.
-- Some kind of manual intervention in the adjustmen process.
+- Dynamic arrangement of content to a given width.
+- Some kind of manual intervention in the arrangement process.
 
 If you come up with an idea or an improvement, that fits into the current scope of the project, feel free to create an issue :)!
 
@@ -41,9 +40,9 @@ Such features are:
 
 - Nested tables
 - Cells that span over multiple columns/rows
+- CSV to table conversion and vice versa
 
-
-### A Basic Table
+## Examples
 
 ```rust
 use comfy_table::Table;
@@ -177,7 +176,7 @@ fn main() {
 
 This code generates the table that can be seen at the top of this Readme.
 
-## More Examples
+## Code Examples
 
 There is an example folder containing a few examples.
 To run an example, run it with `run --example`. E.g.:
