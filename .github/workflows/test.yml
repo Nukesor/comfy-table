@@ -20,5 +20,5 @@ jobs:
         rust-version: stable
     - uses: actions/checkout@v1
 
-    - run: cargo build
     - run: cargo test --verbose
+    - run: cargo build
