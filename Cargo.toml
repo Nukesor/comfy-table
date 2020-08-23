@@ -10,7 +10,6 @@ license = "MIT"
 keywords = ["shell", "commandline", "table", "unicode"]
 readme = "README.md"
 edition = "2018"
-build = "build.rs"
 
 [badges]
 maintenance = { status = "actively-developed" }
@@ -19,9 +18,6 @@ maintenance = { status = "actively-developed" }
 crossterm = "^0.17"
 strum = "^0.18"
 strum_macros = "^0.18"
-
-[build-dependencies]
-skeptic = "0.13"
 
 [dev-dependencies]
 pretty_assertions = "0.6"
