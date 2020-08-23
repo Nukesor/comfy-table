@@ -179,7 +179,7 @@ A fixed set of features that just work, for a simple use-case:
 
 If you come up with an idea or an improvement, that fits into the current scope of the project, feel free to create an issue :)!
 
-Some things however will most likely not be added to the project, since they drastically increase the complexity of the library or are only used by a very small number of people.
+Some things however will most likely not be added to the project, since they drastically increase the complexity of the library or cover very specific edge-cases.
 
 Such features are:
 
