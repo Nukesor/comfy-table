@@ -16,8 +16,8 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 crossterm = "^0.17"
-strum = "^0.18"
-strum_macros = "^0.18"
+strum = "^0.19"
+strum_macros = "^0.19"
 
 [dev-dependencies]
 pretty_assertions = "0.6"
