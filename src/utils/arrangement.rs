@@ -6,12 +6,12 @@ use crate::utils::borders::{
     should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
 };
 
-/// This struct is ONLY used during when calling table.to_string()
-/// It's used to store intermediate results, information on how to
-/// arrange the table and other convenience variables for calculating
-/// a lot of stuff.
-/// This also exists to prevent changes on the original
-/// Column struct while preparing to print the table as a string.
+/// This struct is ONLY used when table.to_string() is called.
+/// It's purpose is to store intermediate results, information on how to
+/// arrange the table and other convenience variables.
+///
+/// The idea is to have a place for all this intermediate stuff, whithout
+/// actually touching the Column struct.
 #[derive(Debug)]
 pub struct ColumnDisplayInfo {
     pub padding: (u16, u16),

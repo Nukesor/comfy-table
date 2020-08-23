@@ -36,15 +36,15 @@ pub enum ContentArrangement {
 /// BorderIntersections are Intersections, where rows/columns lines meet outer borders.
 /// E.g.:
 /// ```text
-///        --------
-///        v      |
-/// +--+---+---+  |
-/// |  |   |   |  |
-/// +==+===+===+<-|
-/// |  |   |   |  |
-/// +--+---+---+<-- These "+" chars are Borderintersections.
-/// |  |   |   |    The inner "+" chars are MiddleIntersections
-/// +--+---+---+
+///        ---------
+///        v       |
+/// +---+---+---+  |
+/// | a | b | c |  |
+/// +===+===+===+<-|
+/// |   |   |   |  |
+/// +---+---+---+<-- These "+" chars are Borderintersections.
+/// |   |   |   |    The inner "+" chars are MiddleIntersections
+/// +---+---+---+
 /// ```
 #[derive(Debug, PartialEq, Eq, Hash, EnumIter)]
 pub enum TableComponent {
