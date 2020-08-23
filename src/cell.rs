@@ -109,6 +109,18 @@ impl Cell {
     }
 }
 
+impl<T: ToString> From<T> for Cell {
+    /// Convert to a new `Cell`.
+    ///
+    /// ```
+    /// # use comfy_table::Cell;
+    /// let cell: Cell = "content".into();
+    /// ```
+    fn from(content: T) -> Cell {
+        Cell::new(content)
+    }
+}
+
 /// Allow the conversion of a type to a vector of cells.
 /// By default this is implemented for all types implementing
 /// IntoIterator where the iterated Item type implements ToString.
