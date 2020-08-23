@@ -23,25 +23,6 @@ Features:
 - Constraints on columns that allow some additional control over how to arrange content.
 - Cross plattform (Linux, macOS, Windows).
 
-## Guide-lines
-
-Comfy-table is supposed to be minimalistic.
-A fixed set of features that just work, for a simple use-case:
-
-- Normal tables (columns, rows, one cell per column/row).
-- Dynamic arrangement of content to a given width.
-- Some kind of manual intervention in the arrangement process.
-
-If you come up with an idea or an improvement, that fits into the current scope of the project, feel free to create an issue :)!
-
-Some things however will most likely not be added to the project, since they drastically increase the complexity of the library or are only used by a very small number of people.
-
-Such features are:
-
-- Nested tables
-- Cells that span over multiple columns/rows
-- CSV to table conversion and vice versa
-
 ## Examples
 
 ```rust
@@ -121,7 +102,6 @@ If the table width isn't explicitely set, the terminal size will be used, if thi
 
 On top of this, we set the default alignment for the right column to `Right` and the Alignment of the left top cell to `Center`.
 
-
 ```text,ignore
 ╭────────────┬────────────┬────────────╮
 │ Header1    ┆ Header2    ┆    Header3 │
@@ -181,11 +161,28 @@ This code generates the table that can be seen at the top of this Readme.
 There is an example folder containing a few examples.
 To run an example, run it with `run --example`. E.g.:
 
-``` cargo run --example readme_table ```
+```bash
+cargo run --example readme_table
+```
 
-If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).\
+If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).  
 There is a test for almost every feature including a visual view for each resulting table.
 
-## Feedback
+## Contribution Guidelines
 
-This is my first Rust library! If you have some suggestions on how to improve this library please create an issue. I'm always open to constructive criticism and eager to learn how to do this properly!
+Comfy-table is supposed to be minimalistic.
+A fixed set of features that just work, for a simple use-case:
+
+- Normal tables (columns, rows, one cell per column/row).
+- Dynamic arrangement of content to a given width.
+- Some kind of manual intervention in the arrangement process.
+
+If you come up with an idea or an improvement, that fits into the current scope of the project, feel free to create an issue :)!
+
+Some things however will most likely not be added to the project, since they drastically increase the complexity of the library or are only used by a very small number of people.
+
+Such features are:
+
+- Nested tables
+- Cells that span over multiple columns/rows
+- CSV to table conversion and vice versa
