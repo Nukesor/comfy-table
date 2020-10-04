@@ -9,6 +9,12 @@ pub struct Row {
     pub(crate) cells: Vec<Cell>,
 }
 
+impl Default for Row {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Row {
     pub fn new() -> Row {
         Row {

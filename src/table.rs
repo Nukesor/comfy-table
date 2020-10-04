@@ -38,6 +38,12 @@ impl fmt::Display for Table {
     }
 }
 
+impl Default for Table {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Table {
     /// Create a new table with default ASCII styling, no rows and a header
     pub fn new() -> Self {
@@ -161,7 +167,7 @@ impl Table {
             return false;
         }
 
-        return ::std::io::stdout().is_tty();
+        ::std::io::stdout().is_tty()
     }
 
     /// Enforce terminal styling. Only useful if you forcefully disabled tty,
@@ -207,8 +213,7 @@ impl Table {
         constraints: T,
     ) -> &mut Self {
         let mut constraints = constraints.into_iter();
-        let mut column_iter = self.column_iter_mut();
-        while let Some(column) = column_iter.next() {
+        for column in self.column_iter_mut() {
             if let Some(constraint) = constraints.next() {
                 column.set_constraint(constraint);
             } else {

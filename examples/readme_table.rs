@@ -1,5 +1,5 @@
-use comfy_table::*;
 use comfy_table::presets::UTF8_FULL;
+use comfy_table::*;
 
 fn main() {
     let mut table = Table::new();
@@ -30,4 +30,3 @@ fn main() {
 
     println!("{}", table);
 }
-

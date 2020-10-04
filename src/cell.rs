@@ -33,7 +33,7 @@ impl Cell {
 
     /// Return a copy of the content contained in this cell.
     pub fn get_content(&self) -> String {
-        return self.content.join("\n").clone();
+        self.content.join("\n")
     }
 
     /// Set the alignment of content for this cell.

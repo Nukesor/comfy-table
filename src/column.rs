@@ -41,7 +41,7 @@ pub struct Column {
 impl Column {
     pub fn new(index: usize) -> Self {
         Column {
-            index: index,
+            index,
             padding: (1, 1),
             constraint: None,
             max_content_width: 0,
