@@ -2,3 +2,7 @@ ignore:
   - "examples"
   - "proptest_regressions"
   - "tests"
+  - "README.md"
+  - "LICENSE"
+  - "Cargo.lock"
+  - "Cargo.toml"
