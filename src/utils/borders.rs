@@ -5,7 +5,7 @@ use crate::utils::arrangement::ColumnDisplayInfo;
 pub fn draw_borders(
     table: &Table,
     rows: Vec<Vec<Vec<String>>>,
-    display_info: &Vec<ColumnDisplayInfo>,
+    display_info: &[ColumnDisplayInfo],
 ) -> Vec<String> {
     let mut lines = Vec::new();
     if should_draw_top_border(table) {
@@ -21,7 +21,7 @@ pub fn draw_borders(
     lines
 }
 
-fn draw_top_border(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> String {
+fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String {
     let left_corner = table.style_or_default(TableComponent::TopLeftCorner);
     let top_border = table.style_or_default(TableComponent::TopBorder);
     let border_intersection = table.style_or_default(TableComponent::TopBorderIntersections);
@@ -54,7 +54,7 @@ fn draw_top_border(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> Stri
 fn draw_rows(
     rows: Vec<Vec<Vec<String>>>,
     table: &Table,
-    display_info: &Vec<ColumnDisplayInfo>,
+    display_info: &[ColumnDisplayInfo],
 ) -> Vec<String> {
     let mut lines = Vec::new();
     // Iterate over all rows
@@ -83,7 +83,7 @@ fn draw_rows(
 }
 
 // Takes the parts of a single line, surrounds them with borders and adds vertical lines.
-fn embed_line(line_parts: &Vec<String>, table: &Table) -> String {
+fn embed_line(line_parts: &[String], table: &Table) -> String {
     let vertical_lines = table.style_or_default(TableComponent::VerticalLines);
     let left_border = table.style_or_default(TableComponent::LeftBorder);
     let right_border = table.style_or_default(TableComponent::RightBorder);
@@ -98,7 +98,7 @@ fn embed_line(line_parts: &Vec<String>, table: &Table) -> String {
         line += part;
         if should_draw_vertical_lines(table) && part_iter.peek().is_some() {
             line += &vertical_lines;
-        } else if should_draw_right_border(table) && !part_iter.peek().is_some() {
+        } else if should_draw_right_border(table) && part_iter.peek().is_none() {
             line += &right_border;
         }
     }
@@ -109,7 +109,7 @@ fn embed_line(line_parts: &Vec<String>, table: &Table) -> String {
 // The horizontal line that separates between rows.
 fn draw_horizontal_lines(
     table: &Table,
-    display_info: &Vec<ColumnDisplayInfo>,
+    display_info: &[ColumnDisplayInfo],
     header: bool,
 ) -> String {
     let (left_intersection, horizontal_lines, middle_intersection, right_intersection) = if header {
@@ -152,7 +152,7 @@ fn draw_horizontal_lines(
     line
 }
 
-fn draw_bottom_border(table: &Table, display_info: &Vec<ColumnDisplayInfo>) -> String {
+fn draw_bottom_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String {
     let left_corner = table.style_or_default(TableComponent::BottomLeftCorner);
     let bottom_border = table.style_or_default(TableComponent::BottomBorder);
     let middle_intersection = table.style_or_default(TableComponent::BottomBorderIntersections);

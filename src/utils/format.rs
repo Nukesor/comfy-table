@@ -24,19 +24,13 @@ use crate::utils::arrangement::ColumnDisplayInfo;
 ///
 /// The strings for each row will be padded and aligned accordingly
 /// to their respective column.
-pub fn format_content(
-    table: &Table,
-    display_info: &Vec<ColumnDisplayInfo>,
-) -> Vec<Vec<Vec<String>>> {
+pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<Vec<Vec<String>>> {
     // The content of the whole table
     let mut table_content = Vec::new();
 
     // Format table header if it exists
-    match table.get_header() {
-        Some(header) => {
-            table_content.push(format_row(header, display_info, table));
-        }
-        None => (),
+    if let Some(header) = table.get_header() {
+        table_content.push(format_row(header, display_info, table));
     }
 
     for row in table.rows.iter() {
@@ -47,7 +41,7 @@ pub fn format_content(
 
 pub fn format_row(
     row: &Row,
-    display_info: &Vec<ColumnDisplayInfo>,
+    display_info: &[ColumnDisplayInfo],
     table: &Table,
 ) -> Vec<Vec<String>> {
     // The content of this specific row
@@ -160,7 +154,7 @@ pub fn split_line(
         let added_length = next_length + current_length + 1;
 
         // The line is empty try to add the next part
-        if current_line.len() == 0 {
+        if current_line.is_empty() {
             // Next part fits in line. Add and continue
             if next_length as u16 <= content_width {
                 current_line += &next;
@@ -218,7 +212,7 @@ pub fn split_line(
         }
     }
 
-    if current_line.len() != 0 {
+    if !current_line.is_empty() {
         lines.push(current_line);
     }
 
