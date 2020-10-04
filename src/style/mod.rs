@@ -17,6 +17,6 @@ pub use column::ColumnConstraint;
 pub use table::{ContentArrangement, TableComponent};
 
 /// Attributes used for styling cell content. Reexport of crossterm's [Attributes](crossterm::style::Attribute) enum.
-pub use ::crossterm::style::Attribute;
+pub use crossterm::style::Attribute;
 /// Colors used for styling cell content. Reexport of crossterm's [Color](crossterm::style::Color) enum.
-pub use ::crossterm::style::Color;
+pub use crossterm::style::Color;

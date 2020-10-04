@@ -1,11 +1,11 @@
-use ::std::collections::HashMap;
-use ::std::fmt;
-use ::std::iter::IntoIterator;
-use ::std::slice::{Iter, IterMut};
+use std::collections::HashMap;
+use std::fmt;
+use std::iter::IntoIterator;
+use std::slice::{Iter, IterMut};
 
-use ::crossterm::terminal::size;
-use ::crossterm::tty::IsTty;
-use ::strum::IntoEnumIterator;
+use crossterm::terminal::size;
+use crossterm::tty::IsTty;
+use strum::IntoEnumIterator;
 
 use crate::column::Column;
 use crate::row::{Row, ToRow};

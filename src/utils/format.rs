@@ -1,5 +1,6 @@
-use ::crossterm::style::style;
-use ::std::iter::FromIterator;
+use std::iter::FromIterator;
+
+use crossterm::style::style;
 
 use crate::cell::Cell;
 use crate::row::Row;

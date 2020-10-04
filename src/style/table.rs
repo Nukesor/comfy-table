@@ -1,4 +1,4 @@
-use ::strum_macros::EnumIter;
+use strum_macros::EnumIter;
 
 /// Specify how comfy_table should arrange the content in your table.
 ///

@@ -1,5 +1,6 @@
+use std::slice::Iter;
+
 use crate::cell::{Cell, ToCells};
-use ::std::slice::Iter;
 
 /// Each row contains [Cells](crate::Cell) and can be added to a [Table](crate::Table).
 #[derive(Clone, Debug)]
