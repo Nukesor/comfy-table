@@ -15,7 +15,7 @@ edition = "2018"
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-crossterm = "^0.17"
+crossterm = "^0.18"
 strum = "^0.19"
 strum_macros = "^0.19"
 
