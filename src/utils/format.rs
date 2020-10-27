@@ -23,8 +23,7 @@ use crate::utils::arrangement::ColumnDisplayInfo;
 ///      tc[1][2][0]      tc[1][2][1]
 /// ```
 ///
-/// The strings for each row will be padded and aligned accordingly
-/// to their respective column.
+/// The strings for each row will be padded and aligned accordingly to their respective column.
 pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<Vec<Vec<String>>> {
     // The content of the whole table
     let mut table_content = Vec::new();
@@ -53,15 +52,15 @@ pub fn format_row(
     for info in display_info.iter() {
         // Each cell is devided into several lines devided by newline
         // Every line that's too long will be split into two/several lines
-        let mut cell_content = Vec::new();
+        let mut cell_lines = Vec::new();
 
         // Check if the row has as many cells as the table has columns
         // If that's not the case, fill the missing cell with empty spaces
         let cell = if let Some(cell) = cell_iter.next() {
             cell
         } else {
-            cell_content.push(" ".repeat(info.width() as usize));
-            temp_row_content.push(cell_content);
+            cell_lines.push(" ".repeat(info.width() as usize));
+            temp_row_content.push(cell_lines);
             continue;
         };
 
@@ -69,18 +68,46 @@ pub fn format_row(
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if (line.chars().count() as u16) > info.content_width() {
-                let mut splitted = split_line(line.clone(), &info, cell, table);
-                cell_content.append(&mut splitted);
+                let mut splitted = split_line(&line, &info);
+                cell_lines.append(&mut splitted);
             } else {
-                let mut line = align_line(line.clone(), info, cell);
-                if table.should_style() {
-                    line = style_line(line, cell);
-                }
-                cell_content.push(line);
+                cell_lines.push(line.into());
             }
         }
 
-        temp_row_content.push(cell_content);
+        // Remove all unneeded lines of this cell, if the row's content should be
+        // truncated and there're too many lines in this cell.
+        // This also inserts a '...' string so users know that there's truncated stuff.
+        if let Some(lines) = row.max_height {
+            if cell_lines.len() > lines {
+                let _ = cell_lines.split_off(lines);
+                // Direct access. We know it's this long.
+                let last_line = cell_lines.get_mut(lines - 1).unwrap();
+                // Don't do anything if the collumn is smaller then 6 characters
+                let width = info.content_width() as usize;
+                if width >= 6 {
+                    // Truncate the line if '...' doesn't fit
+                    if last_line.len() >= width - 3 {
+                        let surplus = (last_line.len() + 3) - width;
+                        last_line.truncate(last_line.len() - surplus);
+                    }
+                    last_line.push_str("...");
+                }
+            }
+        }
+
+        // Iterate over all generated lines of this cell and align them
+        let cell_lines = cell_lines
+            .iter()
+            .map(|line| align_line(line.to_string(), info, cell));
+
+        // Style the cell if necessary.
+        if table.should_style() {
+            let cell_lines = cell_lines.map(|line| style_line(line, cell));
+            temp_row_content.push(cell_lines.collect());
+        } else {
+            temp_row_content.push(cell_lines.collect());
+        }
     }
 
     // Right now, we have a different structure than desired.
@@ -127,12 +154,7 @@ pub fn format_row(
 /// This function tries to do this in a smart way, by taking the content's deliminator
 /// splitting it at these deliminators and reconnecting them until a line is full.
 /// Splitting of parts only occurs if the part doesn't fit in a single line by itself.
-pub fn split_line(
-    line: String,
-    info: &ColumnDisplayInfo,
-    cell: &Cell,
-    table: &Table,
-) -> Vec<String> {
+fn split_line(line: &str, info: &ColumnDisplayInfo) -> Vec<String> {
     let mut lines = Vec::new();
     let content_width = info.content_width();
 
@@ -217,19 +239,6 @@ pub fn split_line(
         lines.push(current_line);
     }
 
-    // Iterate over all generated lines of this cell and align them
-    // If cell styling should be applied, do this here as well.
-    lines = lines
-        .iter()
-        .map(|line| align_line(line.to_string(), info, cell))
-        .map(|line| {
-            if table.should_style() {
-                return style_line(line, cell);
-            }
-            line
-        })
-        .collect();
-
     lines
 }
 
@@ -237,7 +246,7 @@ pub fn split_line(
 /// In every case all lines will be exactly the same character length `info.width - padding long`
 /// This is needed, so we can simply insert it into the border frame later on.
 /// Padding is applied in this function as well.
-pub fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String {
+fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String {
     let content_width = info.content_width();
     let remaining = content_width - line.chars().count() as u16;
 
@@ -271,7 +280,7 @@ pub fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> St
 }
 
 /// Apply the column's padding to this line
-pub fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
+fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
     let mut padded_line = String::new();
 
     padded_line += &" ".repeat(info.padding.0 as usize);
@@ -281,7 +290,7 @@ pub fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
     padded_line
 }
 
-pub fn style_line(line: String, cell: &Cell) -> String {
+fn style_line(line: String, cell: &Cell) -> String {
     let mut content = style(line);
 
     // Apply text color

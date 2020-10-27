@@ -32,6 +32,16 @@ fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
     ]
 }
 
+fn max_height() -> impl Strategy<Value = Option<usize>> {
+    prop_oneof![
+        Just(None),
+        Just(Some(0)),
+        Just(Some(1)),
+        Just(Some(5)),
+        Just(Some(100))
+    ]
+}
+
 prop_compose! {
     fn dimensions()(columns in 1u16..10u16, rows in 1u16..10u16)
                     -> (u16, u16) {
@@ -72,9 +82,16 @@ fn columns_and_rows() -> impl Strategy<
 prop_compose! {
     fn table()
         (arrangement in content_arrangement(),
+        max_height in max_height(),
         table_width in 0..1000u16,
         (rows, constraints, cell_alignments, column_alignments) in columns_and_rows()) -> Table {
         let mut table = Table::new();
+
+        if let Some(height) = max_height {
+            for row in table.row_iter_mut() {
+                row.max_height(height);
+            }
+        }
 
         let mut cell_alignments = cell_alignments.iter();
         for row in rows.iter() {

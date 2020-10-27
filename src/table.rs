@@ -143,7 +143,7 @@ impl Table {
     }
 
     /// In case you are sure you don't want export tables to a tty
-    /// or you experience problems with tty checking code, you can
+    /// or you experience problems with tty specific code, you can
     /// enforce a non_tty mode.
     ///
     /// This disables:
@@ -160,7 +160,7 @@ impl Table {
     }
 
     /// Returns whether the table will be handled as if it's printed to a tty.
-    /// This function respects the [Table::force_no_tty] and [Table::force_tty] functions.
+    /// This function respects the [Table::force_no_tty] functions.
     /// Otherwise we try to determine, if we are on a tty.
     pub fn is_tty(&self) -> bool {
         if self.no_tty {
@@ -413,6 +413,37 @@ impl Table {
     /// ```
     pub fn column_iter_mut(&mut self) -> IterMut<Column> {
         self.columns.iter_mut()
+    }
+
+    /// Reference to a specific row
+    pub fn get_row(&self, index: usize) -> Option<&Row> {
+        self.rows.get(index)
+    }
+
+    /// Mutable reference to a specific row
+    pub fn get_row_mut(&mut self, index: usize) -> Option<&mut Row> {
+        self.rows.get_mut(index)
+    }
+
+    /// Iterator over all rows
+    pub fn row_iter(&mut self) -> Iter<Row> {
+        self.rows.iter()
+    }
+
+    /// Mutable iterator over all rows
+    /// ```
+    /// use comfy_table::Table;
+    /// let mut table = Table::new();
+    /// table.add_row(&vec!["First", "Second", "Third"]);
+    ///
+    /// // Add the constraints to their respective row
+    /// for row in table.row_iter_mut() {
+    ///     row.max_height(5);
+    /// }
+    /// assert!(table.row_iter_mut().len() == 1);
+    /// ```
+    pub fn row_iter_mut(&mut self) -> IterMut<Row> {
+        self.rows.iter_mut()
     }
 
     /// Return a vector representing the maximum amount of characters in any line of this column. \

@@ -39,7 +39,7 @@ impl ColumnDisplayInfo {
             cell_alignment: column.cell_alignment,
         }
     }
-    pub fn padding_width(&self) -> u16 {
+    fn padding_width(&self) -> u16 {
         self.padding.0 + self.padding.1
     }
 
@@ -47,7 +47,7 @@ impl ColumnDisplayInfo {
         self.content_width
     }
 
-    pub fn set_content_width(&mut self, width: u16) {
+    fn set_content_width(&mut self, width: u16) {
         // Don't allow content widths of 0.
         if width == 0 {
             self.content_width = 1;
@@ -57,7 +57,7 @@ impl ColumnDisplayInfo {
         self.content_width = width;
     }
 
-    pub fn max_width(&self) -> u16 {
+    fn max_width(&self) -> u16 {
         self.max_content_width + self.padding.0 + self.padding.1
     }
 
@@ -79,7 +79,7 @@ impl ColumnDisplayInfo {
 
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
-pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
+pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     let table_width = table.get_table_width();
     let mut display_infos = Vec::new();
     for column in table.columns.iter() {

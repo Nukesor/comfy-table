@@ -2,7 +2,7 @@ use crate::style::TableComponent;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
 
-pub fn draw_borders(
+pub(crate) fn draw_borders(
     table: &Table,
     rows: Vec<Vec<Vec<String>>>,
     display_info: &[ColumnDisplayInfo],

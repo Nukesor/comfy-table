@@ -8,6 +8,7 @@ pub struct Row {
     /// Index of the row. This will be set as soon as the row is added to the table
     pub(crate) index: Option<usize>,
     pub(crate) cells: Vec<Cell>,
+    pub(crate) max_height: Option<usize>,
 }
 
 impl Default for Row {
@@ -21,6 +22,7 @@ impl Row {
         Row {
             index: None,
             cells: Vec::new(),
+            max_height: None,
         }
     }
 
@@ -39,6 +41,7 @@ impl Row {
         Row {
             index: None,
             cells: cells.to_cells(),
+            max_height: None,
         }
     }
 
@@ -51,6 +54,19 @@ impl Row {
     /// ```
     pub fn add_cell(&mut self, cell: Cell) -> &mut Self {
         self.cells.push(cell);
+
+        self
+    }
+
+    /// Truncate content of cells which occupies more than X lines of space.
+    /// ```
+    /// use comfy_table::{Row, Cell};
+    ///
+    /// let mut row = Row::new();
+    /// row.max_height(5);
+    /// ```
+    pub fn max_height(&mut self, lines: usize) -> &mut Self {
+        self.max_height = Some(lines);
 
         self
     }
