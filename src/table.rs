@@ -205,7 +205,6 @@ impl Table {
     ///     .set_constraints(vec![
     ///         ColumnConstraint::MaxWidth(15),
     ///         ColumnConstraint::MinWidth(20),
-    ///         ColumnConstraint::Width(40),
     /// ]);
     /// ```
     pub fn set_constraints<T: IntoIterator<Item = ColumnConstraint>>(
