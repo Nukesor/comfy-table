@@ -1,5 +1,3 @@
-use std::iter::FromIterator;
-
 use crossterm::style::style;
 
 use crate::cell::Cell;
@@ -7,6 +5,7 @@ use crate::row::Row;
 use crate::style::CellAlignment;
 use crate::table::Table;
 use crate::utils::arrangement::ColumnDisplayInfo;
+use crate::utils::split::split_line;
 
 /// Returns the formatted content of the table.
 /// The content is organized in the following structure
@@ -148,98 +147,6 @@ pub fn format_row(
     }
 
     row_content
-}
-
-/// Split a cell content line if it's longer than the specified columns width - padding
-/// This function tries to do this in a smart way, by taking the content's deliminator
-/// splitting it at these deliminators and reconnecting them until a line is full.
-/// Splitting of parts only occurs if the part doesn't fit in a single line by itself.
-fn split_line(line: &str, info: &ColumnDisplayInfo) -> Vec<String> {
-    let mut lines = Vec::new();
-    let content_width = info.content_width();
-
-    // Split the line by the given deliminator and turn the content into a stack.
-    // Reverse it, since we want to push/pop without reversing the text.
-    // Also clone it and convert it into a Vec<String>. Otherwise we get some burrowing problems
-    // due to early drops of borrowed values that need to be inserted into `Vec<&str>`
-    let mut splitted = line
-        .split(' ')
-        .map(|part| part.to_string())
-        .collect::<Vec<String>>();
-    splitted.reverse();
-
-    let mut current_line = String::new();
-    while let Some(next) = splitted.pop() {
-        let current_length = current_line.chars().count();
-        let next_length = next.chars().count();
-
-        // The theoretical length of the current line after combining it with the next part
-        let added_length = next_length + current_length + 1;
-
-        // The line is empty try to add the next part
-        if current_line.is_empty() {
-            // Next part fits in line. Add and continue
-            if next_length as u16 <= content_width {
-                current_line += &next;
-                continue;
-
-            // It doesn't fit, split it and put the remaining part back on the stack.
-            } else {
-                let mut next: Vec<char> = next.chars().collect();
-                let remaining = next.split_off(content_width as usize);
-                splitted.push(String::from_iter(remaining));
-                lines.push(String::from_iter(next));
-            }
-        }
-        // The next word/section fits into the current line
-        else if added_length as u16 <= content_width {
-            current_line += " ";
-            current_line += &next;
-            // Already push the next line, if there isn't space for more than to chars
-            if current_line.chars().count() as i32 >= content_width as i32 - 2 {
-                lines.push(current_line);
-                current_line = String::new();
-            }
-        // The next word/section doesn't fit
-        } else {
-            let remaining_width = content_width as i32 - current_line.chars().count() as i32 - 1;
-
-            // The current line is already full.
-            // Put the next part back on the stack and push the current line
-            if remaining_width <= 2 {
-                splitted.push(next);
-
-                // Push the finished line, and start a new one
-                lines.push(current_line);
-                current_line = String::new();
-            }
-            // The word is longer than the specified content_width
-            // Split the word, push the remaining string back on the stack
-            else if next_length as u16 > content_width {
-                let mut next: Vec<char> = next.chars().collect();
-                let remaining = next.split_off((remaining_width) as usize);
-
-                current_line += " ";
-                current_line += &String::from_iter(next);
-                splitted.push(String::from_iter(remaining));
-
-                // Push the finished line, and start a new one
-                lines.push(current_line);
-                current_line = String::new();
-            } else {
-                // The next part fits into a single line.
-                // Push the current line and make the next part the next line
-                lines.push(current_line);
-                current_line = next.to_string();
-            }
-        }
-    }
-
-    if !current_line.is_empty() {
-        lines.push(current_line);
-    }
-
-    lines
 }
 
 /// Apply the alignment for a column. Alignment can be either Left/Right/Center.
