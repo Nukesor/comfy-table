@@ -23,6 +23,7 @@ fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
     prop_oneof![
         Just(None),
         Just(Some(ColumnConstraint::ContentWidth)),
+        Just(Some(ColumnConstraint::Hidden)),
         any::<u16>().prop_map(|width| { Some(ColumnConstraint::Width(width)) }),
         any::<u16>().prop_map(|width| { Some(ColumnConstraint::MinWidth(width)) }),
         any::<u16>().prop_map(|width| { Some(ColumnConstraint::MaxWidth(width)) }),

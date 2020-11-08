@@ -101,3 +101,25 @@ fn hidden_columns_with_dynamic_adjustment() {
 └──────┴────────┴───────┘";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
+
+/// Nothing breaks, if all columns are hidden
+#[test]
+fn only_hidden_columns() {
+    let mut table = get_table();
+    table.set_constraints(vec![
+        ColumnConstraint::Hidden,
+        ColumnConstraint::Hidden,
+        ColumnConstraint::Hidden,
+        ColumnConstraint::Hidden,
+        ColumnConstraint::Hidden,
+        ColumnConstraint::Hidden,
+    ]);
+
+    println!("{}", table.to_string());
+    let expected = "
+┌┐
+╞╡
+├┤
+└┘";
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
