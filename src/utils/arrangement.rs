@@ -65,6 +65,14 @@ impl ColumnDisplayInfo {
         self.content_width + self.padding.0 + self.padding.1
     }
 
+    pub fn is_hidden(&self) -> bool {
+        if let Some(constraint) = self.constraint {
+            return constraint == ColumnConstraint::Hidden;
+        }
+
+        false
+    }
+
     /// Return the remaining value after subtracting the padding width.
     fn without_padding(&self, width: u16) -> u16 {
         let padding = self.padding_width();
@@ -158,6 +166,9 @@ fn evaluate_constraint(
                 info.constraint = Some(MaxWidth(max_width));
             }
         }
+        Hidden => {
+            info.constraint = Some(ColumnConstraint::Hidden);
+        }
     }
 }
 
@@ -198,6 +209,7 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_width: u16) {
     // Convert to i32 to handle negative values in case we work with a very small terminal
     let mut remaining_width = table_width as i32;
+    let column_count = count_visible_columns(infos);
 
     // Remove space occupied by borders from remaining_width
     if should_draw_left_border(table) {
@@ -207,7 +219,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         remaining_width -= 1;
     }
     if should_draw_vertical_lines(table) {
-        remaining_width -= infos.len() as i32 - 1;
+        remaining_width -= column_count as i32 - 1;
     }
 
     // All columns that have have been checked.
@@ -227,7 +239,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     let mut found_smaller = true;
     while found_smaller {
         found_smaller = false;
-        let remaining_columns = infos.len() - checked.len();
+        let remaining_columns = column_count - checked.len();
 
         // There are no columns left to check. Proceed to the next step
         if remaining_columns == 0 {
@@ -241,6 +253,11 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         }
 
         for (id, info) in infos.iter_mut().enumerate() {
+            // Ignore hidden columns
+            if info.is_hidden() {
+                continue;
+            }
+
             // We already checked this column, skip it
             if checked.contains(&id) {
                 continue;
@@ -276,7 +293,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     }
 
     // Step 5. Equally distribute the remaining_width to all remaining columns
-    let remaining_columns = infos.len() - checked.len();
+    let remaining_columns = column_count - checked.len();
     // We already managed to fix all.
     if remaining_columns == 0 {
         return;
@@ -296,10 +313,16 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     let mut excess = remaining_width - (average_space * remaining_columns as u16);
 
     for (id, info) in infos.iter_mut().enumerate() {
+        // Ignore hidden columns
+        if info.is_hidden() {
+            continue;
+        }
+
         // We already checked this column, skip it
         if checked.contains(&id) {
             continue;
         }
+
         // Distribute the excess until nothing is left
         let mut width = if excess > 0 {
             excess -= 1;
@@ -313,6 +336,16 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         info.set_content_width(width);
         info.fixed = true;
     }
+}
+
+fn count_visible_columns(infos: &[ColumnDisplayInfo]) -> usize {
+    let mut count = 0;
+    for info in infos {
+        if !info.is_hidden() {
+            count += 1;
+        }
+    }
+    count
 }
 
 #[cfg(test)]

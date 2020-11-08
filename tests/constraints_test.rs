@@ -1,7 +1,7 @@
 use comfy_table::*;
 use pretty_assertions::assert_eq;
 
-fn get_max_min_table() -> Table {
+fn get_constraint_table() -> Table {
     let mut table = Table::new();
     table
         .set_header(&vec!["smol", "Header2", "Header3"])
@@ -22,7 +22,7 @@ fn get_max_min_table() -> Table {
 #[test]
 /// Ensure max-, min- and fixed-width constraints are respected
 fn fixed_max_min_constraints() {
-    let mut table = get_max_min_table();
+    let mut table = get_constraint_table();
 
     table.set_constraints(vec![
         ColumnConstraint::MinWidth(10),
@@ -99,7 +99,7 @@ fn fixed_max_min_constraints() {
 /// Max and Min constraints won't be considered, if they are unnecessary
 /// This is true for normal and dynamic arrangement tables.
 fn unnecessary_max_min_constraints() {
-    let mut table = get_max_min_table();
+    let mut table = get_constraint_table();
 
     table.set_constraints(vec![
         ColumnConstraint::MinWidth(1),
@@ -140,7 +140,7 @@ fn unnecessary_max_min_constraints() {
 /// This is allowed, but results in a wider table than acutally aimed for.
 /// Anyway we still try to fit everything as good as possible, which of course breaks stuff.
 fn constraints_bigger_than_table_width() {
-    let mut table = get_max_min_table();
+    let mut table = get_constraint_table();
 
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
@@ -176,7 +176,7 @@ fn constraints_bigger_than_table_width() {
 /// Test correct usage of the Percentage constraint.
 /// Percentage allows to set a fixed width.
 fn percentage() {
-    let mut table = get_max_min_table();
+    let mut table = get_constraint_table();
 
     // Set a percentage of 20% for the first column
     // Hide the second

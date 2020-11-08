@@ -2,6 +2,8 @@
 /// They allow some control over the dynamic content arrangement process.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum ColumnConstraint {
+    /// This will completely hide a column as if it doesn't exist.
+    Hidden,
     /// Force the column to be as long as it's content.
     /// Use with caution! This can easily break your table, if the column's content is overly long.
     ContentWidth,
