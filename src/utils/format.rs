@@ -40,7 +40,7 @@ pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<
 
 pub fn format_row(
     row: &Row,
-    display_info: &[ColumnDisplayInfo],
+    display_infos: &[ColumnDisplayInfo],
     table: &Table,
 ) -> Vec<Vec<String>> {
     // The content of this specific row
@@ -48,7 +48,11 @@ pub fn format_row(
 
     let mut cell_iter = row.cells.iter();
     // Now iterate over all cells and handle them according to their alignment
-    for info in display_info.iter() {
+    for info in display_infos.iter() {
+        if info.is_hidden() {
+            cell_iter.next();
+            continue;
+        }
         // Each cell is devided into several lines devided by newline
         // Every line that's too long will be split into two/several lines
         let mut cell_lines = Vec::new();
@@ -133,7 +137,10 @@ pub fn format_row(
     for index in 0..max_lines {
         let mut line = Vec::new();
         let mut cell_iter = temp_row_content.iter();
-        for info in display_info.iter() {
+        for info in display_infos.iter() {
+            if info.is_hidden() {
+                continue;
+            }
             let cell = cell_iter.next().unwrap();
             match cell.get(index) {
                 // The current cell has content for this line. Append it
