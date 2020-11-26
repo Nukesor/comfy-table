@@ -1,18 +1,28 @@
 name: Tests
 
+
 on:
   push:
-    branches:
-      - master
+    branches: [master]
+    paths:
+      - '**.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
   pull_request:
+    branches: [master]
+    paths:
+      - '**.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
 
 jobs:
   test:
-    name: Tests for ${{ matrix.os }}
+    name: Tests on ${{ matrix.os }} for ${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
+        toolchain: ["1.42.0", stable, nightly]
 
     steps:
       - name: Checkout code
@@ -22,7 +32,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: ${{ matrix.toolchain }}
           override: true
           components: rustfmt, clippy
 
