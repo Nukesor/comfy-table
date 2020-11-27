@@ -67,11 +67,22 @@ pub fn format_row(
             continue;
         };
 
+        // Determine, which delimiter should be used
+        let delimiter = if let Some(delimiter) = cell.delimiter {
+            delimiter
+        } else if let Some(delimiter) = info.delimiter {
+            delimiter
+        } else if let Some(delimiter) = table.delimiter {
+            delimiter
+        } else {
+            ' '
+        };
+
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if (line.chars().count() as u16) > info.content_width() {
-                let mut splitted = split_line(&line, &info);
+                let mut splitted = split_line(&line, &info, delimiter);
                 cell_lines.append(&mut splitted);
             } else {
                 cell_lines.push(line.into());

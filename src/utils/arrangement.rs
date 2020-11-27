@@ -15,6 +15,7 @@ use crate::utils::borders::{
 #[derive(Debug)]
 pub struct ColumnDisplayInfo {
     pub padding: (u16, u16),
+    pub delimiter: Option<char>,
     /// The max amount of characters over all lines in this column
     max_content_width: u16,
     /// The actual allowed content width after arrangement
@@ -32,6 +33,7 @@ impl ColumnDisplayInfo {
     fn new(column: &Column) -> Self {
         ColumnDisplayInfo {
             padding: column.padding,
+            delimiter: column.delimiter,
             max_content_width: column.max_content_width,
             content_width: 0,
             fixed: false,

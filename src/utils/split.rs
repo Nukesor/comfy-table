@@ -12,10 +12,9 @@ use crate::utils::arrangement::ColumnDisplayInfo;
 /// This is repeated until there're no more "elements".
 ///
 /// Mid-element splits only occurs if a element doesn't fit in a single line by itself.
-pub fn split_line(line: &str, info: &ColumnDisplayInfo) -> Vec<String> {
+pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<String> {
     let mut lines = Vec::new();
     let content_width = info.content_width();
-    let delimiter = ' ';
 
     // Split the line by the given deliminator and turn the content into a stack.
     // Reverse it, since we want to push/pop without reversing the text.
@@ -88,7 +87,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo) -> Vec<String> {
             let mut next: Vec<char> = next.chars().collect();
             // Only add delimiter, if we're not on a fresh line
             if !current_line.is_empty() {
-                current_line += " ";
+                current_line.push(delimiter);
             }
 
             let remaining = next.split_off((remaining_width) as usize);
