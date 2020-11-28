@@ -9,6 +9,9 @@ pub struct Cell {
     /// This is done to handle newlines more easily.
     /// On set_content, the incoming string is split by '\n'
     pub(crate) content: Vec<String>,
+    /// The delimiter which is used to split the text into consistent pieces.
+    /// The default is ` `.
+    pub(crate) delimiter: Option<char>,
     pub(crate) alignment: Option<CellAlignment>,
     pub(crate) fg: Option<Color>,
     pub(crate) bg: Option<Color>,
@@ -24,6 +27,7 @@ impl Cell {
                 .split('\n')
                 .map(|content| content.to_string())
                 .collect(),
+            delimiter: None,
             alignment: None,
             fg: None,
             bg: None,
@@ -34,6 +38,13 @@ impl Cell {
     /// Return a copy of the content contained in this cell.
     pub fn get_content(&self) -> String {
         self.content.join("\n")
+    }
+
+    /// Set the delimiter used to split text for this cell
+    pub fn set_delimiter(mut self, delimiter: char) -> Self {
+        self.delimiter = Some(delimiter);
+
+        self
     }
 
     /// Set the alignment of content for this cell.

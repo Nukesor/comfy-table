@@ -32,6 +32,9 @@ pub struct Column {
     pub index: usize,
     /// Left/right padding for each cell of this column in spaces
     pub(crate) padding: (u16, u16),
+    /// The delimiter which is used to split the text into consistent pieces.
+    /// Default is ` `.
+    pub(crate) delimiter: Option<char>,
     /// Define the cell alligment for all cells of this column
     pub(crate) cell_alignment: Option<CellAlignment>,
     pub(crate) max_content_width: u16,
@@ -43,6 +46,7 @@ impl Column {
         Column {
             index,
             padding: (1, 1),
+            delimiter: None,
             constraint: None,
             max_content_width: 0,
             cell_alignment: None,
@@ -54,6 +58,15 @@ impl Column {
     /// Default is `(1, 1)`.
     pub fn set_padding(&mut self, padding: (u16, u16)) -> &mut Self {
         self.padding = padding;
+
+        self
+    }
+
+    /// Set the delimiter used to split text for this column's cells.
+    /// A custom delimiter on a cell in will overwrite the column's delimiter.
+    /// The default is a simple space ` `.
+    pub fn set_delimiter(&mut self, delimiter: char) -> &mut Self {
+        self.delimiter = Some(delimiter);
 
         self
     }

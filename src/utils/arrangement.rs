@@ -15,6 +15,7 @@ use crate::utils::borders::{
 #[derive(Debug)]
 pub struct ColumnDisplayInfo {
     pub padding: (u16, u16),
+    pub delimiter: Option<char>,
     /// The max amount of characters over all lines in this column
     max_content_width: u16,
     /// The actual allowed content width after arrangement
@@ -32,6 +33,7 @@ impl ColumnDisplayInfo {
     fn new(column: &Column) -> Self {
         ColumnDisplayInfo {
             padding: column.padding,
+            delimiter: column.delimiter,
             max_content_width: column.max_content_width,
             content_width: 0,
             fixed: false,
@@ -93,7 +95,7 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     for column in table.columns.iter() {
         let mut info = ColumnDisplayInfo::new(column);
 
-        if let Some(constraint) = column.constraint.as_ref() {
+        if let Some(constraint) = column.constraint {
             evaluate_constraint(&mut info, constraint, table_width);
         }
 
@@ -119,7 +121,7 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
 /// Look at given constraints of a column and populate the ColumnDisplayInfo depending on those.
 fn evaluate_constraint(
     info: &mut ColumnDisplayInfo,
-    constraint: &ColumnConstraint,
+    constraint: ColumnConstraint,
     table_width: Option<u16>,
 ) {
     match constraint {
@@ -128,23 +130,23 @@ fn evaluate_constraint(
             info.fixed = true;
         }
         Width(width) => {
-            let width = info.without_padding(*width);
+            let width = info.without_padding(width);
             info.set_content_width(width);
             info.fixed = true;
         }
         MinWidth(min_width) => {
             // In case a min_width is specified, we can already fix the size of the column
             // right now (since we already know the max_content_width.
-            if info.max_width() <= *min_width {
-                let width = info.without_padding(*min_width);
+            if info.max_width() <= min_width {
+                let width = info.without_padding(min_width);
                 info.set_content_width(width);
                 info.fixed = true;
             }
         }
-        MaxWidth(max_width) => info.constraint = Some(MaxWidth(*max_width)),
+        MaxWidth(max_width) => info.constraint = Some(MaxWidth(max_width)),
         Percentage(percent) => {
             if let Some(table_width) = table_width {
-                let mut width = (table_width as i32 * *percent as i32 / 100) as u16;
+                let mut width = (table_width as i32 * percent as i32 / 100) as u16;
                 width = info.without_padding(width as u16);
                 info.set_content_width(width);
                 info.fixed = true;
@@ -152,7 +154,7 @@ fn evaluate_constraint(
         }
         MinPercentage(percent) => {
             if let Some(table_width) = table_width {
-                let min_width = (table_width as i32 * *percent as i32 / 100) as u16;
+                let min_width = (table_width as i32 * percent as i32 / 100) as u16;
                 if info.max_width() <= min_width {
                     let width = info.without_padding(min_width);
                     info.set_content_width(width);
@@ -162,7 +164,7 @@ fn evaluate_constraint(
         }
         MaxPercentage(percent) => {
             if let Some(table_width) = table_width {
-                let max_width = (table_width as i32 * *percent as i32 / 100) as u16;
+                let max_width = (table_width as i32 * percent as i32 / 100) as u16;
                 info.constraint = Some(MaxWidth(max_width));
             }
         }

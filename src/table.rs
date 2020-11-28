@@ -23,6 +23,7 @@ pub struct Table {
     pub(crate) header: Option<Row>,
     pub(crate) rows: Vec<Row>,
     pub(crate) arrangement: ContentArrangement,
+    pub(crate) delimiter: Option<char>,
     no_tty: bool,
     table_width: Option<u16>,
     enforce_styling: bool,
@@ -52,6 +53,7 @@ impl Table {
             header: None,
             rows: Vec::new(),
             arrangement: ContentArrangement::Disabled,
+            delimiter: None,
             no_tty: false,
             table_width: None,
             style: HashMap::new(),
@@ -142,6 +144,15 @@ impl Table {
         self
     }
 
+    /// Set the delimiter used to split text in all cells.
+    /// A custom delimiter on a cell in will overwrite the column's delimiter.
+    /// The default is a simple space ` `.
+    pub fn set_delimiter(&mut self, delimiter: char) -> &mut Self {
+        self.delimiter = Some(delimiter);
+
+        self
+    }
+
     /// In case you are sure you don't want export tables to a tty
     /// or you experience problems with tty specific code, you can
     /// enforce a non_tty mode.
@@ -199,6 +210,7 @@ impl Table {
     /// If more Constraints are passed than there are Columns, these Constraints will be ignored
     /// ```
     /// use comfy_table::{Table, ColumnConstraint, ContentArrangement};
+    ///
     /// let mut table = Table::new();
     /// table.add_row(&vec!["one", "two", "three"])
     ///     .set_content_arrangement(ContentArrangement::Dynamic)
@@ -258,13 +270,13 @@ impl Table {
     /// A pure convenience method, so you're not force to fiddle with those preset strings.
     ///
     /// ```
-    ///    use comfy_table::Table;
-    ///    use comfy_table::presets::UTF8_FULL;
+    /// use comfy_table::Table;
+    /// use comfy_table::presets::UTF8_FULL;
     ///
-    ///    let mut table = Table::new();
-    ///    table.load_preset(UTF8_FULL);
+    /// let mut table = Table::new();
+    /// table.load_preset(UTF8_FULL);
     ///
-    ///    assert_eq!(UTF8_FULL, table.current_style_as_preset())
+    /// assert_eq!(UTF8_FULL, table.current_style_as_preset())
     /// ```
     pub fn current_style_as_preset(&mut self) -> String {
         let components = TableComponent::iter();
@@ -321,7 +333,7 @@ impl Table {
     /// For example, if `TopBorderIntersections` is `None` the first row would look like this:
     /// ```text
     /// +------ ------+
-    /// | asdf | ghij |
+    /// | this | test |
     /// ```
     ///
     /// If in addition `TopLeftCorner`,`TopBorder` and `TopRightCorner` would be `None` as well,
