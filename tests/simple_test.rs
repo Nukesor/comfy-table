@@ -54,3 +54,26 @@ fn missing_column_table() {
 +-----------+---------+-----------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
+
+#[test]
+fn single_column_table() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1"])
+        .add_row(&vec!["One One"])
+        .add_row(&vec!["Two One"])
+        .add_row(&vec!["Three One"]);
+
+    println!("{}", table.to_string());
+    let expected = "
++-----------+
+| Header1   |
++===========+
+| One One   |
+|-----------|
+| Two One   |
+|-----------|
+| Three One |
++-----------+";
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
