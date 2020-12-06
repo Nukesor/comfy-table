@@ -149,6 +149,8 @@ where
     }
 }
 
+/// Allow the conversion of a type to a cells.
+/// By default this is implemented for all types implementing ToString.
 pub trait ToCell {
     fn to_cell(self) -> Cell;
 }

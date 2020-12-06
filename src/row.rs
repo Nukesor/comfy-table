@@ -99,6 +99,9 @@ impl Row {
     }
 }
 
+/// Allow the conversion of a type to a row.
+/// By default this is implemented for everything implementing [ToCells].
+/// This means every iterable implementing [ToString].
 pub trait ToRow {
     fn to_row(self) -> Row;
 }

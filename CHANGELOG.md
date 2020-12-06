@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Allow to set custom delimiters on tables, columns and cells.
 
+### Changed
+
+- Expose all important traits. I.e. `ToRow`, `ToCell` and `ToCells`.
+
 ## [1.3.0] - 2020-11-20
 
 ### Added

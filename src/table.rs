@@ -15,7 +15,11 @@ use crate::utils::arrangement::arrange_content;
 use crate::utils::borders::draw_borders;
 use crate::utils::format::format_content;
 
-/// A table containing rows of cells.
+/// This is the main interface for building a table.
+/// Each table consists of [Rows](Row), which in turn contain [Cells](crate::cell::Cell).
+///
+/// There also exists a representation of a [Column].
+/// Columns are automatically created when adding rows to a table.
 #[derive(Debug)]
 pub struct Table {
     pub(crate) columns: Vec<Column>,
@@ -46,7 +50,7 @@ impl Default for Table {
 }
 
 impl Table {
-    /// Create a new table with default ASCII styling, no rows and a header
+    /// Create a new table with default ASCII styling.
     pub fn new() -> Self {
         let mut table = Table {
             columns: Vec::new(),
@@ -66,6 +70,7 @@ impl Table {
     }
 
     /// Set the header row of the table. This is usually the title of each column.
+    /// There'll be no header unless you explicitly set it with this function.
     /// ```
     /// use comfy_table::{Table, Row};
     ///
@@ -160,7 +165,7 @@ impl Table {
     /// This disables:
     ///
     /// - table_width lookup from the current tty
-    /// - Styling and attributes on cells (unless you [Table::enforce_styling])
+    /// - Styling and attributes on cells (unless you use [Table::enforce_styling])
     ///
     /// If you use the [dynamic content arrangement](ContentArrangement::Dynamic),
     /// you need to set the width of your desired table manually with [set_table_width](Table::set_table_width).
@@ -171,7 +176,7 @@ impl Table {
     }
 
     /// Returns whether the table will be handled as if it's printed to a tty.
-    /// This function respects the [Table::force_no_tty] functions.
+    /// This function respects the [Table::force_no_tty] function.
     /// Otherwise we try to determine, if we are on a tty.
     pub fn is_tty(&self) -> bool {
         if self.no_tty {
@@ -236,7 +241,7 @@ impl Table {
     }
 
     /// This function creates a TableStyle from a given preset string.
-    /// Preset strings can be found in styling::presets::*
+    /// Preset strings can be found in `styling::presets::*`.
     ///
     /// Anyway, you can write your own preset strings and use them with this function.
     /// The function expects a characters for components to be in the same order as in the [TableComponent] enum.
