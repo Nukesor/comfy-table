@@ -69,8 +69,9 @@ impl Table {
         table
     }
 
-    /// Set the header row of the table. This is usually the title of each column.
+    /// Set the header row of the table. This is usually the title of each column.\
     /// There'll be no header unless you explicitly set it with this function.
+    ///
     /// ```
     /// use comfy_table::{Table, Row};
     ///
@@ -93,6 +94,7 @@ impl Table {
     }
 
     /// Add a new row to the table.
+    ///
     /// ```
     /// use comfy_table::{Table, Row};
     ///
@@ -109,9 +111,9 @@ impl Table {
 
         self
     }
-    /// Enforce a max width that should be used in combination with [dynamic content arrangement](ContentArrangement::Dynamic).
-    /// This is usually not necessary, if you plan to output your table to a tty, since the
-    /// terminal width can be automatically determined.
+    /// Enforce a max width that should be used in combination with [dynamic content arrangement](ContentArrangement::Dynamic).\
+    /// This is usually not necessary, if you plan to output your table to a tty,
+    /// since the terminal width can be automatically determined.
     pub fn set_table_width(&mut self, table_width: u16) -> &mut Self {
         self.table_width = Some(table_width);
 
@@ -123,7 +125,7 @@ impl Table {
     /// This will be `Some(width)`, if the terminal width can be detected or if the table width is set via [set_table_width](Table::set_table_width).
     ///
     /// If neither is not possible, `None` will be returned.\
-    /// This implies that both [Dynamic](ContentArrangement::Dynamic) and [Percentage](crate::style::ColumnConstraint::Percentage) won't work.
+    /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::ColumnConstraint::Percentage) constraint won't work.
     pub fn get_table_width(&self) -> Option<u16> {
         if let Some(width) = self.table_width {
             Some(width)
@@ -135,7 +137,7 @@ impl Table {
         }
     }
 
-    /// Specify how comfy_table should arrange the content in your table.
+    /// Specify how Comfy Table should arrange the content in your table.
     ///
     /// ```
     /// use comfy_table::{Table, ContentArrangement};
@@ -150,7 +152,8 @@ impl Table {
     }
 
     /// Set the delimiter used to split text in all cells.
-    /// A custom delimiter on a cell in will overwrite the column's delimiter.
+    ///
+    /// A custom delimiter on a cell in will overwrite the column's delimiter.\
     /// The default is a simple space ` `.
     pub fn set_delimiter(&mut self, delimiter: char) -> &mut Self {
         self.delimiter = Some(delimiter);
@@ -158,9 +161,8 @@ impl Table {
         self
     }
 
-    /// In case you are sure you don't want export tables to a tty
-    /// or you experience problems with tty specific code, you can
-    /// enforce a non_tty mode.
+    /// In case you are sure you don't want export tables to a tty or you experience
+    /// problems with tty specific code, you can enforce a non_tty mode.
     ///
     /// This disables:
     ///
@@ -176,7 +178,8 @@ impl Table {
     }
 
     /// Returns whether the table will be handled as if it's printed to a tty.
-    /// This function respects the [Table::force_no_tty] function.
+    ///
+    /// This function respects the [Table::force_no_tty] function.\
     /// Otherwise we try to determine, if we are on a tty.
     pub fn is_tty(&self) -> bool {
         if self.no_tty {
@@ -186,8 +189,10 @@ impl Table {
         ::std::io::stdout().is_tty()
     }
 
-    /// Enforce terminal styling. Only useful if you forcefully disabled tty,
-    /// but still want those fancy terminal styles.
+    /// Enforce terminal styling.
+    ///
+    /// Only useful if you forcefully disabled tty, but still want those fancy terminal styles.
+    ///
     /// ```
     /// use comfy_table::Table;
     ///
@@ -201,8 +206,8 @@ impl Table {
         self
     }
 
-    /// Enforce terminal styling. Only useful if you forcefully disabled tty,
-    /// but still want those fancy terminal styles.
+    /// Returns whether the content of this table should be styled with the current settings and
+    /// environment.
     pub fn should_style(&self) -> bool {
         if self.enforce_styling {
             return true;
@@ -211,8 +216,9 @@ impl Table {
     }
 
     /// Convenience method to set a [ColumnConstraint] for all columns at once.
-    /// Simply pass any iterable with ColumnConstraints.
-    /// If more Constraints are passed than there are Columns, these Constraints will be ignored
+    ///
+    /// Simply pass any iterable with ColumnConstraints.\
+    /// If more constraints are passed than there are columns, the superfluous constraints will be ignored.
     /// ```
     /// use comfy_table::{Table, ColumnConstraint, ContentArrangement};
     ///
@@ -240,11 +246,13 @@ impl Table {
         self
     }
 
-    /// This function creates a TableStyle from a given preset string.
+    /// This function creates a TableStyle from a given preset string.\
     /// Preset strings can be found in `styling::presets::*`.
     ///
-    /// Anyway, you can write your own preset strings and use them with this function.
-    /// The function expects a characters for components to be in the same order as in the [TableComponent] enum.
+    /// You can also write your own preset strings and use them with this function.
+    /// There's the convenience method [Table::current_style_as_preset], which prints you a preset
+    /// string from your current style configuration. \
+    /// The function expects the to-be-drawn characters to be in the same order as in the [TableComponent] enum.
     ///
     /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all remaining components.
     ///
@@ -272,7 +280,8 @@ impl Table {
     }
 
     /// Returns the current style as a preset string.
-    /// A pure convenience method, so you're not force to fiddle with those preset strings.
+    ///
+    /// A pure convenience method, so you're not force to fiddle with those preset strings yourself.
     ///
     /// ```
     /// use comfy_table::Table;
@@ -298,7 +307,9 @@ impl Table {
     }
 
     /// Modify a preset with a modifier string from [modifiers](crate::style::modifiers).
+    ///
     /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
+    ///
     /// ```
     /// use comfy_table::Table;
     /// use comfy_table::presets::UTF8_FULL;
@@ -328,14 +339,15 @@ impl Table {
         self
     }
 
-    /// Define the char that will be used to draw a specific component
+    /// Define the char that will be used to draw a specific component.\
     /// Look at [TableComponent] to see all stylable components
     ///
-    /// If `None` is supplied, the element won't be displayed.
+    /// If `None` is supplied, the element won't be displayed.\
     /// In case of a e.g. *BorderIntersection a whitespace will be used as placeholder,
     /// unless related borders and and corners are set to `None` as well.
     ///
     /// For example, if `TopBorderIntersections` is `None` the first row would look like this:
+    ///
     /// ```text
     /// +------ ------+
     /// | this | test |
@@ -365,7 +377,7 @@ impl Table {
         self
     }
 
-    /// Get a copy of the char that's currently used for drawing this component
+    /// Get a copy of the char that's currently used for drawing this component.
     /// ```
     /// use comfy_table::Table;
     /// use comfy_table::TableComponent::*;
@@ -390,12 +402,12 @@ impl Table {
         self
     }
 
-    /// Reference to a specific column
+    /// Get a reference to a specific column.
     pub fn get_column(&self, index: usize) -> Option<&Column> {
         self.columns.get(index)
     }
 
-    /// Mutable reference to a specific column
+    /// Get a mutable reference to a specific column.
     pub fn get_column_mut(&mut self, index: usize) -> Option<&mut Column> {
         self.columns.get_mut(index)
     }
@@ -405,7 +417,8 @@ impl Table {
         self.columns.iter()
     }
 
-    /// Mutable iterator over all columns
+    /// Get a mutable iterator over all columns.
+    ///
     /// ```
     /// use comfy_table::{Table, ColumnConstraint};
     /// let mut table = Table::new();
@@ -446,7 +459,8 @@ impl Table {
         self.rows.iter()
     }
 
-    /// Mutable iterator over all rows
+    /// Get a mutable iterator over all rows.
+    ///
     /// ```
     /// use comfy_table::Table;
     /// let mut table = Table::new();
@@ -483,7 +497,7 @@ impl Table {
         self.style.get(&component).is_some()
     }
 
-    /// Autogenerate new columns, if a row is added with more cells than existing columns
+    /// Autogenerate new columns, if a row is added with more cells than existing columns.
     fn autogenerate_columns(&mut self, row: &Row) {
         if row.cell_count() > self.columns.len() {
             for index in self.columns.len()..row.cell_count() {
