@@ -1,4 +1,4 @@
-/// This module provides styling presets for tables.
+/// This module provides styling presets for tables.\
 /// Every preset has an example preview.
 pub mod presets;
 

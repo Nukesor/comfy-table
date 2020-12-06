@@ -1,4 +1,5 @@
-/// Constraints can be added to [columns](crate::Column).\
+/// Constraints can be added to [columns](crate::Column).
+///
 /// They allow some control over the dynamic content arrangement process.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum ColumnConstraint {

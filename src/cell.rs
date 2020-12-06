@@ -5,11 +5,11 @@ use crate::style::CellAlignment;
 /// A stylable table cell with content.
 #[derive(Clone, Debug)]
 pub struct Cell {
-    /// The content is a list of strings. \
-    /// This is done to make working with newlines more easily. \
+    /// The content is a list of strings.\
+    /// This is done to make working with newlines more easily.\
     /// When creating a new [Cell], the given content is split by newline.
     pub(crate) content: Vec<String>,
-    /// The delimiter which is used to split the text into consistent pieces. \
+    /// The delimiter which is used to split the text into consistent pieces.\
     /// The default is ` `.
     pub(crate) delimiter: Option<char>,
     pub(crate) alignment: Option<CellAlignment>,
@@ -98,7 +98,7 @@ impl Cell {
         self
     }
 
-    /// Add a styling attribute to the content cell. \
+    /// Add a styling attribute to the content cell.\
     /// Those can be **bold**, _italic_, blinking and many more.
     ///
     /// comfy-table uses [Crossterm Attributes](crossterm::style::Attribute).
@@ -139,7 +139,7 @@ impl<T: ToString> From<T> for Cell {
 /// Allow the conversion of a type to a vector of cells.
 ///
 /// By default this is implemented for all types implementing
-/// [IntoIterator] where the iterated Item type implements [ToString]. \
+/// [IntoIterator] where the iterated Item type implements [ToString].\
 /// E.g. a `Vec<i32>` works.
 pub trait ToCells {
     fn to_cells(self) -> Vec<Cell>;

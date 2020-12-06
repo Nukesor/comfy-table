@@ -10,13 +10,13 @@ use strum_macros::EnumIter;
 /// ```
 #[derive(Clone, Debug)]
 pub enum ContentArrangement {
-    /// Don't do any content arrangement. \
-    /// Tables with this mode might become wider than your output and look ugly. \
+    /// Don't do any content arrangement.\
+    /// Tables with this mode might become wider than your output and look ugly.\
     /// Constraints on columns are still respected.
     Disabled,
-    /// Dynamically determine the width of columns in regard to terminal width and content length. \
+    /// Dynamically determine the width of columns in regard to terminal width and content length.\
     /// With this mode, the content in cells will wrap dynamically to get the  the best column layout
-    /// for the given content. \
+    /// for the given content.\
     /// Constraints on columns are still respected.
     ///
     /// **Warning:** If terminal width cannot be determined and no table_width is set via [Table::set_table_width](crate::table::Table::set_table_width),

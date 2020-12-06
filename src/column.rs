@@ -7,7 +7,7 @@ use crate::style::{CellAlignment, ColumnConstraint};
 /// 2. Constraints on how wide this column shall be
 /// 3. Default alignment for cells in this column
 ///
-/// Columns are generated when adding rows or a header to a table. \
+/// Columns are generated when adding rows or a header to a table.\
 /// As a result columns can only be modified after the table is populated by some data.
 ///
 /// ```
@@ -74,7 +74,7 @@ impl Column {
         self
     }
 
-    /// Get the width in characters of the widest line in this column. \
+    /// Get the width in characters of the widest line in this column.\
     /// This doesn't include padding yet!
     pub fn get_max_content_width(&self) -> u16 {
         self.max_content_width
@@ -86,7 +86,7 @@ impl Column {
         self.max_content_width + self.padding.0 + self.padding.1
     }
 
-    /// Constraints allow to influence the auto-adjustment behavior of columns. \
+    /// Constraints allow to influence the auto-adjustment behavior of columns.\
     /// This can be useful to counter undesired auto-adjustment of content in tables.
     pub fn set_constraint(&mut self, constraint: ColumnConstraint) -> &mut Self {
         self.constraint = Some(constraint);
@@ -106,7 +106,7 @@ impl Column {
         self
     }
 
-    /// Set the alignment for content inside of cells for this column. \
+    /// Set the alignment for content inside of cells for this column.\
     /// **Note:** Alignment on a cell will always overwrite the column's setting.
     pub fn set_cell_alignment(&mut self, alignment: CellAlignment) {
         self.cell_alignment = Some(alignment);

@@ -462,7 +462,7 @@ impl Table {
         self.rows.iter_mut()
     }
 
-    /// Return a vector representing the maximum amount of characters in any line of this column. \
+    /// Return a vector representing the maximum amount of characters in any line of this column.\
     /// This is mostly needed for internal testing and formatting, but can be interesting
     /// if you want to see the widths of the longest lines for each column.
     pub fn column_max_content_widths(&self) -> Vec<u16> {

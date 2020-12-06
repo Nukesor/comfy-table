@@ -4,8 +4,8 @@ use crate::utils::arrangement::ColumnDisplayInfo;
 
 /// Split a line if it's longer than the allowed columns (width - padding).
 ///
-/// This function tries to do this in a smart way, by splitting the content with
-/// a given delimiter at the very beginning. (For now this is a whitespace ' ')
+/// This function tries to do this in a smart way, by splitting the content
+/// with a given delimiter at the very beginning.
 /// These "elements" then get added one-by-one to the lines, until a line is full.
 /// As soon as the line is full, we add it to the result set and start a new line.
 ///
@@ -124,7 +124,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
 const MIN_FREE_CHARS: i32 = 2;
 
 /// Check if the current line is too long and whether we should start a new one
-/// If it's too long, we add the current line to the list of lines and return a new String.
+/// If it's too long, we add the current line to the list of lines and return a new [String].
 /// Otherwise, we simply return the current line and basically don't do anything.
 fn check_if_full(lines: &mut Vec<String>, content_width: u16, current_line: String) -> String {
     // Already complete the current line, if there isn't space for more than two chars

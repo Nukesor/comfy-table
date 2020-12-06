@@ -22,7 +22,7 @@ use crate::utils::split::split_line;
 ///      tc[1][2][0]      tc[1][2][1]
 /// ```
 ///
-/// The strings for each row will be padded and aligned accordingly to their respective column.
+/// The strings for each row will be padded and aligned according to their respective column.
 pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<Vec<Vec<String>>> {
     // The content of the whole table
     let mut table_content = Vec::new();
