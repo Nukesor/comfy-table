@@ -5,11 +5,11 @@ use crate::style::CellAlignment;
 /// A stylable table cell with content.
 #[derive(Clone, Debug)]
 pub struct Cell {
-    /// Content is a list of strings.
-    /// This is done to handle newlines more easily.
-    /// On set_content, the incoming string is split by '\n'
+    /// The content is a list of strings. \
+    /// This is done to make working with newlines more easily. \
+    /// When creating a new [Cell], the given content is split by newline.
     pub(crate) content: Vec<String>,
-    /// The delimiter which is used to split the text into consistent pieces.
+    /// The delimiter which is used to split the text into consistent pieces. \
     /// The default is ` `.
     pub(crate) delimiter: Option<char>,
     pub(crate) alignment: Option<CellAlignment>,
@@ -49,7 +49,8 @@ impl Cell {
 
     /// Set the alignment of content for this cell.
     ///
-    /// Setting this overwrites alignment settings of the Column for this specific Cell.
+    /// Setting this overwrites alignment settings of the
+    /// [Column](crate::column::Column::set_cell_alignment) for this specific cell.
     /// ```
     /// use comfy_table::CellAlignment;
     /// use comfy_table::Cell;
@@ -64,6 +65,7 @@ impl Cell {
     }
 
     /// Set the foreground text color for this cell.
+    ///
     /// comfy-table uses [Crossterm Colors](crossterm::style::Color).
     /// Look at their documentation for all possible Colors.
     /// ```
@@ -80,6 +82,7 @@ impl Cell {
     }
 
     /// Set the background color for this cell.
+    ///
     /// comfy-table uses [Crossterm Colors](crossterm::style::Color).
     /// Look at their documentation for all possible Colors.
     /// ```
@@ -95,10 +98,11 @@ impl Cell {
         self
     }
 
-    /// Add a styling attribute to the content cell
+    /// Add a styling attribute to the content cell. \
     /// Those can be **bold**, _italic_, blinking and many more.
+    ///
     /// comfy-table uses [Crossterm Attributes](crossterm::style::Attribute).
-    /// Look at their documentation for all possible Attributes.
+    /// Look at their documentation for all possible [Attributes](Attribute).
     /// ```
     /// use comfy_table::Attribute;
     /// use comfy_table::Cell;
@@ -112,7 +116,7 @@ impl Cell {
         self
     }
 
-    /// Same as add_attribute, but you can pass a Vector of Attributes
+    /// Same as add_attribute, but you can pass a vector of [Attributes](Attribute)
     pub fn add_attributes(mut self, mut attribute: Vec<Attribute>) -> Self {
         self.attributes.append(&mut attribute);
 
@@ -121,7 +125,7 @@ impl Cell {
 }
 
 impl<T: ToString> From<T> for Cell {
-    /// Convert to a new `Cell`.
+    /// Convert to a new [Cell].
     ///
     /// ```
     /// # use comfy_table::Cell;
@@ -133,9 +137,10 @@ impl<T: ToString> From<T> for Cell {
 }
 
 /// Allow the conversion of a type to a vector of cells.
+///
 /// By default this is implemented for all types implementing
-/// IntoIterator where the iterated Item type implements ToString.
-/// E.g. a Vec<i32> works
+/// [IntoIterator] where the iterated Item type implements [ToString]. \
+/// E.g. a `Vec<i32>` works.
 pub trait ToCells {
     fn to_cells(self) -> Vec<Cell>;
 }
@@ -149,8 +154,9 @@ where
     }
 }
 
-/// Allow the conversion of a type to a cells.
-/// By default this is implemented for all types implementing ToString.
+/// Allow the conversion of a type to a [Cell].
+///
+/// By default this is implemented for all types implementing [ToString].
 pub trait ToCell {
     fn to_cell(self) -> Cell;
 }

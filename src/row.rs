@@ -27,6 +27,7 @@ impl Row {
     }
 
     /// Create a Row from any `Iter<T: ToCell>`
+    ///
     /// ```rust
     /// use comfy_table::{Row, Cell};
     ///
@@ -36,6 +37,7 @@ impl Row {
     ///    Cell::new("Two"),
     ///    Cell::new("Three"),
     /// ]);
+    /// let row = Row::from(vec![1, 2, 3, 4]);
     /// ```
     pub fn from<T: ToCells>(cells: T) -> Row {
         Row {
@@ -45,7 +47,8 @@ impl Row {
         }
     }
 
-    /// Add a cell to the row
+    /// Add a cell to the row.
+    ///
     /// ```rust
     /// use comfy_table::{Row, Cell};
     ///
@@ -59,6 +62,7 @@ impl Row {
     }
 
     /// Truncate content of cells which occupies more than X lines of space.
+    ///
     /// ```
     /// use comfy_table::{Row, Cell};
     ///
