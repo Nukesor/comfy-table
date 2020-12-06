@@ -33,14 +33,14 @@ fn main() {
     table
         .set_header(vec!["Header1", "Header2", "Header3"])
         .add_row(vec![
-            "This is a text",
-            "This is another text",
-            "This is the third text",
+                 "This is a text",
+                 "This is another text",
+                 "This is the third text",
         ])
         .add_row(vec![
-            "This is another text",
-            "Now\nadd some\nmulti line stuff",
-            "This is awesome",
+                 "This is another text",
+                 "Now\nadd some\nmulti line stuff",
+                 "This is awesome",
         ]);
 
     println!("{}", table);
@@ -78,14 +78,14 @@ fn main() {
         .set_table_width(40)
         .set_header(vec!["Header1", "Header2", "Header3"])
         .add_row(vec![
-            Cell::new("Center aligned").set_alignment(CellAlignment::Center),
-            Cell::new("This is another text"),
-            Cell::new("This is the third text"),
+                 Cell::new("Center aligned").set_alignment(CellAlignment::Center),
+                 Cell::new("This is another text"),
+                 Cell::new("This is the third text"),
         ])
         .add_row(vec![
-            "This is another text",
-            "Now\nadd some\nmulti line stuff",
-            "This is awesome",
+                 "This is another text",
+                 "Now\nadd some\nmulti line stuff",
+                 "This is awesome",
         ]);
 
     // Set the default alignment for the third column to right
@@ -129,25 +129,25 @@ fn main() {
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(80)
         .set_header(vec![
-            Cell::new("Header1").add_attribute(Attribute::Bold),
-            Cell::new("Header2").fg(Color::Green),
-            Cell::new("Header3"),
+                    Cell::new("Header1").add_attribute(Attribute::Bold),
+                    Cell::new("Header2").fg(Color::Green),
+                    Cell::new("Header3"),
         ])
         .add_row(vec![
-            Cell::new("This is a bold text").add_attribute(Attribute::Bold),
-            Cell::new("This is a green text").fg(Color::Green),
-            Cell::new("This one has black background").bg(Color::Black),
+                 Cell::new("This is a bold text").add_attribute(Attribute::Bold),
+                 Cell::new("This is a green text").fg(Color::Green),
+                 Cell::new("This one has black background").bg(Color::Black),
         ])
         .add_row(vec![
-            Cell::new("Blinky boi").add_attribute(Attribute::SlowBlink),
-            Cell::new("This table's content is dynamically arranged. The table is exactly 80 characters wide.\nHere comes a reallylongwordthatshoulddynamicallywrap"),
-            Cell::new("COMBINE ALL THE THINGS")
-            .fg(Color::Green)
-            .bg(Color::Black)
-            .add_attributes(vec![
-                Attribute::Bold,
-                Attribute::SlowBlink,
-            ])
+                 Cell::new("Blinky boi").add_attribute(Attribute::SlowBlink),
+                 Cell::new("This table's content is dynamically arranged. The table is exactly 80 characters wide.\nHere comes a reallylongwordthatshoulddynamicallywrap"),
+                 Cell::new("COMBINE ALL THE THINGS")
+                 .fg(Color::Green)
+                 .bg(Color::Black)
+                 .add_attributes(vec![
+                                 Attribute::Bold,
+                                 Attribute::SlowBlink,
+                 ])
         ]);
 
     println!("{}", table);
