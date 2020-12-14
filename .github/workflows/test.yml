@@ -4,16 +4,8 @@ name: Tests
 on:
   push:
     branches: [master]
-    paths:
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
   pull_request:
     branches: [master]
-    paths:
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
 
 jobs:
   test:
