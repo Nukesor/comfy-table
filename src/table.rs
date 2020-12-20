@@ -69,6 +69,20 @@ impl Table {
         table
     }
 
+    /// This is an alternative `fmt` function, which simply removes any trailing whitespaces.
+    /// Trailing whitespaces often occur, when using tables without a right border.
+    pub fn trim_fmt(&self) -> String {
+        let display_info = arrange_content(self);
+        let content = format_content(&self, &display_info);
+        let mut lines = draw_borders(&self, content, &display_info);
+        lines = lines
+            .iter()
+            .map(|line| line.trim_end().to_string())
+            .collect();
+
+        lines.join("\n")
+    }
+
     /// Set the header row of the table. This is usually the title of each column.\
     /// There'll be no header unless you explicitly set it with this function.
     ///
