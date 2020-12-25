@@ -51,9 +51,11 @@ jobs:
         with:
           command: fmt
           args: --all -- --check
+        if: matrix.toolchain == 'stable'
 
       - name: cargo clippy
         uses: actions-rs/cargo@v1
         with:
           command: clippy
           args: -- -D warnings
+        if: matrix.toolchain == 'stable'
