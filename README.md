@@ -23,6 +23,9 @@ Features:
 - Constraints on columns that allow some additional control over how to arrange content.
 - Cross plattform (Linux, macOS, Windows).
 
+Comfy-table is written for the current `stable` Rust version.
+Older Rust versions may work, but aren't officially supported.
+
 ## Examples
 
 ```rust
