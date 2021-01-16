@@ -107,3 +107,12 @@ pub const UTF8_BORDERS_ONLY: &str = "││──╞══╡     ──┌┐�
 /// ───────────────
 /// ```
 pub const UTF8_HORIZONTAL_BORDERS_ONLY: &str = "  ── ══  ──  ──    ";
+
+/// Don't draw any borders
+///
+/// ```text
+///  Hello  there
+///  a      b
+///  c      d
+/// ```
+pub const NOTHING: &str = "                   ";

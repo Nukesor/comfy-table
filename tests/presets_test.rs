@@ -133,3 +133,15 @@ fn utf8_horizontal_borders_only() {
     println!("{}", table.to_string());
     assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
 }
+
+#[test]
+fn nothing() {
+    let mut table = get_preset_table();
+    table.load_preset(NOTHING);
+    let expected = "
+ Header1  Header2  Header3
+ One One  One Two  One Three
+ One One  One Two  One Three";
+    println!("{}", table.to_string());
+    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+}
