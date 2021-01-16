@@ -27,6 +27,8 @@ pub struct ColumnDisplayInfo {
     pub constraint: Option<ColumnConstraint>,
     /// The content alignment of cells in this column
     pub cell_alignment: Option<CellAlignment>,
+    /// The content alignment of cells in this column
+    pub needs_splitting: bool,
 }
 
 impl ColumnDisplayInfo {
@@ -39,6 +41,7 @@ impl ColumnDisplayInfo {
             fixed: false,
             constraint: None::<ColumnConstraint>,
             cell_alignment: column.cell_alignment,
+            needs_splitting: false,
         }
     }
     fn padding_width(&self) -> u16 {
@@ -238,6 +241,71 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     }
 
     // Step 2-4. Find all columns that require less space than the average
+    let mut remaining_width =
+        find_columns_less_than_average(remaining_width, column_count, infos, &mut checked);
+
+    let remaining_columns = column_count - checked.len();
+    // The content doesn't need to be split and fits into the current table width
+    if remaining_columns == 0 {
+        return;
+    }
+
+    // Step 5. Equally distribute the remaining_width to all remaining columns
+    // If we have less than one space per remaining column, give at least one space per column
+    if remaining_width < remaining_columns as i32 {
+        remaining_width = remaining_columns as i32;
+    }
+
+    // Convert back to u16. We don't need the negative value handling any longer.
+    let remaining_width = remaining_width as u16;
+
+    let average_space = remaining_width / remaining_columns as u16;
+    // Since we do integer division, there is most likely a little bit of lost space.
+    // Calculate and try to distribute it as fair as possible (from left to right).
+    let mut excess = remaining_width - (average_space * remaining_columns as u16);
+
+    for (id, info) in infos.iter_mut().enumerate() {
+        // Ignore hidden columns
+        if info.is_hidden() {
+            continue;
+        }
+
+        // We already checked this column, skip it
+        if checked.contains(&id) {
+            continue;
+        }
+
+        // Distribute the excess until nothing is left
+        let mut width = if excess > 0 {
+            excess -= 1;
+            average_space + 1
+        } else {
+            average_space
+        };
+
+        width = info.without_padding(width);
+
+        info.set_content_width(width);
+        info.fixed = true;
+    }
+}
+
+/// This function is part of the column width calculation process.
+///
+/// Parameters
+/// 1. `remaining_width`: This is the amount of space that isn't yet reserved by any other column.
+///                         We need this to determine the average space each column got column.
+///                         Any column that needs less than this space can get it's width fixed and
+///                         we can use the remaining space for the other columns.
+/// 2. `column_count`: The total amount of columns. Used to calculate the average space.
+/// 3. `infos`: The ColumnDisplayInfos used anywhere else
+/// 4. `checked`: These are all columns which have a fixed width and are no longer need checking.
+fn find_columns_less_than_average(
+    mut remaining_width: i32,
+    column_count: usize,
+    infos: &mut [ColumnDisplayInfo],
+    checked: &mut Vec<usize>,
+) -> i32 {
     let mut found_smaller = true;
     while found_smaller {
         found_smaller = false;
@@ -294,50 +362,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         }
     }
 
-    // Step 5. Equally distribute the remaining_width to all remaining columns
-    let remaining_columns = column_count - checked.len();
-    // We already managed to fix all.
-    if remaining_columns == 0 {
-        return;
-    }
-
-    // If we have less than one space per remaining column, give at least
-    // one space per column
-    if remaining_width < remaining_columns as i32 {
-        remaining_width = remaining_columns as i32;
-    }
-    // Convert back to u16. We don't need the negative value handling any longer.
-    let remaining_width = remaining_width as u16;
-
-    let average_space = remaining_width / remaining_columns as u16;
-    // Since we do integer division, there is most likely a little bit of lost space.
-    // Calculate and try to distribute it as fair as possible (from left to right).
-    let mut excess = remaining_width - (average_space * remaining_columns as u16);
-
-    for (id, info) in infos.iter_mut().enumerate() {
-        // Ignore hidden columns
-        if info.is_hidden() {
-            continue;
-        }
-
-        // We already checked this column, skip it
-        if checked.contains(&id) {
-            continue;
-        }
-
-        // Distribute the excess until nothing is left
-        let mut width = if excess > 0 {
-            excess -= 1;
-            average_space + 1
-        } else {
-            average_space
-        };
-
-        width = info.without_padding(width);
-
-        info.set_content_width(width);
-        info.fixed = true;
-    }
+    remaining_width
 }
 
 fn count_visible_columns(infos: &[ColumnDisplayInfo]) -> usize {
