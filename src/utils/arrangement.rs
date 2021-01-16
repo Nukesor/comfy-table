@@ -1,94 +1,11 @@
-use crate::column::Column;
-use crate::style::ColumnConstraint::*;
-use crate::style::{CellAlignment, ColumnConstraint, ContentArrangement};
-use crate::table::Table;
-use crate::utils::borders::{
+use super::borders::{
     should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
 };
+use super::column_display_info::ColumnDisplayInfo;
 
-/// This struct is ONLY used when table.to_string() is called.
-/// It's purpose is to store intermediate results, information on how to
-/// arrange the table and other convenience variables.
-///
-/// The idea is to have a place for all this intermediate stuff, whithout
-/// actually touching the Column struct.
-#[derive(Debug)]
-pub struct ColumnDisplayInfo {
-    pub padding: (u16, u16),
-    pub delimiter: Option<char>,
-    /// The max amount of characters over all lines in this column
-    max_content_width: u16,
-    /// The actual allowed content width after arrangement
-    content_width: u16,
-    /// Flag that determines, if the content_width for this column
-    /// has already been freezed.
-    fixed: bool,
-    /// A constraint that should be considered during dynamic arrangement
-    pub constraint: Option<ColumnConstraint>,
-    /// The content alignment of cells in this column
-    pub cell_alignment: Option<CellAlignment>,
-    /// The content alignment of cells in this column
-    pub needs_splitting: bool,
-}
-
-impl ColumnDisplayInfo {
-    fn new(column: &Column) -> Self {
-        ColumnDisplayInfo {
-            padding: column.padding,
-            delimiter: column.delimiter,
-            max_content_width: column.max_content_width,
-            content_width: 0,
-            fixed: false,
-            constraint: None::<ColumnConstraint>,
-            cell_alignment: column.cell_alignment,
-            needs_splitting: false,
-        }
-    }
-    fn padding_width(&self) -> u16 {
-        self.padding.0 + self.padding.1
-    }
-
-    pub fn content_width(&self) -> u16 {
-        self.content_width
-    }
-
-    fn set_content_width(&mut self, width: u16) {
-        // Don't allow content widths of 0.
-        if width == 0 {
-            self.content_width = 1;
-
-            return;
-        }
-        self.content_width = width;
-    }
-
-    fn max_width(&self) -> u16 {
-        self.max_content_width + self.padding.0 + self.padding.1
-    }
-
-    pub fn width(&self) -> u16 {
-        self.content_width + self.padding.0 + self.padding.1
-    }
-
-    pub fn is_hidden(&self) -> bool {
-        if let Some(constraint) = self.constraint {
-            return constraint == ColumnConstraint::Hidden;
-        }
-
-        false
-    }
-
-    /// Return the remaining value after subtracting the padding width.
-    fn without_padding(&self, width: u16) -> u16 {
-        let padding = self.padding_width();
-        // Default minimum content width has to be 1
-        if padding >= width {
-            return 1;
-        }
-
-        width - padding
-    }
-}
+use crate::style::ColumnConstraint::*;
+use crate::style::{ColumnConstraint, ContentArrangement};
+use crate::table::Table;
 
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.

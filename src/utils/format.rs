@@ -1,11 +1,11 @@
 use crossterm::style::style;
 
+use super::column_display_info::ColumnDisplayInfo;
+use super::split::split_line;
 use crate::cell::Cell;
 use crate::row::Row;
 use crate::style::CellAlignment;
 use crate::table::Table;
-use crate::utils::arrangement::ColumnDisplayInfo;
-use crate::utils::split::split_line;
 
 /// Returns the formatted content of the table.
 /// The content is organized in the following structure
