@@ -7,6 +7,7 @@ use crossterm::terminal::size;
 use crossterm::tty::IsTty;
 use strum::IntoEnumIterator;
 
+use crate::cell::Cell;
 use crate::column::Column;
 use crate::row::{Row, ToRow};
 use crate::style::presets::ASCII_FULL;
@@ -458,6 +459,32 @@ impl Table {
         self.columns.iter_mut()
     }
 
+    /// Get a mutable iterator over cells of a column.
+    /// The iterator returns a nested Option<Option<Cell>>, since there might be
+    /// rows that are missing this specific Cell.
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    /// let mut table = Table::new();
+    /// table.add_row(&vec!["First", "Second"]);
+    /// table.add_row(&vec!["Third"]);
+    /// table.add_row(&vec!["Fourth", "Fifth"]);
+    ///
+    /// // Create an iterator over the second column
+    /// let mut cell_iter = table.column_cells_iter(1);
+    /// assert_eq!(cell_iter.next().unwrap().unwrap().get_content(), "Second");
+    /// assert!(cell_iter.next().unwrap().is_none());
+    /// assert_eq!(cell_iter.next().unwrap().unwrap().get_content(), "Fifth");
+    /// assert!(cell_iter.next().is_none());
+    /// ```
+    pub fn column_cells_iter(&mut self, column_index: usize) -> ColumnCellIter {
+        ColumnCellIter {
+            rows: &self.rows,
+            column_index,
+            row_index: 0,
+        }
+    }
+
     /// Reference to a specific row
     pub fn get_row(&self, index: usize) -> Option<&Row> {
         self.rows.get(index)
@@ -530,6 +557,34 @@ impl Table {
                 column.max_content_width = *width as u16;
             }
         }
+    }
+}
+
+/// This is an iterator over all cells of a specific column.
+/// A dedicated struct is necessary, since data is usually handled by rows and thereby stored in
+/// `Table::rows`. That's why this iterator also has to be implemented on the Table struct.
+pub struct ColumnCellIter<'a> {
+    rows: &'a [Row],
+    column_index: usize,
+    row_index: usize,
+}
+
+impl<'a> Iterator for ColumnCellIter<'a> {
+    type Item = Option<&'a Cell>;
+    fn next(&mut self) -> Option<Option<&'a Cell>> {
+        // Check if there's a next row
+        if let Some(row) = self.rows.get(self.row_index) {
+            self.row_index += 1;
+
+            // Check if the row has the requested column.
+            if let Some(cell) = row.cells.get(self.column_index) {
+                return Some(Some(cell));
+            }
+
+            return Some(None);
+        }
+
+        None
     }
 }
 
