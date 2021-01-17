@@ -187,17 +187,17 @@ fn percentage() {
 
     println!("{}", table.to_string());
     let expected = "
-+--------+---------------+-------------+
-| smol   | Header2       | Header3     |
++--------+--------------+--------------+
+| smol   | Header2      | Header3      |
 +======================================+
-| smol   | This is       | This is the |
-|        | another text  | third text  |
-|--------+---------------+-------------|
-| smol   | Now           | This is     |
-|        | add some      | awesome     |
-|        | multi line    |             |
-|        | stuff         |             |
-+--------+---------------+-------------+";
+| smol   | This is      | This is the  |
+|        | another text | third text   |
+|--------+--------------+--------------|
+| smol   | Now          | This is      |
+|        | add some     | awesome      |
+|        | multi line   |              |
+|        | stuff        |              |
++--------+--------------+--------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 
     table.set_table_width(40).set_constraints(vec![

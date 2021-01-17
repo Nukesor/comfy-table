@@ -188,7 +188,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     // Only check if we can save some space if there's space worth saving.
     if remaining_width > (2 * remaining_columns as i32) {
         // Step 5
-        remaining_width = check_remaining_space_after_split(
+        remaining_width = distribute_remaining_space_after_split(
             remaining_width,
             remaining_columns,
             infos,
@@ -323,7 +323,7 @@ fn find_columns_less_than_average(
     remaining_width
 }
 
-fn check_remaining_space_after_split(
+fn distribute_remaining_space_after_split(
     mut remaining_width: i32,
     mut remaining_columns: usize,
     infos: &mut [ColumnDisplayInfo],
@@ -342,57 +342,15 @@ fn check_remaining_space_after_split(
             continue;
         }
 
-        // Calculate the average space for each column.
+        // Calculate the average space that remains for each column.
         let average_space = remaining_width / remaining_columns as i32;
 
-        let mut column_lines = Vec::new();
-        // A lot of this logic is duplicated from the [utils::format::format_row] function.
-        for cell in table.column_cells_iter(id) {
-            // Only look at rows that actually contain this cell.
-            let cell = if let Some(cell) = cell {
-                cell
-            } else {
-                continue;
-            };
+        let longest_line = get_longest_line_for_content_width(average_space, id, info, table);
 
-            // Determine, which delimiter should be used
-            let delimiter = if let Some(delimiter) = cell.delimiter {
-                delimiter
-            } else if let Some(delimiter) = info.delimiter {
-                delimiter
-            } else if let Some(delimiter) = table.delimiter {
-                delimiter
-            } else {
-                ' '
-            };
-
-            // Temporarily set the content_width of the column to the remaining average space.
-            // That way we can simulate how the splitted text will look like.
-            info.set_content_width(average_space as u16);
-
-            // Iterate over each line and split it into multiple lines, if necessary.
-            // Newlines added by the user will be preserved.
-            for line in cell.content.iter() {
-                if (line.chars().count() as u16) > info.content_width() {
-                    let mut splitted = super::split::split_line(&line, &info, delimiter);
-                    column_lines.append(&mut splitted);
-                } else {
-                    column_lines.push(line.into());
-                }
-            }
-        }
-
-        // Check how long the longest line is after the content splitting
-        let mut longest_line = 0;
-        for line in column_lines {
-            if line.len() > longest_line {
-                longest_line = line.len();
-            }
-        }
-
-        // There's some space left after splitting the content.
-        // Save the calculated space and add the gained space to the remaining_width.
-        if longest_line < average_space as usize {
+        // If there's a considerable amount space left after splitting the content,
+        // save the calculated space and add the gained space to the remaining_width.
+        let remaining_space = average_space - longest_line as i32;
+        if remaining_space >= 3 {
             distribution.insert(id, longest_line);
             checked.push(id);
             info.set_content_width(longest_line as u16);
@@ -403,6 +361,60 @@ fn check_remaining_space_after_split(
     }
 
     remaining_width
+}
+
+fn get_longest_line_for_content_width(
+    average_space: i32,
+    id: usize,
+    info: &mut ColumnDisplayInfo,
+    table: &Table,
+) -> usize {
+    let mut column_lines = Vec::new();
+    // A lot of this logic is duplicated from the [utils::format::format_row] function.
+    for cell in table.column_cells_iter(id) {
+        // Only look at rows that actually contain this cell.
+        let cell = if let Some(cell) = cell {
+            cell
+        } else {
+            continue;
+        };
+
+        // Determine, which delimiter should be used
+        let delimiter = if let Some(delimiter) = cell.delimiter {
+            delimiter
+        } else if let Some(delimiter) = info.delimiter {
+            delimiter
+        } else if let Some(delimiter) = table.delimiter {
+            delimiter
+        } else {
+            ' '
+        };
+
+        // Temporarily set the content_width of the column to the remaining average space.
+        // That way we can simulate how the splitted text will look like.
+        info.set_content_width(average_space as u16);
+
+        // Iterate over each line and split it into multiple lines, if necessary.
+        // Newlines added by the user will be preserved.
+        for line in cell.content.iter() {
+            if (line.chars().count() as u16) > info.content_width() {
+                let mut splitted = super::split::split_line(&line, &info, delimiter);
+                column_lines.append(&mut splitted);
+            } else {
+                column_lines.push(line.into());
+            }
+        }
+    }
+
+    // Check how long the longest line is after the content splitting
+    let mut longest_line = 0;
+    for line in column_lines {
+        if line.len() > longest_line {
+            longest_line = line.len();
+        }
+    }
+
+    longest_line
 }
 
 fn count_visible_columns(infos: &[ColumnDisplayInfo]) -> usize {

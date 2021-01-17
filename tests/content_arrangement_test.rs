@@ -110,3 +110,51 @@ fn table_with_truncate() {
 +----------------+--------+-------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
+
+#[test]
+/// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
+/// space doesn't get used after splitting the lines. This happens mostly when there are
+/// many long words in a single column.
+/// The remaining space should rather be distributed to other cells.
+fn distribute_space_after_split() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1", "Header2", "Head"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(80)
+        .add_row(&vec![
+            "This is a very long line with a lot of text",
+            "This is text with a anotherverylongtexttesttest",
+            "smol",
+        ]);
+
+    println!("{}", table.to_string());
+    let expected = "
++-----------------------------------------+-----------------------------+------+
+| Header1                                 | Header2                     | Head |
++==============================================================================+
+| This is a very long line with a lot of  | This is text with a         | smol |
+| text                                    | anotherverylongtexttesttest |      |
++-----------------------------------------+-----------------------------+------+";
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
+fn unused_space_after_split() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(50)
+        .add_row(&vec!["This is text with a anotherverylongtexttesttestaa"]);
+
+    println!("{}", table.to_string());
+    let expected = "
++-------------------------------+
+| Header1                       |
++===============================+
+| This is text with a           |
+| anotherverylongtexttesttestaa |
++-------------------------------+";
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}

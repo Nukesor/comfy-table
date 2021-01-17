@@ -3,6 +3,61 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2021-01-16
+
+### Added
+
+**Dynamic arrangement**
+
+A new logic to optimize space usage after splitting content has been added.\
+If there is a lot of unused space after the content has been arranged, this space will now be redistributed ot the remaining columns.
+Or it will be removed if there are no other columns.
+
+**This is considered a breaking change, since this can result in different table layouts!!**
+
+This process is far from perfect, but the behavior is better than before.
+
+
+Old behavior:
+```
++-----------------------------------+-----------------------------------+------+
+| Header1                           | Header2                           | Head |
++==============================================================================+
+| This is a very long line with a   | This is text with a               | smol |
+| lot of text                       | anotherverylongtexttesttest       |      |
++-----------------------------------+-----------------------------------+------+
+```
+
+New behavior:
+```
++-----------------------------------------+-----------------------------+------+
+| Header1                                 | Header2                     | Head |
++==============================================================================+
+| This is a very long line with a lot of  | This is text with a         | smol |
+| text                                    | anotherverylongtexttesttest |      |
++-----------------------------------------+-----------------------------+------+
+```
+
+Old behavior:
+```
++------------------------------------------------+
+| Header1                                        |
++================================================+
+| This is text with a                            |
+| anotherverylongtexttesttestaa                  |
++------------------------------------------------+
+```
+
+New behavior:
+```
++-------------------------------+
+| Header1                       |
++===============================+
+| This is text with a           |
+| anotherverylongtexttesttestaa |
++-------------------------------+
+```
+
 ## [1.6.0] - 2021-01-16
 
 ### Added
