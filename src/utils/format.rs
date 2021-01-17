@@ -54,11 +54,11 @@ pub fn format_row(
             continue;
         }
         // Each cell is devided into several lines devided by newline
-        // Every line that's too long will be split into two/several lines
+        // Every line that's too long will be split into multiple lines
         let mut cell_lines = Vec::new();
 
-        // Check if the row has as many cells as the table has columns
-        // If that's not the case, fill the missing cell with empty spaces
+        // Check if the row has as many cells as the table has columns.
+        // If that's not the case, create a new cell with empty spaces.
         let cell = if let Some(cell) = cell_iter.next() {
             cell
         } else {

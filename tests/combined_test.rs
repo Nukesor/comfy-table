@@ -38,18 +38,19 @@ fn combined_features() {
     table.force_no_tty().enforce_styling();
     println!("{}", table.to_string());
     let expected = "
-┌─────────────────────┬────────────────────────────┬───────────────────────────┐
-│\u{1b}[1m Header1             \u{1b}[0m┆\u{1b}[38;5;10m Header2                    \u{1b}[39m┆ Header3                   │
-╞═════════════════════╪════════════════════════════╪═══════════════════════════╡
-│\u{1b}[1m This is a bold text \u{1b}[0m┆\u{1b}[38;5;10m This is a green text       \u{1b}[39m┆\u{1b}[48;5;0m This one has black        \u{1b}[49m│
-│                     ┆                            ┆\u{1b}[48;5;0m background                \u{1b}[49m│
-├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
-│\u{1b}[5m Blinky boi          \u{1b}[0m┆ This table\'s content is    ┆\u{1b}[48;5;0m\u{1b}[38;5;10m\u{1b}[1m\u{1b}[5m COMBINE ALL THE THINGS    \u{1b}[0m│
-│                     ┆ dynamically arranged. The  ┆                           │
-│                     ┆ table is exactly 80        ┆                           │
-│                     ┆ characters wide.           ┆                           │
-│                     ┆ Here comes a reallylongwor ┆                           │
-│                     ┆ dthatshoulddynamicallywrap ┆                           │
-└─────────────────────┴────────────────────────────┴───────────────────────────┘";
+┌─────────────────────┬───────────────────────────────┬────────────────────────┐
+│\u{1b}[1m Header1             \u{1b}[0m┆\u{1b}[38;5;10m Header2                       \u{1b}[39m┆ Header3                │
+╞═════════════════════╪═══════════════════════════════╪════════════════════════╡
+│\u{1b}[1m This is a bold text \u{1b}[0m┆\u{1b}[38;5;10m This is a green text          \u{1b}[39m┆\u{1b}[48;5;0m This one has black     \u{1b}[49m│
+│                     ┆                               ┆\u{1b}[48;5;0m background             \u{1b}[49m│
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+│\u{1b}[5m Blinky boi          \u{1b}[0m┆ This table\'s content is       ┆\u{1b}[48;5;0m\u{1b}[38;5;10m\u{1b}[1m\u{1b}[5m COMBINE ALL THE THINGS \u{1b}[0m│
+│                     ┆ dynamically arranged. The     ┆                        │
+│                     ┆ table is exactly 80           ┆                        │
+│                     ┆ characters wide.              ┆                        │
+│                     ┆ Here comes a reallylongwordth ┆                        │
+│                     ┆ atshoulddynamicallywrap       ┆                        │
+└─────────────────────┴───────────────────────────────┴────────────────────────┘";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

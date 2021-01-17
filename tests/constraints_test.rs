@@ -178,9 +178,8 @@ fn constraints_bigger_than_table_width() {
 fn percentage() {
     let mut table = get_constraint_table();
 
-    // Set a percentage of 20% for the first column
-    // Hide the second
-    // The third should get the remaining 70%
+    // Set a percentage of 20% for the first column.
+    // The the rest should arrange accordingly.
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(40)
@@ -188,17 +187,17 @@ fn percentage() {
 
     println!("{}", table.to_string());
     let expected = "
-+--------+--------------+--------------+
-| smol   | Header2      | Header3      |
++--------+---------------+-------------+
+| smol   | Header2       | Header3     |
 +======================================+
-| smol   | This is      | This is the  |
-|        | another text | third text   |
-|--------+--------------+--------------|
-| smol   | Now          | This is      |
-|        | add some     | awesome      |
-|        | multi line   |              |
-|        | stuff        |              |
-+--------+--------------+--------------+";
+| smol   | This is       | This is the |
+|        | another text  | third text  |
+|--------+---------------+-------------|
+| smol   | Now           | This is     |
+|        | add some      | awesome     |
+|        | multi line    |             |
+|        | stuff         |             |
++--------+---------------+-------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 
     table.set_table_width(40).set_constraints(vec![

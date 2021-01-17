@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use super::borders::{
     should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
 };
@@ -117,18 +119,26 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 
 /// Try to find the best fit for a given content and table_width
 ///
-/// 1. Determine all Columns that already have a fixed width and subtract it from remaining_width.\
+/// 1. Determine all Columns that already have a fixed width and subtract it from remaining_width.
 /// 2. Check if there are any columns that require less space than the average
-///    remaining space for remaining columns. (This includes the MaxWidth Constraint)
-/// 3. Take those columns, fix their size and add the surplus in space to the remaining space
+///    remaining space for remaining columns. (This includes the MaxWidth Constraint).
+/// 3. Take those columns, fix their size and add the surplus in space to the remaining space.
 /// 4. Repeat step 2-3 until no columns with smaller size than average remaining space are left.
-/// 5. Divide the remaining space in relatively equal chunks.
+/// 5. Now it get's a little tricky.
+///     If any column's content is too big and needs to be split, we're now going to simulate how
+///     this might look like. The reason for this is the way we're splitting, which is to prefer
+///     splitting at a delimiter.
+///     This can lead to a column needing less space after splitting, than it was initially assigned.
+///     By doing this incrementally for each column, we can save a lot of space in some edge-cases.
+/// 6. Divide the remaining space in relatively equal chunks.
 ///
 /// This breaks when:
 ///
 /// 1. A user assigns more space to a few columns than there is on the terminal
 /// 2. A user provides more than 100% column width over a few columns.
 fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_width: u16) {
+    // This will represent the amount of remaining space that has to be distributed between all
+    // columns. This value **excludes** borders, lines and padding!
     // Convert to i32 to handle negative values in case we work with a very small terminal
     let mut remaining_width = table_width as i32;
     let column_count = count_visible_columns(infos);
@@ -147,27 +157,54 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     // All columns that have have been checked.
     let mut checked = Vec::new();
 
-    // Step 1. Remove all already fixed sizes from the remaining_width
+    // Step 1.
+    // Subtract all paddings from the remaining width.
+    // Remove all already fixed sizes from the remaining_width.
     for (id, info) in infos.iter().enumerate() {
+        if info.is_hidden() {
+            continue;
+        }
+        // Remove the fixed padding for each column
+        remaining_width -= info.padding_width() as i32;
+
         // This info already has a fixed width (by Constraint)
         // Subtract width from remaining_width and add to checked.
         if info.fixed {
-            remaining_width -= info.width() as i32;
+            remaining_width -= info.content_width() as i32;
             checked.push(id);
         }
     }
 
     // Step 2-4. Find all columns that require less space than the average
-    let mut remaining_width =
+    remaining_width =
         find_columns_less_than_average(remaining_width, column_count, infos, &mut checked);
 
-    let remaining_columns = column_count - checked.len();
+    let mut remaining_columns = column_count - checked.len();
     // The content doesn't need to be split and fits into the current table width
     if remaining_columns == 0 {
         return;
     }
 
-    // Step 5. Equally distribute the remaining_width to all remaining columns
+    // Only check if we can save some space if there's space worth saving.
+    if remaining_width > (2 * remaining_columns as i32) {
+        // Step 5
+        remaining_width = check_remaining_space_after_split(
+            remaining_width,
+            remaining_columns,
+            infos,
+            &mut checked,
+            table,
+        );
+    }
+
+    // Recalculate the remaining column count.
+    remaining_columns = column_count - checked.len();
+    // The remaining width has already been distributed successfully in Step 5.
+    if remaining_columns == 0 {
+        return;
+    }
+
+    // Step 6. Equally distribute the remaining_width to all remaining columns
     // If we have less than one space per remaining column, give at least one space per column
     if remaining_width < remaining_columns as i32 {
         remaining_width = remaining_columns as i32;
@@ -193,14 +230,12 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         }
 
         // Distribute the excess until nothing is left
-        let mut width = if excess > 0 {
+        let width = if excess > 0 {
             excess -= 1;
             average_space + 1
         } else {
             average_space
         };
-
-        width = info.without_padding(width);
 
         info.set_content_width(width);
         info.fixed = true;
@@ -250,17 +285,23 @@ fn find_columns_less_than_average(
                 continue;
             }
 
-            // The column has a smaller MaxWidth Constraint than the average remaining space
-            // and a higher max_content_width than it's constraint.
-            // Fix the column width to max_width and mark it as checked.
+            // The column has a MaxWidth Constraint.
+            // we can fix the column to this max_width and mark it as checked, if these
+            // two conditions are met:
+            // - The average remaining space is bigger then the MaxWidth constraint.
+            // - The actual max content of the column is bigger than the MaxWidth constraint.
             if let Some(ColumnConstraint::MaxWidth(max_width)) = info.constraint {
-                if max_width as i32 <= average_space && info.max_width() >= max_width {
+                // Max/Min constraints always include padding!
+                let space_after_padding = average_space + info.padding_width() as i32;
+
+                // Check that both conditions mentioned above are met.
+                if max_width as i32 <= space_after_padding && info.max_width() >= max_width {
                     let width = info.without_padding(max_width);
                     info.set_content_width(width);
                     info.fixed = true;
+                    checked.push(id);
 
                     remaining_width -= info.width() as i32;
-                    checked.push(id);
                     found_smaller = true;
                     continue;
                 }
@@ -268,14 +309,96 @@ fn find_columns_less_than_average(
 
             // The column has a smaller max_content_width than the average space.
             // Fix the width to max_content_width and mark it as checked
-            if (info.max_width() as i32) < average_space {
+            if (info.max_content_width as i32) < average_space {
                 info.set_content_width(info.max_content_width);
                 info.fixed = true;
-
-                remaining_width -= info.width() as i32;
                 checked.push(id);
+
+                remaining_width -= info.max_content_width as i32;
                 found_smaller = true;
             }
+        }
+    }
+
+    remaining_width
+}
+
+fn check_remaining_space_after_split(
+    mut remaining_width: i32,
+    mut remaining_columns: usize,
+    infos: &mut [ColumnDisplayInfo],
+    checked: &mut Vec<usize>,
+    table: &Table,
+) -> i32 {
+    let mut distribution = BTreeMap::new();
+    for (id, info) in infos.iter_mut().enumerate() {
+        // Ignore hidden columns
+        if info.is_hidden() {
+            continue;
+        }
+
+        // We already checked this column, skip it
+        if checked.contains(&id) {
+            continue;
+        }
+
+        // Calculate the average space for each column.
+        let average_space = remaining_width / remaining_columns as i32;
+
+        let mut column_lines = Vec::new();
+        // A lot of this logic is duplicated from the [utils::format::format_row] function.
+        for cell in table.column_cells_iter(id) {
+            // Only look at rows that actually contain this cell.
+            let cell = if let Some(cell) = cell {
+                cell
+            } else {
+                continue;
+            };
+
+            // Determine, which delimiter should be used
+            let delimiter = if let Some(delimiter) = cell.delimiter {
+                delimiter
+            } else if let Some(delimiter) = info.delimiter {
+                delimiter
+            } else if let Some(delimiter) = table.delimiter {
+                delimiter
+            } else {
+                ' '
+            };
+
+            // Temporarily set the content_width of the column to the remaining average space.
+            // That way we can simulate how the splitted text will look like.
+            info.set_content_width(average_space as u16);
+
+            // Iterate over each line and split it into multiple lines, if necessary.
+            // Newlines added by the user will be preserved.
+            for line in cell.content.iter() {
+                if (line.chars().count() as u16) > info.content_width() {
+                    let mut splitted = super::split::split_line(&line, &info, delimiter);
+                    column_lines.append(&mut splitted);
+                } else {
+                    column_lines.push(line.into());
+                }
+            }
+        }
+
+        // Check how long the longest line is after the content splitting
+        let mut longest_line = 0;
+        for line in column_lines {
+            if line.len() > longest_line {
+                longest_line = line.len();
+            }
+        }
+
+        // There's some space left after splitting the content.
+        // Save the calculated space and add the gained space to the remaining_width.
+        if longest_line < average_space as usize {
+            distribution.insert(id, longest_line);
+            checked.push(id);
+            info.set_content_width(longest_line as u16);
+
+            remaining_width -= longest_line as i32;
+            remaining_columns -= 1;
         }
     }
 

@@ -39,7 +39,7 @@ impl ColumnDisplayInfo {
             needs_splitting: false,
         }
     }
-    fn padding_width(&self) -> u16 {
+    pub fn padding_width(&self) -> u16 {
         self.padding.0 + self.padding.1
     }
 
@@ -74,6 +74,7 @@ impl ColumnDisplayInfo {
     }
 
     /// Return the remaining value after subtracting the padding width.
+    /// The minimum content has to be always 1.
     pub fn without_padding(&self, width: u16) -> u16 {
         let padding = self.padding_width();
         // Default minimum content width has to be 1

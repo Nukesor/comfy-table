@@ -477,7 +477,7 @@ impl Table {
     /// assert_eq!(cell_iter.next().unwrap().unwrap().get_content(), "Fifth");
     /// assert!(cell_iter.next().is_none());
     /// ```
-    pub fn column_cells_iter(&mut self, column_index: usize) -> ColumnCellIter {
+    pub fn column_cells_iter(&self, column_index: usize) -> ColumnCellIter {
         ColumnCellIter {
             rows: &self.rows,
             column_index,
