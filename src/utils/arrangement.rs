@@ -125,11 +125,7 @@ fn disabled_arrangement(infos: &mut Vec<ColumnDisplayInfo>) {
 /// 3. Take those columns, fix their size and add the surplus in space to the remaining space.
 /// 4. Repeat step 2-3 until no columns with smaller size than average remaining space are left.
 /// 5. Now it get's a little tricky.
-///     If any column's content is too big and needs to be split, we're now going to simulate how
-///     this might look like. The reason for this is the way we're splitting, which is to prefer
-///     splitting at a delimiter.
-///     This can lead to a column needing less space after splitting, than it was initially assigned.
-///     By doing this incrementally for each column, we can save a lot of space in some edge-cases.
+///    Check the documentation of [optimize_space_after_split] for more information.
 /// 6. Divide the remaining space in relatively equal chunks.
 ///
 /// This breaks when:
@@ -188,7 +184,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     // Only check if we can save some space if there's space worth saving.
     if remaining_width > (2 * remaining_columns as i32) {
         // Step 5
-        remaining_width = distribute_remaining_space_after_split(
+        remaining_width = optimize_space_after_split(
             remaining_width,
             remaining_columns,
             infos,
@@ -205,30 +201,13 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     if remaining_columns == 0 {
         if remaining_width > 0 && matches!(table.arrangement, ContentArrangement::DynamicFullWidth)
         {
-            // Calculate the amount of average remaining space.
-            // Since we do integer division, there is most likely a little bit of lost space.
-            // We then try to distribute it as fair as possible (from left to right).
-            let average_remaining_space = remaining_width / column_count as i32;
-            let mut excess = remaining_width - average_remaining_space;
-
-            for (_, info) in infos.iter_mut().enumerate() {
-                // Ignore hidden columns
-                if info.is_hidden() {
-                    continue;
-                }
-
-                let info_width = info.content_width();
-                // Distribute the excess until nothing is left
-                let width = if excess > 0 {
-                    excess -= 1;
-                    info_width + (average_remaining_space + 1) as u16
-                } else {
-                    info_width + average_remaining_space as u16
-                };
-
-                info.set_content_width(width);
-                info.fixed = true;
-            }
+            distribute_remaining_space(
+                infos,
+                &mut checked,
+                column_count,
+                remaining_width as usize,
+                false,
+            );
         }
         return;
     }
@@ -239,37 +218,13 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         remaining_width = remaining_columns as i32;
     }
 
-    // Convert back to u16. We don't need the negative value handling any longer.
-    let remaining_width = remaining_width as u16;
-
-    // Calculate the amount of average remaining space.
-    // Since we do integer division, there is most likely a little bit of lost space.
-    // We then try to distribute it as fair as possible (from left to right).
-    let average_space = remaining_width / remaining_columns as u16;
-    let mut excess = remaining_width - (average_space * remaining_columns as u16);
-
-    for (id, info) in infos.iter_mut().enumerate() {
-        // Ignore hidden columns
-        if info.is_hidden() {
-            continue;
-        }
-
-        // We already checked this column, skip it
-        if checked.contains(&id) {
-            continue;
-        }
-
-        // Distribute the excess until nothing is left
-        let width = if excess > 0 {
-            excess -= 1;
-            average_space + 1
-        } else {
-            average_space
-        };
-
-        info.set_content_width(width);
-        info.fixed = true;
-    }
+    distribute_remaining_space(
+        infos,
+        &mut checked,
+        column_count,
+        remaining_width as usize,
+        true,
+    );
 }
 
 /// This function is part of the column width calculation process.
@@ -353,7 +308,14 @@ fn find_columns_less_than_average(
     remaining_width
 }
 
-fn distribute_remaining_space_after_split(
+/// Step 5.
+///
+/// Some Column's are too big and need to be split.
+/// We're now going to simulate how this might look like.
+/// The reason for this is the way we're splitting, i.e. to prefer a split at a delimiter.
+/// This can lead to a column needing less space than it was initially assigned.
+/// By doing this for each column, we can save a lot of space in some edge-cases.
+fn optimize_space_after_split(
     mut remaining_width: i32,
     mut remaining_columns: usize,
     infos: &mut [ColumnDisplayInfo],
@@ -375,7 +337,7 @@ fn distribute_remaining_space_after_split(
         // Calculate the average space that remains for each column.
         let average_space = remaining_width / remaining_columns as i32;
 
-        let longest_line = get_longest_line_for_content_width(average_space, id, info, table);
+        let longest_line = get_longest_line_after_split(average_space, id, info, table);
 
         // If there's a considerable amount space left after splitting the content,
         // save the calculated space and add the gained space to the remaining_width.
@@ -393,7 +355,10 @@ fn distribute_remaining_space_after_split(
     remaining_width
 }
 
-fn get_longest_line_for_content_width(
+/// Part of Step 5.
+/// This function simulates the split of a Column's content and returns the longest
+/// existing line after the split.
+fn get_longest_line_after_split(
     average_space: i32,
     id: usize,
     info: &mut ColumnDisplayInfo,
@@ -445,6 +410,63 @@ fn get_longest_line_for_content_width(
     }
 
     longest_line
+}
+
+/// Distribute any remaining space between any remaining columns.
+/// There are two modes.
+/// 1. unchecked_only == true
+///     In this mode, only unchecked columns will get more space.
+///     This way we can give some columns which don't have enough space a little more space.
+/// 2. unchecked_only == false
+///     In this mode any remaining space will be distributed between ALL columns.
+fn distribute_remaining_space(
+    infos: &mut [ColumnDisplayInfo],
+    checked: &mut Vec<usize>,
+    column_count: usize,
+    remaining_width: usize,
+    unchecked_only: bool,
+) {
+    let remaining_columns = if unchecked_only {
+        column_count - checked.len()
+    } else {
+        count_visible_columns(infos)
+    };
+
+    // Calculate the amount of average remaining space per column.
+    // Since we do integer division, there is most likely a little bit of not equally divisable space.
+    // We then try to distribute it as fair as possible (from left to right).
+    let average_space = remaining_width / remaining_columns;
+    let mut excess = remaining_width - (average_space * remaining_columns);
+
+    for (id, info) in infos.iter_mut().enumerate() {
+        // Ignore hidden columns
+        if info.is_hidden() {
+            continue;
+        }
+
+        // We already checked this column, skip it
+        if unchecked_only && checked.contains(&id) {
+            continue;
+        }
+
+        // Distribute the excess until nothing is left
+        let mut width = if excess > 0 {
+            excess -= 1;
+            (average_space + 1) as u16
+        } else {
+            average_space as u16
+        };
+
+        // If the width of all columns is already fixed and any remaining width needs to be
+        // distributed between all columns, we have to add the additional space to the already
+        // fixed space of the column
+        if !unchecked_only {
+            width += info.content_width();
+        }
+
+        info.set_content_width(width);
+        info.fixed = true;
+    }
 }
 
 fn count_visible_columns(infos: &[ColumnDisplayInfo]) -> usize {
