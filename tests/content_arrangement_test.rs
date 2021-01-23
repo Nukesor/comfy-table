@@ -158,3 +158,27 @@ fn unused_space_after_split() {
 +-------------------------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
+
+#[test]
+fn dynamic_full_width() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1"])
+        .set_content_arrangement(ContentArrangement::DynamicFullWidth)
+        .set_table_width(50)
+        .add_row(&vec!["This is text with a anotherverylongtexttesttestaa"]);
+
+    println!("{}", table.to_string());
+    let expected = "
++------------------------------------------------+
+| Header1                                        |
++================================================+
+| This is text with a                            |
+| anotherverylongtexttesttestaa                  |
++------------------------------------------------+";
+    let table_text = table.to_string();
+    assert_eq!("\n".to_string() + &table_text, expected);
+
+    // Assert
+    assert!(table_text.split('\n').all(|line| line.len() == 50));
+}

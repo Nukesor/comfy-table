@@ -32,7 +32,7 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
 
     match &table.arrangement {
         ContentArrangement::Disabled => disabled_arrangement(&mut display_infos),
-        ContentArrangement::Dynamic => {
+        ContentArrangement::Dynamic | ContentArrangement::DynamicFullWidth => {
             dynamic_arrangement(table, &mut display_infos, table_width.unwrap());
         }
     }
@@ -199,8 +199,37 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
 
     // Recalculate the remaining column count.
     remaining_columns = column_count - checked.len();
+
     // The remaining width has already been distributed successfully in Step 5.
+    // Abort unless the user forces to use the full width of the table.
     if remaining_columns == 0 {
+        if remaining_width > 0 && matches!(table.arrangement, ContentArrangement::DynamicFullWidth)
+        {
+            // Calculate the amount of average remaining space.
+            // Since we do integer division, there is most likely a little bit of lost space.
+            // We then try to distribute it as fair as possible (from left to right).
+            let average_remaining_space = remaining_width / column_count as i32;
+            let mut excess = remaining_width - average_remaining_space;
+
+            for (_, info) in infos.iter_mut().enumerate() {
+                // Ignore hidden columns
+                if info.is_hidden() {
+                    continue;
+                }
+
+                let info_width = info.content_width();
+                // Distribute the excess until nothing is left
+                let width = if excess > 0 {
+                    excess -= 1;
+                    info_width + (average_remaining_space + 1) as u16
+                } else {
+                    info_width + average_remaining_space as u16
+                };
+
+                info.set_content_width(width);
+                info.fixed = true;
+            }
+        }
         return;
     }
 
@@ -213,9 +242,10 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
     // Convert back to u16. We don't need the negative value handling any longer.
     let remaining_width = remaining_width as u16;
 
-    let average_space = remaining_width / remaining_columns as u16;
+    // Calculate the amount of average remaining space.
     // Since we do integer division, there is most likely a little bit of lost space.
-    // Calculate and try to distribute it as fair as possible (from left to right).
+    // We then try to distribute it as fair as possible (from left to right).
+    let average_space = remaining_width / remaining_columns as u16;
     let mut excess = remaining_width - (average_space * remaining_columns as u16);
 
     for (id, info) in infos.iter_mut().enumerate() {
