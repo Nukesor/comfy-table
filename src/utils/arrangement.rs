@@ -176,14 +176,12 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
         find_columns_less_than_average(remaining_width, column_count, infos, &mut checked);
 
     let mut remaining_columns = column_count - checked.len();
-    // The content doesn't need to be split and fits into the current table width
-    if remaining_columns == 0 {
-        return;
-    }
 
-    // Only check if we can save some space if there's space worth saving.
-    if remaining_width > (2 * remaining_columns as i32) {
-        // Step 5
+    // Only check if we can save some space.
+    // 1. If the table doesn't already fit into the given width (there are remaining columns).
+    // 2. If there's space worth saving (more than two characters per rermaining column).
+    if remaining_columns != 0 && remaining_width > (2 * remaining_columns as i32) {
+        // This is where Step 5 happens.
         remaining_width = optimize_space_after_split(
             remaining_width,
             remaining_columns,
@@ -431,6 +429,10 @@ fn distribute_remaining_space(
     } else {
         count_visible_columns(infos)
     };
+
+    if remaining_columns == 0 {
+        return;
+    }
 
     // Calculate the amount of average remaining space per column.
     // Since we do integer division, there is most likely a little bit of not equally divisable space.

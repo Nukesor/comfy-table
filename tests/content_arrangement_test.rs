@@ -160,7 +160,7 @@ fn unused_space_after_split() {
 }
 
 #[test]
-fn dynamic_full_width() {
+fn dynamic_full_width_after_split() {
     let mut table = Table::new();
     table
         .set_header(&vec!["Header1"])
@@ -181,4 +181,31 @@ fn dynamic_full_width() {
 
     // Assert
     assert!(table_text.split('\n').all(|line| line.len() == 50));
+}
+
+#[test]
+/// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
+/// space doesn't get used after splitting the lines. This happens mostly when there are
+/// many long words in a single column.
+/// The remaining space should rather be distributed to other cells.
+fn dynamic_full_width() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1", "Header2", "smol"])
+        .set_content_arrangement(ContentArrangement::DynamicFullWidth)
+        .set_table_width(80)
+        .add_row(&vec!["This is a short line", "small", "smol"]);
+
+    println!("{}", table.to_string());
+    let expected = "
++-----------------------------------+----------------------+-------------------+
+| Header1                           | Header2              | smol              |
++==============================================================================+
+| This is a short line              | small                | smol              |
++-----------------------------------+----------------------+-------------------+";
+    let table_text = table.to_string();
+    assert_eq!("\n".to_string() + &table_text, expected);
+
+    // Assert
+    assert!(table_text.split('\n').all(|line| line.len() == 80));
 }
