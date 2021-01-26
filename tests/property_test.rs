@@ -7,6 +7,7 @@ fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
     prop_oneof![
         Just(ContentArrangement::Disabled),
         Just(ContentArrangement::Dynamic),
+        Just(ContentArrangement::DynamicFullWidth),
     ]
 }
 
