@@ -3,10 +3,16 @@ use pretty_assertions::assert_eq;
 use comfy_table::*;
 
 #[test]
-fn missing_column_table() {
+/// Columns can set a custom padding.
+/// Ensure these settings are working.
+fn custom_padding() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .set_header(vec![
+            Cell::new("Header1"),
+            Cell::new("Header2"),
+            Cell::new("Header3"),
+        ])
         .add_row(&vec!["One One", "One Two", "One Three"])
         .add_row(&vec!["Two One", "Two Two", "Two Three"])
         .add_row(&vec!["Three One", "Three Two", "Three Three"]);

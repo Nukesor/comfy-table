@@ -3,6 +3,7 @@ use comfy_table::modifiers::UTF8_ROUND_CORNERS;
 use comfy_table::presets::UTF8_FULL;
 use comfy_table::*;
 
+/// Pick any of the three existing ContentArrangement types for the table.
 fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
     prop_oneof![
         Just(ContentArrangement::Disabled),
@@ -11,6 +12,7 @@ fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
     ]
 }
 
+/// Each cell can have any alignment.
 fn cell_alignment() -> impl Strategy<Value = Option<CellAlignment>> {
     prop_oneof![
         Just(None),
@@ -20,6 +22,7 @@ fn cell_alignment() -> impl Strategy<Value = Option<CellAlignment>> {
     ]
 }
 
+/// Any Column can have any constellation of ColumnConstraints
 fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
     prop_oneof![
         Just(None),
@@ -34,6 +37,7 @@ fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
     ]
 }
 
+/// We test the Row::max_height with a few values.
 fn max_height() -> impl Strategy<Value = Option<usize>> {
     prop_oneof![
         Just(None),
@@ -45,12 +49,18 @@ fn max_height() -> impl Strategy<Value = Option<usize>> {
 }
 
 prop_compose! {
+    /// Returns the dimensions of the table, i.e. the amount of rows and columns.
     fn dimensions()(columns in 1u16..10u16, rows in 1u16..10u16)
                     -> (u16, u16) {
        (columns, rows)
    }
 }
 
+/// Returns all data needed to build the final table.
+/// 1. A matrix of cells Row[Column[Cell]].
+/// 2. Constriants for all columns.
+/// 3. The alignment for each cell.
+/// 3. The alignment for each column.
 fn columns_and_rows() -> impl Strategy<
     Value = (
         Vec<Vec<String>>,
@@ -82,13 +92,15 @@ fn columns_and_rows() -> impl Strategy<
 }
 
 prop_compose! {
+    /// The ultimate test
+    /// This creates a table from a combination of all "random" selectors above.
     fn table()
         (arrangement in content_arrangement(),
         max_height in max_height(),
         table_width in 0..1000u16,
         (rows, constraints, cell_alignments, column_alignments) in columns_and_rows()) -> Table {
-        let mut table = Table::new();
 
+        let mut table = Table::new();
         if let Some(height) = max_height {
             for row in table.row_iter_mut() {
                 row.max_height(height);

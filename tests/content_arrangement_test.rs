@@ -3,6 +3,7 @@ use pretty_assertions::assert_eq;
 use comfy_table::{ColumnConstraint, ContentArrangement, Row, Table};
 
 #[test]
+/// Test the robustnes of the dynamic table arangement.
 fn simple_dynamic_table() {
     let mut table = Table::new();
     table.set_header(&vec!["Header1", "Header2", "Head"])
@@ -60,6 +61,8 @@ fn simple_dynamic_table() {
 }
 
 #[test]
+/// Individual rows can be configured to have a max height.
+/// Everything beyond that line height should be truncated.
 fn table_with_truncate() {
     let mut table = Table::new();
     let mut first_row: Row = Row::from(vec![
@@ -140,6 +143,8 @@ fn distribute_space_after_split() {
 }
 
 #[test]
+/// A single column get's split and a lot of the available isn't used afterward.
+/// The remaining space should be cut away, making the table more compact.
 fn unused_space_after_split() {
     let mut table = Table::new();
     table
@@ -160,6 +165,7 @@ fn unused_space_after_split() {
 }
 
 #[test]
+/// The full width of a table should be used, even if the space isn't used.
 fn dynamic_full_width_after_split() {
     let mut table = Table::new();
     table
@@ -185,9 +191,8 @@ fn dynamic_full_width_after_split() {
 
 #[test]
 /// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
-/// space doesn't get used after splitting the lines. This happens mostly when there are
-/// many long words in a single column.
-/// The remaining space should rather be distributed to other cells.
+/// space isn't used after splitting the lines.
+/// The remaining space should rather distributed between all cells.
 fn dynamic_full_width() {
     let mut table = Table::new();
     table
