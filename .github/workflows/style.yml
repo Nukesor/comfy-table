@@ -1,17 +1,17 @@
-name: Tests
+name: Code Style
 
 on:
   push:
     branches: [master]
     paths:
-      - '.github/workflows/test.yml'
+      - '.github/workflows/style.yml'
       - '**.rs'
       - 'Cargo.toml'
       - 'Cargo.lock'
   pull_request:
     branches: [master]
     paths:
-      - '.github/workflows/test.yml'
+      - '.github/workflows/style.yml'
       - '**.rs'
       - 'Cargo.toml'
       - 'Cargo.lock'
@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        toolchain: [stable, nightly]
+        toolchain: [stable]
 
     steps:
       - name: Checkout code
@@ -42,7 +42,16 @@ jobs:
         with:
           command: build
 
-      - name: cargo test
+      - name: cargo fmt
         uses: actions-rs/cargo@v1
         with:
-          command: test
+          command: fmt
+          args: --all -- --check
+        if: matrix.toolchain == 'stable'
+
+      - name: cargo clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -- -D warnings
+        if: matrix.toolchain == 'stable'
