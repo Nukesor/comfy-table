@@ -1,6 +1,6 @@
 use std::slice::Iter;
 
-use crate::cell::{Cell, ToCells};
+use crate::cell::{Cell, Cells};
 
 /// Each row contains [Cells](crate::Cell) and can be added to a [Table](crate::Table).
 #[derive(Clone, Debug)]
@@ -23,27 +23,6 @@ impl Row {
         Row {
             index: None,
             cells: Vec::new(),
-            max_height: None,
-        }
-    }
-
-    /// Create a Row from any `Iter<T: ToCell>`
-    ///
-    /// ```rust
-    /// use comfy_table::{Row, Cell};
-    ///
-    /// let row = Row::from(vec!["One", "Two", "Three",]);
-    /// let row = Row::from(vec![
-    ///    Cell::new("One"),
-    ///    Cell::new("Two"),
-    ///    Cell::new("Three"),
-    /// ]);
-    /// let row = Row::from(vec![1, 2, 3, 4]);
-    /// ```
-    pub fn from<T: ToCells>(cells: T) -> Row {
-        Row {
-            index: None,
-            cells: cells.to_cells(),
             max_height: None,
         }
     }
@@ -93,34 +72,40 @@ impl Row {
             .collect()
     }
 
-    /// Return the amount of cells on this row.
+    /// Get the amount of cells on this row.
     pub fn cell_count(&self) -> usize {
         self.cells.len()
     }
 
-    /// An iterator over all cells of this row
+    /// Returns an iterator over all cells of this row
     pub fn cell_iter(&self) -> Iter<Cell> {
         self.cells.iter()
     }
 }
 
-/// Allow the conversion of a type to a row.
+/// Create a Row from any `Into<Cells>`. \
+/// [Cells] is a simple wrapper around a `Vec<Cell>`.
 ///
-/// By default this is implemented for everything implementing [ToCells].\
-/// This means every iterable implementing [ToString].
-pub trait ToRow {
-    fn to_row(self) -> Row;
-}
-
-impl<T: ToCells> ToRow for T {
-    fn to_row(self) -> Row {
-        Row::from(self.to_cells())
-    }
-}
-
-impl ToRow for Row {
-    fn to_row(self) -> Row {
-        self
+/// Check the [From] implementations on [Cell] for more information.
+///
+/// ```rust
+/// use comfy_table::{Row, Cell};
+///
+/// let row = Row::from(vec!["One", "Two", "Three",]);
+/// let row = Row::from(vec![
+///    Cell::new("One"),
+///    Cell::new("Two"),
+///    Cell::new("Three"),
+/// ]);
+/// let row = Row::from(vec![1, 2, 3, 4]);
+/// ```
+impl<T: Into<Cells>> From<T> for Row {
+    fn from(cells: T) -> Row {
+        Row {
+            index: None,
+            cells: cells.into().0,
+            max_height: None,
+        }
     }
 }
 
@@ -130,7 +115,7 @@ mod tests {
 
     #[test]
     fn test_correct_max_content_width() {
-        let row = Row::from(&vec![
+        let row = Row::from(vec![
             "",
             "four",
             "fivef",

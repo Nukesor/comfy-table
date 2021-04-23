@@ -23,7 +23,7 @@ pub enum ContentArrangement {
     /// [Table::set_table_width](crate::table::Table::set_table_width),
     /// this option won't work and [Disabled](ContentArrangement::Disabled) will be used as a fallback.
     Dynamic,
-    /// This is mode is the same as the [Dynamic] arrangement, but it will always use as much
+    /// This is mode is the same as the [ContentArrangement::Dynamic] arrangement, but it will always use as much
     /// space as it's given. Any surplus space will be distributed between all columns.
     DynamicFullWidth,
     // /// Same as [ContentArrangement::Dynamic], but the full width of the terminal will always be used.

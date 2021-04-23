@@ -126,52 +126,40 @@ impl Cell {
     }
 }
 
+/// Convert anything with [ToString] to a new [Cell].
+///
+/// ```
+/// # use comfy_table::Cell;
+/// let cell: Cell = "content".into();
+/// let cell: Cell = 5u32.into();
+/// ```
 impl<T: ToString> From<T> for Cell {
-    /// Convert to a new [Cell].
-    ///
-    /// ```
-    /// # use comfy_table::Cell;
-    /// let cell: Cell = "content".into();
-    /// ```
     fn from(content: T) -> Cell {
         Cell::new(content)
     }
 }
 
-/// Allow the conversion of a type to a vector of cells.
-///
-/// By default this is implemented for all types implementing
-/// [IntoIterator] where the iterated Item type implements [ToString].\
-/// E.g. a `Vec<i32>` works.
-pub trait ToCells {
-    fn to_cells(self) -> Vec<Cell>;
-}
+/// A simple wrapper type for a `Vec<Cell>`. Needed to support super generic functions.
+/// Check the trait implementations for more docs.
+pub struct Cells(pub Vec<Cell>);
 
-impl<T: IntoIterator> ToCells for T
+/// Allow the conversion of a type to a [Cells], which is a simple vector of cells.
+///
+/// By default this is implemented for all Iterators over items implementing [ToString].
+///
+/// ```
+/// use comfy_table::{Row, Cells};
+///
+/// let cells_string: Cells = vec!["One", "Two", "Three"].into();
+/// let cells_integer: Cells = vec![1, 2, 3, 4].into();
+/// ```
+impl<T> From<T> for Cells
 where
-    T::Item: ToCell,
+    T: IntoIterator,
+    T::Item: Into<Cell>,
 {
-    fn to_cells(self) -> Vec<Cell> {
-        self.into_iter().map(|item| item.to_cell()).collect()
-    }
-}
-
-/// Allow the conversion of a type to a [Cell].
-///
-/// By default this is implemented for all types implementing [ToString].
-pub trait ToCell {
-    fn to_cell(self) -> Cell;
-}
-
-impl<T: ToString> ToCell for T {
-    fn to_cell(self) -> Cell {
-        Cell::new(self.to_string())
-    }
-}
-
-impl ToCell for Cell {
-    fn to_cell(self) -> Cell {
-        self
+    fn from(cells: T) -> Cells {
+        Cells(cells.into_iter().map(|item| item.into()).collect())
     }
 }
 

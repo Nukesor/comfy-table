@@ -9,7 +9,7 @@ use strum::IntoEnumIterator;
 
 use crate::cell::Cell;
 use crate::column::Column;
-use crate::row::{Row, ToRow};
+use crate::row::Row;
 use crate::style::presets::ASCII_FULL;
 use crate::style::{ColumnConstraint, ContentArrangement, TableComponent};
 use crate::utils::arrangement::arrange_content;
@@ -95,8 +95,8 @@ impl Table {
     /// table.set_header(header);
     /// ```
 
-    pub fn set_header<T: ToRow>(&mut self, row: T) -> &mut Self {
-        let row = row.to_row();
+    pub fn set_header<T: Into<Row>>(&mut self, row: T) -> &mut Self {
+        let row = row.into();
         self.autogenerate_columns(&row);
         self.adjust_max_column_widths(&row);
         self.header = Some(row);
@@ -117,8 +117,8 @@ impl Table {
     /// let row = Row::from(vec!["One", "Two"]);
     /// table.add_row(row);
     /// ```
-    pub fn add_row<T: ToRow>(&mut self, row: T) -> &mut Self {
-        let mut row = row.to_row();
+    pub fn add_row<T: Into<Row>>(&mut self, row: T) -> &mut Self {
+        let mut row = row.into();
         self.autogenerate_columns(&row);
         self.adjust_max_column_widths(&row);
         row.index = Some(self.rows.len());

@@ -5,9 +5,9 @@ mod style;
 mod table;
 mod utils;
 
-pub use crate::cell::{Cell, ToCell, ToCells};
+pub use crate::cell::{Cell, Cells};
 pub use crate::column::Column;
-pub use crate::row::{Row, ToRow};
+pub use crate::row::Row;
 pub use crate::table::{ColumnCellIter, Table};
 pub use style::*;
 
