@@ -40,7 +40,9 @@ impl Cell {
         self.content.join("\n")
     }
 
-    /// Set the delimiter used to split text for this cell
+    /// Set the delimiter used to split text for this cell. \
+    /// Normal text uses spaces (` `) as delimiters. This is necessary to help comfy-table
+    /// understand the concept of _words_.
     pub fn set_delimiter(mut self, delimiter: char) -> Self {
         self.delimiter = Some(delimiter);
 

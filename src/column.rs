@@ -67,7 +67,8 @@ impl Column {
     /// Set the delimiter used to split text for this column's cells.
     ///
     /// A custom delimiter on a cell in will overwrite the column's delimiter.
-    /// The default is a simple space ` `.
+    /// Normal text uses spaces (` `) as delimiters. This is necessary to help comfy-table
+    /// understand the concept of _words_.
     pub fn set_delimiter(&mut self, delimiter: char) -> &mut Self {
         self.delimiter = Some(delimiter);
 
