@@ -403,10 +403,7 @@ impl Table {
     /// ```
 
     pub fn get_style(&mut self, component: TableComponent) -> Option<char> {
-        match self.style.get(&component) {
-            None => None,
-            Some(character) => Some(*character),
-        }
+        self.style.get(&component).map(|character| *character)
     }
 
     /// Remove the style for a specific component of the table.\
