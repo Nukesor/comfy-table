@@ -403,7 +403,7 @@ impl Table {
     /// ```
 
     pub fn get_style(&mut self, component: TableComponent) -> Option<char> {
-        self.style.get(&component).map(|character| *character)
+        self.style.get(&component).copied()
     }
 
     /// Remove the style for a specific component of the table.\
