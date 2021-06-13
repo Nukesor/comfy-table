@@ -7,9 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 # Breaking changes
 
-- Add the `Cells` type, to allow super generic `Iterator -> Row` conversions.
 - Remove most custom traits and replace them with std's generic `From` trait. \
     Check the docs on the trait implementations for Cell, Row and Cells
+- Add the `Cells` type, to allow super generic `Iterator -> Row` conversions.
 
 
 ## [2.1.0] - 2021-01-26
