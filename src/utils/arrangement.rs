@@ -4,6 +4,7 @@ use super::borders::{
     should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
 };
 use super::column_display_info::ColumnDisplayInfo;
+use super::format::get_delimiter;
 
 use crate::style::ColumnConstraint::*;
 use crate::style::{ColumnConstraint, ContentArrangement};
@@ -229,10 +230,10 @@ fn dynamic_arrangement(table: &Table, infos: &mut Vec<ColumnDisplayInfo>, table_
 ///
 /// Parameters
 /// 1. `remaining_width`: This is the amount of space that isn't yet reserved by any other column.
-///                         We need this to determine the average space each column got column.
-///                         Any column that needs less than this space can get it's width fixed and
-///                         we can use the remaining space for the other columns.
-/// 2. `column_count`: The total amount of columns. Used to calculate the average space.
+///                         We need this to determine the average space each column has left.
+///                         Any columns that needs less than this average receives a fixed width.
+///                         The leftover space can then be used for the other columns.
+/// 2. `column_count`: The amount of non-yet determined columns. Used to calculate the average space.
 /// 3. `infos`: The ColumnDisplayInfos used anywhere else
 /// 4. `checked`: These are all columns which have a fixed width and are no longer need checking.
 fn find_columns_less_than_average(
@@ -310,8 +311,19 @@ fn find_columns_less_than_average(
 ///
 /// Some Column's are too big and need to be split.
 /// We're now going to simulate how this might look like.
-/// The reason for this is the way we're splitting, i.e. to prefer a split at a delimiter.
+/// The reason for this is the way we're splitting, which is to prefer a split at a delimiter.
 /// This can lead to a column needing less space than it was initially assigned.
+///
+/// Example:
+/// A column is allowed to have a width 10 characters.
+/// A cell's content looks like this `sometest sometest`, which is 17 chars wide.
+/// After splitting at the default delimiter (space), it looks like this:
+/// ```
+/// sometest
+/// sometest
+/// ```
+/// Even though the column required 17 spaces beforehand, it can now be shrunk to 8 chars width.
+///
 /// By doing this for each column, we can save a lot of space in some edge-cases.
 fn optimize_space_after_split(
     mut remaining_width: i32,
@@ -354,16 +366,22 @@ fn optimize_space_after_split(
 }
 
 /// Part of Step 5.
+///
 /// This function simulates the split of a Column's content and returns the longest
 /// existing line after the split.
+///
+/// A lot of this logic is duplicated from the [utils::format::format_row] function.
 fn get_longest_line_after_split(
     average_space: i32,
     id: usize,
     info: &mut ColumnDisplayInfo,
     table: &Table,
 ) -> usize {
+    // Collect all resulting lines of the column in a single vector.
+    // That way we can easily determine the longest line afterwards.
     let mut column_lines = Vec::new();
-    // A lot of this logic is duplicated from the [utils::format::format_row] function.
+
+    // Iterate
     for cell in table.column_cells_iter(id) {
         // Only look at rows that actually contain this cell.
         let cell = if let Some(cell) = cell {
@@ -372,16 +390,7 @@ fn get_longest_line_after_split(
             continue;
         };
 
-        // Determine, which delimiter should be used
-        let delimiter = if let Some(delimiter) = cell.delimiter {
-            delimiter
-        } else if let Some(delimiter) = info.delimiter {
-            delimiter
-        } else if let Some(delimiter) = table.delimiter {
-            delimiter
-        } else {
-            ' '
-        };
+        let delimiter = get_delimiter(cell, info, table);
 
         // Temporarily set the content_width of the column to the remaining average space.
         // That way we can simulate how the splitted text will look like.
@@ -399,15 +408,12 @@ fn get_longest_line_after_split(
         }
     }
 
-    // Check how long the longest line is after the content splitting
-    let mut longest_line = 0;
-    for line in column_lines {
-        if line.len() > longest_line {
-            longest_line = line.len();
-        }
-    }
-
-    longest_line
+    // Get the longest line, default to length 0 if no lines exist.
+    column_lines
+        .iter()
+        .map(|line| line.len())
+        .max()
+        .unwrap_or(0)
 }
 
 /// Distribute any remaining space between any remaining columns.

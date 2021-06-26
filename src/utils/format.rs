@@ -7,6 +7,19 @@ use crate::row::Row;
 use crate::style::CellAlignment;
 use crate::table::Table;
 
+pub fn get_delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
+    // Determine, which delimiter should be used
+    if let Some(delimiter) = cell.delimiter {
+        delimiter
+    } else if let Some(delimiter) = info.delimiter {
+        delimiter
+    } else if let Some(delimiter) = table.delimiter {
+        delimiter
+    } else {
+        ' '
+    }
+}
+
 /// Returns the formatted content of the table.
 /// The content is organized in the following structure
 ///
@@ -67,16 +80,7 @@ pub fn format_row(
             continue;
         };
 
-        // Determine, which delimiter should be used
-        let delimiter = if let Some(delimiter) = cell.delimiter {
-            delimiter
-        } else if let Some(delimiter) = info.delimiter {
-            delimiter
-        } else if let Some(delimiter) = table.delimiter {
-            delimiter
-        } else {
-            ' '
-        };
+        let delimiter = get_delimiter(cell, info, table);
 
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
