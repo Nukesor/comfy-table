@@ -318,7 +318,7 @@ fn find_columns_less_than_average(
 /// A column is allowed to have a width 10 characters.
 /// A cell's content looks like this `sometest sometest`, which is 17 chars wide.
 /// After splitting at the default delimiter (space), it looks like this:
-/// ```
+/// ```text
 /// sometest
 /// sometest
 /// ```
