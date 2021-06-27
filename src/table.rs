@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fmt;
-use std::iter::IntoIterator;
+use std::iter::{IntoIterator, Repeat};
 use std::slice::{Iter, IterMut};
 
 use crossterm::terminal::size;
@@ -79,6 +79,23 @@ impl Table {
         lines = lines
             .iter()
             .map(|line| line.trim_end().to_string())
+            .collect();
+
+        lines.join("\n")
+    }
+
+    /// This is an alternative `fmt` function, which adds leading spaces to the table.
+    pub fn fmt_with_margin(&self, margin: usize) -> String {
+        let display_info = arrange_content(self);
+        let content = format_content(&self, &display_info);
+        let mut lines = draw_borders(&self, content, &display_info);
+        lines = lines
+            .iter()
+            .map(|line| {
+                let mut s = " ".repeat(margin);
+                s.push_str(line);
+                s
+            })
             .collect();
 
         lines.join("\n")
