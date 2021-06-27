@@ -84,6 +84,13 @@ impl Table {
         lines.join("\n")
     }
 
+    /// This is an alternative to `fmt`, but rather returns an iterator to each line.
+    pub fn lines(&self) -> impl Iterator<Item = String> {
+        let display_info = arrange_content(self);
+        let content = format_content(&self, &display_info);
+        draw_borders(&self, content, &display_info).into_iter()
+    }
+
     /// Set the header row of the table. This is usually the title of each column.\
     /// There'll be no header unless you explicitly set it with this function.
     ///
