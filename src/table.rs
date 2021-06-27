@@ -141,6 +141,7 @@ impl Table {
     /// If neither is not possible, `None` will be returned.\
     /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::ColumnConstraint::Percentage) constraint won't work.
     pub fn get_table_width(&self) -> Option<u16> {
+        // TODO: Revisit and handle/remove unwrap. Should return None by default.
         if let Some(width) = self.table_width {
             Some(width)
         } else if self.is_tty() {

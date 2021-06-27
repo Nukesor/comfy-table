@@ -1,4 +1,4 @@
-use super::column_display_info::ColumnDisplayInfo;
+use super::ColumnDisplayInfo;
 
 use crate::style::TableComponent;
 use crate::table::Table;

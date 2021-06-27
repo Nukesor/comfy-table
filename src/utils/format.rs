@@ -1,7 +1,7 @@
 use crossterm::style::{style, Stylize};
 
-use super::column_display_info::ColumnDisplayInfo;
 use super::split::split_line;
+use super::ColumnDisplayInfo;
 use crate::cell::Cell;
 use crate::row::Row;
 use crate::style::CellAlignment;
