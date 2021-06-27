@@ -80,7 +80,7 @@ impl Table {
     pub fn lines(&self) -> impl Iterator<Item = String> {
         let display_info = arrange_content(self);
         let content = format_content(&self, &display_info);
-        draw_borders(&self, content, &display_info).into_iter()
+        draw_borders(self, content, &display_info).into_iter()
     }
 
     /// Set the header row of the table. This is usually the title of each column.\
