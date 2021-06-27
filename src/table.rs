@@ -36,11 +36,7 @@ pub struct Table {
 
 impl fmt::Display for Table {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let display_info = arrange_content(self);
-        let content = format_content(&self, &display_info);
-        let lines = draw_borders(&self, content, &display_info);
-
-        write!(f, "{}", lines.join("\n"))
+        write!(f, "{}", self.lines().collect::<Vec<_>>().join("\n"))
     }
 }
 
@@ -73,15 +69,18 @@ impl Table {
     /// This is an alternative `fmt` function, which simply removes any trailing whitespaces.
     /// Trailing whitespaces often occur, when using tables without a right border.
     pub fn trim_fmt(&self) -> String {
+        self.lines()
+            .map(|line| line.trim_end().to_string())
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+
+    /// This is an alternative to `fmt`, but rather returns an iterator to each line, rather than
+    /// one String separated by newlines.
+    pub fn lines(&self) -> impl Iterator<Item = String> {
         let display_info = arrange_content(self);
         let content = format_content(&self, &display_info);
-        let mut lines = draw_borders(&self, content, &display_info);
-        lines = lines
-            .iter()
-            .map(|line| line.trim_end().to_string())
-            .collect();
-
-        lines.join("\n")
+        draw_borders(self, content, &display_info).into_iter()
     }
 
     /// Set the header row of the table. This is usually the title of each column.\
