@@ -64,6 +64,11 @@ impl Column {
         self
     }
 
+    /// Internal convenience helper that returns the total width of the combined padding.
+    pub(crate) fn get_padding_width(&self) -> u16 {
+        self.padding.0 + self.padding.1
+    }
+
     /// Set the delimiter used to split text for this column's cells.
     ///
     /// A custom delimiter on a cell in will overwrite the column's delimiter.
@@ -105,6 +110,11 @@ impl Column {
         self.constraint = None;
 
         self
+    }
+
+    /// Returns wheather the columns is hidden via [ColumnConstraint::Hidden].
+    pub fn is_hidden(&self) -> bool {
+        matches!(self.constraint, Some(ColumnConstraint::Hidden))
     }
 
     /// Set the alignment for content inside of cells for this column.\

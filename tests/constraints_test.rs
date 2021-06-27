@@ -48,6 +48,7 @@ fn fixed_max_min_constraints() {
 |          | line   |          |
 |          | stuff  |          |
 +----------+--------+----------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 
     // Now try this again when using dynamic content arrangement
@@ -92,6 +93,7 @@ fn fixed_max_min_constraints() {
 |          | uf |          |
 |          | f  |          |
 +----------+----+----------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -117,6 +119,7 @@ fn unnecessary_max_min_constraints() {
 |      | add some             |                        |
 |      | multi line stuff     |                        |
 +------+----------------------+------------------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 
     // Now test for dynamic content arrangement
@@ -132,6 +135,7 @@ fn unnecessary_max_min_constraints() {
 |      | add some             |                        |
 |      | multi line stuff     |                        |
 +------+----------------------+------------------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -169,6 +173,7 @@ fn constraints_bigger_than_table_width() {
 | o | multi line stuff             |                        |
 | l |                              |                        |
 +---+------------------------------+------------------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -198,6 +203,7 @@ fn percentage() {
 |        | multi line   |              |
 |        | stuff        |              |
 +--------+--------------+--------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 
     table.set_table_width(40).set_constraints(vec![
@@ -224,5 +230,6 @@ fn percentage() {
 |                | line   |            |
 |                | stuff  |            |
 +----------------+--------+------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

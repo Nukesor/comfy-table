@@ -1,6 +1,6 @@
 use std::iter::FromIterator;
 
-use super::column_display_info::ColumnDisplayInfo;
+use super::ColumnDisplayInfo;
 
 /// Split a line if it's longer than the allowed columns (width - padding).
 ///
@@ -14,7 +14,7 @@ use super::column_display_info::ColumnDisplayInfo;
 /// Mid-element splits only occurs if a element doesn't fit in a single line by itself.
 pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<String> {
     let mut lines = Vec::new();
-    let content_width = info.content_width();
+    let content_width = usize::from(info.content_width);
 
     // Split the line by the given deliminator and turn the content into a stack.
     // Reverse it, since we want to push/pop without reversing the text.
@@ -39,13 +39,13 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             added_length += 1;
         }
         // The remaining width for this column. If we are on a non-empty line, subtract 1 for the delimiter.
-        let mut remaining_width = content_width as i32 - current_line.chars().count() as i32;
+        let mut remaining_width = content_width - current_line.chars().count();
         if !current_line.is_empty() {
-            remaining_width -= 1;
+            remaining_width = remaining_width.saturating_sub(1);
         }
 
         // The next element fits into the current line
-        if added_length as u16 <= content_width {
+        if added_length <= content_width {
             // Only add delimiter, if we're not on a fresh line
             if !current_line.is_empty() {
                 current_line.push(delimiter);
@@ -83,14 +83,14 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
         // Case 1
         // The element is longer than the specified content_width
         // Split the word, push the remaining string back on the stack
-        if next_length as u16 > content_width {
+        if next_length > content_width {
             let mut next: Vec<char> = next.chars().collect();
             // Only add delimiter, if we're not on a fresh line
             if !current_line.is_empty() {
                 current_line.push(delimiter);
             }
 
-            let remaining = next.split_off((remaining_width) as usize);
+            let remaining = next.split_off(remaining_width);
             current_line += &String::from_iter(next);
             elements.push(String::from_iter(remaining));
 
@@ -121,14 +121,14 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
 /// Otherwise the line will simply be left as it is and we start with a new one.
 /// Two chars seems like a reasonable approach, since this would require next element to be
 /// a single char + delimiter.
-const MIN_FREE_CHARS: i32 = 2;
+const MIN_FREE_CHARS: usize = 2;
 
 /// Check if the current line is too long and whether we should start a new one
 /// If it's too long, we add the current line to the list of lines and return a new [String].
 /// Otherwise, we simply return the current line and basically don't do anything.
-fn check_if_full(lines: &mut Vec<String>, content_width: u16, current_line: String) -> String {
+fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: String) -> String {
     // Already complete the current line, if there isn't space for more than two chars
-    if current_line.chars().count() as i32 > content_width as i32 - MIN_FREE_CHARS {
+    if current_line.chars().count() > content_width.saturating_sub(MIN_FREE_CHARS) {
         lines.push(current_line);
         return String::new();
     }

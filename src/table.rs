@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::convert::TryInto;
 use std::fmt;
 use std::iter::IntoIterator;
 use std::slice::{Iter, IterMut};
@@ -79,7 +80,7 @@ impl Table {
     /// one String separated by newlines.
     pub fn lines(&self) -> impl Iterator<Item = String> {
         let display_info = arrange_content(self);
-        let content = format_content(&self, &display_info);
+        let content = format_content(self, &display_info);
         draw_borders(self, content, &display_info).into_iter()
     }
 
@@ -549,10 +550,11 @@ impl Table {
     fn adjust_max_column_widths(&mut self, row: &Row) {
         let max_widths = row.max_content_widths();
         for (index, width) in max_widths.iter().enumerate() {
+            let width = (*width).try_into().unwrap_or(u16::MAX);
             // We expect this column to exist, since we autoenerate columns just before calling this function
             let mut column = self.columns.get_mut(index).unwrap();
-            if column.max_content_width < *width as u16 {
-                column.max_content_width = *width as u16;
+            if column.max_content_width < width {
+                column.max_content_width = width;
             }
         }
     }

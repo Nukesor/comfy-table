@@ -57,6 +57,7 @@ fn simple_dynamic_table() {
 |        | line  |      |
 |        | stuff |      |
 +--------+-------+------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -111,6 +112,7 @@ fn table_with_truncate() {
 | long line in   | ther   |       |
 | the middle ... | text   |       |
 +----------------+--------+-------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -139,6 +141,7 @@ fn distribute_space_after_split() {
 | This is a very long line with a lot of  | This is text with a         | smol |
 | text                                    | anotherverylongtexttesttest |      |
 +-----------------------------------------+-----------------------------+------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -161,6 +164,7 @@ fn unused_space_after_split() {
 | This is text with a           |
 | anotherverylongtexttesttestaa |
 +-------------------------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -182,6 +186,7 @@ fn dynamic_full_width_after_split() {
 | This is text with a                            |
 | anotherverylongtexttesttestaa                  |
 +------------------------------------------------+";
+    println!("{}", expected);
     let table_text = table.to_string();
     assert_eq!("\n".to_string() + &table_text, expected);
 
@@ -208,6 +213,7 @@ fn dynamic_full_width() {
 +==============================================================================+
 | This is a short line              | small                | smol              |
 +-----------------------------------+----------------------+-------------------+";
+    println!("{}", expected);
     let table_text = table.to_string();
     assert_eq!("\n".to_string() + &table_text, expected);
 
