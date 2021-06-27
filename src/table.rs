@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fmt;
-use std::iter::{IntoIterator, Repeat};
+use std::iter::IntoIterator;
 use std::slice::{Iter, IterMut};
 
 use crossterm::terminal::size;
