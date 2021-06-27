@@ -71,7 +71,8 @@ impl Table {
     pub fn trim_fmt(&self) -> String {
         self.lines()
             .map(|line| line.trim_end().to_string())
-            .collect::<Vec<_>>().join("\n")
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 
     /// This is an alternative to `fmt`, but rather returns an iterator to each line, rather than
