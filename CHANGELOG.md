@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [4.0.0] - 2021-06-13
 
+# Added
+
+- Add `Table::lines`, which returns an iterator over all lines of the final table output by [dmaahs2017](https://github.com/dmaahs2017) for [#35](https://github.com/Nukesor/comfy-table/issues/35).
+
 # Fixed
 
 - Fixed percentages sometimes weren't correctly calculated, due to not taking border columns into account.
