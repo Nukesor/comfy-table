@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 # Fix
 
 - Fixed percentages sometimes weren't correctly calculated, due to not taking border columns into account.
+- Return `None` for `Table::get_table_width`, if getting the terminal size somehow failed.
+- Fixed a lot of possible, but highly unlikely number conversion overflow issues.
 
 ## [3.0.0] - 2021-06-13
 
