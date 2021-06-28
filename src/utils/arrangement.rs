@@ -274,10 +274,8 @@ fn dynamic_arrangement(table: &Table, infos: &mut DisplayInfos, table_width: usi
     // All remaining columns should get an equal amount of remaining space.
     // However, we check if we can save some space after the content has been split.
     //
-    // We do this if:
-    // 1. If there even are remaining columns.
-    // 2. If there's space worth saving (more than two characters per rermaining column).
-    if remaining_columns != 0 && remaining_width > (2 * remaining_columns) {
+    // We only do this if there are remaining columns.
+    if remaining_columns > 0 {
         // This is where Step 5 happens.
         let (width, columns) = optimize_space_after_split(
             table,
