@@ -1,7 +1,7 @@
 use crossterm::style::{style, Stylize};
 
-use super::column_display_info::ColumnDisplayInfo;
 use super::split::split_line;
+use super::ColumnDisplayInfo;
 use crate::cell::Cell;
 use crate::row::Row;
 use crate::style::CellAlignment;
@@ -62,7 +62,7 @@ pub fn format_row(
     let mut cell_iter = row.cells.iter();
     // Now iterate over all cells and handle them according to their alignment
     for info in display_infos.iter() {
-        if info.is_hidden() {
+        if info.is_hidden {
             cell_iter.next();
             continue;
         }
@@ -75,7 +75,7 @@ pub fn format_row(
         let cell = if let Some(cell) = cell_iter.next() {
             cell
         } else {
-            cell_lines.push(" ".repeat(info.width() as usize));
+            cell_lines.push(" ".repeat(info.width().into()));
             temp_row_content.push(cell_lines);
             continue;
         };
@@ -85,8 +85,8 @@ pub fn format_row(
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if (line.chars().count() as u16) > info.content_width() {
-                let mut splitted = split_line(&line, &info, delimiter);
+            if line.chars().count() > info.content_width.into() {
+                let mut splitted = split_line(line, info, delimiter);
                 cell_lines.append(&mut splitted);
             } else {
                 cell_lines.push(line.into());
@@ -99,10 +99,13 @@ pub fn format_row(
         if let Some(lines) = row.max_height {
             if cell_lines.len() > lines {
                 let _ = cell_lines.split_off(lines);
-                // Direct access. We know it's this long.
-                let last_line = cell_lines.get_mut(lines - 1).unwrap();
+                // Direct access.
+                let last_line = cell_lines
+                    .get_mut(lines - 1)
+                    .expect("We know it's this long.");
+
                 // Don't do anything if the collumn is smaller then 6 characters
-                let width = info.content_width() as usize;
+                let width: usize = info.content_width.into();
                 if width >= 6 {
                     // Truncate the line if '...' doesn't fit
                     if last_line.len() >= width - 3 {
@@ -153,7 +156,7 @@ pub fn format_row(
         let mut line = Vec::new();
         let mut cell_iter = temp_row_content.iter();
         for info in display_infos.iter() {
-            if info.is_hidden() {
+            if info.is_hidden {
                 continue;
             }
             let cell = cell_iter.next().unwrap();
@@ -162,7 +165,7 @@ pub fn format_row(
                 Some(content) => line.push(content.clone()),
                 // The current cell doesn't have content for this line.
                 // Fill with a placeholder (empty spaces)
-                None => line.push(" ".repeat(info.width() as usize)),
+                None => line.push(" ".repeat(info.width().into())),
             }
         }
         row_content.push(line);
@@ -176,8 +179,8 @@ pub fn format_row(
 /// This is needed, so we can simply insert it into the border frame later on.
 /// Padding is applied in this function as well.
 fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String {
-    let content_width = info.content_width();
-    let remaining = content_width - line.chars().count() as u16;
+    let content_width = info.content_width;
+    let remaining: usize = usize::from(content_width).saturating_sub(line.chars().count());
 
     // Determine the alignment of the column cells.
     // Cell settings overwrite the columns Alignment settings.
@@ -193,10 +196,10 @@ fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String
     // Apply left/right/both side padding depending on the alignment of the column
     match alignment {
         CellAlignment::Left => {
-            line += &" ".repeat(remaining as usize);
+            line += &" ".repeat(remaining);
         }
         CellAlignment::Right => {
-            line = " ".repeat(remaining as usize) + &line;
+            line = " ".repeat(remaining) + &line;
         }
         CellAlignment::Center => {
             let left_padding = (remaining as f32 / 2f32).ceil() as usize;
@@ -212,9 +215,9 @@ fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String
 fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
     let mut padded_line = String::new();
 
-    padded_line += &" ".repeat(info.padding.0 as usize);
+    padded_line += &" ".repeat(info.padding.0.into());
     padded_line += &line;
-    padded_line += &" ".repeat(info.padding.1 as usize);
+    padded_line += &" ".repeat(info.padding.1.into());
 
     padded_line
 }

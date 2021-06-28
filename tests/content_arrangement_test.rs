@@ -2,6 +2,12 @@ use pretty_assertions::assert_eq;
 
 use comfy_table::{ColumnConstraint, ContentArrangement, Row, Table};
 
+fn assert_table_lines(table: &Table, count: usize) {
+    for line in table.lines() {
+        assert_eq!(line.chars().count(), count);
+    }
+}
+
 #[test]
 /// Test the robustnes of the dynamic table arangement.
 fn simple_dynamic_table() {
@@ -57,6 +63,8 @@ fn simple_dynamic_table() {
 |        | line  |      |
 |        | stuff |      |
 +--------+-------+------+";
+    println!("{}", expected);
+    assert!(table.lines().all(|line| line.chars().count() == 25));
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -111,6 +119,8 @@ fn table_with_truncate() {
 | long line in   | ther   |       |
 | the middle ... | text   |       |
 +----------------+--------+-------+";
+    println!("{}", expected);
+    assert_table_lines(&table, 35);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -139,6 +149,9 @@ fn distribute_space_after_split() {
 | This is a very long line with a lot of  | This is text with a         | smol |
 | text                                    | anotherverylongtexttesttest |      |
 +-----------------------------------------+-----------------------------+------+";
+    println!("{}", expected);
+
+    assert_table_lines(&table, 80);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -150,17 +163,19 @@ fn unused_space_after_split() {
     table
         .set_header(&vec!["Header1"])
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(50)
-        .add_row(&vec!["This is text with a anotherverylongtexttesttestaa"]);
+        .set_table_width(30)
+        .add_row(&vec!["This is text with a anotherverylongtext"]);
 
     println!("{}", table.to_string());
     let expected = "
-+-------------------------------+
-| Header1                       |
-+===============================+
-| This is text with a           |
-| anotherverylongtexttesttestaa |
-+-------------------------------+";
++---------------------+
+| Header1             |
++=====================+
+| This is text with a |
+| anotherverylongtext |
++---------------------+";
+    println!("{}", expected);
+    assert_table_lines(&table, 23);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -182,11 +197,9 @@ fn dynamic_full_width_after_split() {
 | This is text with a                            |
 | anotherverylongtexttesttestaa                  |
 +------------------------------------------------+";
-    let table_text = table.to_string();
-    assert_eq!("\n".to_string() + &table_text, expected);
-
-    // Assert
-    assert!(table_text.split('\n').all(|line| line.len() == 50));
+    println!("{}", expected);
+    assert_table_lines(&table, 50);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
 #[test]
@@ -208,9 +221,7 @@ fn dynamic_full_width() {
 +==============================================================================+
 | This is a short line              | small                | smol              |
 +-----------------------------------+----------------------+-------------------+";
-    let table_text = table.to_string();
-    assert_eq!("\n".to_string() + &table_text, expected);
-
-    // Assert
-    assert!(table_text.split('\n').all(|line| line.len() == 80));
+    println!("{}", expected);
+    assert_table_lines(&table, 80);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

@@ -1,4 +1,4 @@
-use super::column_display_info::ColumnDisplayInfo;
+use super::ColumnDisplayInfo;
 
 use crate::style::TableComponent;
 use crate::table::Table;
@@ -39,11 +39,11 @@ fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String 
     let mut first = true;
     for info in display_info.iter() {
         // Only add something, if the column isn't hidden
-        if !info.is_hidden() {
+        if !info.is_hidden {
             if !first {
                 line += &intersection;
             }
-            line += &top_border.repeat(info.width() as usize);
+            line += &top_border.repeat(info.width().into());
             first = false;
         }
     }
@@ -145,11 +145,11 @@ fn draw_horizontal_lines(
     let mut first = true;
     for info in display_info.iter() {
         // Only add something, if the column isn't hidden
-        if !info.is_hidden() {
+        if !info.is_hidden {
             if !first {
                 line += &middle_intersection;
             }
-            line += &horizontal_lines.repeat(info.width() as usize);
+            line += &horizontal_lines.repeat(info.width().into());
             first = false;
         }
     }
@@ -179,11 +179,11 @@ fn draw_bottom_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> Stri
     let mut first = true;
     for info in display_info.iter() {
         // Only add something, if the column isn't hidden
-        if !info.is_hidden() {
+        if !info.is_hidden {
             if !first {
                 line += &middle_intersection;
             }
-            line += &bottom_border.repeat(info.width() as usize);
+            line += &bottom_border.repeat(info.width().into());
             first = false;
         }
     }

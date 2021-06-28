@@ -48,6 +48,7 @@ fn fixed_max_min_constraints() {
 |          | line   |          |
 |          | stuff  |          |
 +----------+--------+----------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 
     // Now try this again when using dynamic content arrangement
@@ -92,6 +93,7 @@ fn fixed_max_min_constraints() {
 |          | uf |          |
 |          | f  |          |
 +----------+----+----------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -117,6 +119,7 @@ fn unnecessary_max_min_constraints() {
 |      | add some             |                        |
 |      | multi line stuff     |                        |
 +------+----------------------+------------------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 
     // Now test for dynamic content arrangement
@@ -132,6 +135,7 @@ fn unnecessary_max_min_constraints() {
 |      | add some             |                        |
 |      | multi line stuff     |                        |
 +------+----------------------+------------------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -169,6 +173,7 @@ fn constraints_bigger_than_table_width() {
 | o | multi line stuff             |                        |
 | l |                              |                        |
 +---+------------------------------+------------------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -187,42 +192,83 @@ fn percentage() {
 
     println!("{}", table.to_string());
     let expected = "
-+--------+--------------+--------------+
-| smol   | Header2      | Header3      |
++-------+---------------+--------------+
+| smol  | Header2       | Header3      |
 +======================================+
-| smol   | This is      | This is the  |
-|        | another text | third text   |
-|--------+--------------+--------------|
-| smol   | Now          | This is      |
-|        | add some     | awesome      |
-|        | multi line   |              |
-|        | stuff        |              |
-+--------+--------------+--------------+";
+| smol  | This is       | This is the  |
+|       | another text  | third text   |
+|-------+---------------+--------------|
+| smol  | Now           | This is      |
+|       | add some      | awesome      |
+|       | multi line    |              |
+|       | stuff         |              |
++-------+---------------+--------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
 
-    table.set_table_width(40).set_constraints(vec![
-        ColumnConstraint::MinPercentage(40),
-        ColumnConstraint::MaxPercentage(30),
-        ColumnConstraint::Percentage(30),
-    ]);
+#[test]
+fn percentage_second() {
+    let mut table = get_constraint_table();
+
+    table
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(40)
+        .set_constraints(vec![
+            ColumnConstraint::MinPercentage(40),
+            ColumnConstraint::MaxPercentage(30),
+            ColumnConstraint::Percentage(30),
+        ]);
 
     println!("{}", table.to_string());
     let expected = "
-+----------------+--------+------------+
-| smol           | Header | Header3    |
-|                | 2      |            |
-+======================================+
-| smol           | This   | This is    |
-|                | is ano | the third  |
-|                | ther   | text       |
-|                | text   |            |
-|----------------+--------+------------|
-| smol           | Now    | This is    |
-|                | add    | awesome    |
-|                | some   |            |
-|                | multi  |            |
-|                | line   |            |
-|                | stuff  |            |
-+----------------+--------+------------+";
++--------------+----------+----------+
+| smol         | Header2  | Header3  |
++====================================+
+| smol         | This is  | This is  |
+|              | another  | the      |
+|              | text     | third    |
+|              |          | text     |
+|--------------+----------+----------|
+| smol         | Now      | This is  |
+|              | add some | awesome  |
+|              | multi    |          |
+|              | line     |          |
+|              | stuff    |          |
++--------------+----------+----------+";
+    println!("{}", expected);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
+fn max_percentage() {
+    let mut table = get_constraint_table();
+
+    table
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(40)
+        .set_constraints(vec![
+            ColumnConstraint::ContentWidth,
+            ColumnConstraint::MaxPercentage(30),
+            ColumnConstraint::Percentage(30),
+        ]);
+
+    println!("{}", table.to_string());
+    let expected = "
++------+----------+----------+
+| smol | Header2  | Header3  |
++============================+
+| smol | This is  | This is  |
+|      | another  | the      |
+|      | text     | third    |
+|      |          | text     |
+|------+----------+----------|
+| smol | Now      | This is  |
+|      | add some | awesome  |
+|      | multi    |          |
+|      | line     |          |
+|      | stuff    |          |
++------+----------+----------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
