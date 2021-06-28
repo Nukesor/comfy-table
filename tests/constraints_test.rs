@@ -222,19 +222,53 @@ fn percentage_second() {
 
     println!("{}", table.to_string());
     let expected = "
-+--------------+------------+----------+
-| smol         | Header2    | Header3  |
-+======================================+
-| smol         | This is    | This is  |
-|              | another    | the      |
-|              | text       | third    |
-|              |            | text     |
-|--------------+------------+----------|
-| smol         | Now        | This is  |
-|              | add some   | awesome  |
-|              | multi line |          |
-|              | stuff      |          |
-+--------------+------------+----------+";
++--------------+----------+----------+
+| smol         | Header2  | Header3  |
++====================================+
+| smol         | This is  | This is  |
+|              | another  | the      |
+|              | text     | third    |
+|              |          | text     |
+|--------------+----------+----------|
+| smol         | Now      | This is  |
+|              | add some | awesome  |
+|              | multi    |          |
+|              | line     |          |
+|              | stuff    |          |
++--------------+----------+----------+";
+    println!("{}", expected);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
+fn max_percentage() {
+    let mut table = get_constraint_table();
+
+    table
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(40)
+        .set_constraints(vec![
+            ColumnConstraint::ContentWidth,
+            ColumnConstraint::MaxPercentage(30),
+            ColumnConstraint::Percentage(30),
+        ]);
+
+    println!("{}", table.to_string());
+    let expected = "
++------+----------+----------+
+| smol | Header2  | Header3  |
++============================+
+| smol | This is  | This is  |
+|      | another  | the      |
+|      | text     | third    |
+|      |          | text     |
+|------+----------+----------|
+| smol | Now      | This is  |
+|      | add some | awesome  |
+|      | multi    |          |
+|      | line     |          |
+|      | stuff    |          |
++------+----------+----------+";
     println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

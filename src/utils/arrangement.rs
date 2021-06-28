@@ -58,7 +58,7 @@ fn count_border_columns(table: &Table, visible_columns: usize) -> usize {
     lines
 }
 
-pub fn get_delimiter(cell: &Cell, column: &Column, table: &Table) -> char {
+fn get_delimiter(table: &Table, column: &Column, cell: &Cell) -> char {
     // Determine, which delimiter should be used
     if let Some(delimiter) = cell.delimiter {
         delimiter
@@ -71,16 +71,40 @@ pub fn get_delimiter(cell: &Cell, column: &Column, table: &Table) -> char {
     }
 }
 
+/// A little wrapper, which resolves MaxPercentage constraints to their actual MaxWidth value for
+/// the current table and terminal width.
+fn get_max_constraint(
+    table: &Table,
+    constraint: &Option<ColumnConstraint>,
+    table_width: usize,
+    visible_columns: usize,
+) -> Option<ColumnConstraint> {
+    match constraint {
+        Some(MaxWidth(width)) => Some(MaxWidth(*width)),
+        Some(MaxPercentage(percent)) => {
+            // Get the table width minus borders.
+            let width = table_width.saturating_sub(count_border_columns(table, visible_columns));
+
+            // Calculate the absolute value in actual columns.
+            let width = (width * usize::from(*percent) / 100)
+                .try_into()
+                .unwrap_or(u16::MAX);
+            Some(MaxWidth(width))
+        }
+        _ => None,
+    }
+}
+
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
 pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
-    let table_width = table.get_table_width().map(|width| usize::from(width));
+    let table_width = table.get_table_width().map(usize::from);
     let mut infos = BTreeMap::new();
 
     let visible_columns = count_visible_columns(&table.columns);
     for column in table.columns.iter() {
         if column.constraint.is_some() {
-            evaluate_constraint(&table, column, &mut infos, table_width, visible_columns);
+            evaluate_constraint(table, column, &mut infos, table_width, visible_columns);
         }
     }
     //println!("After initial constraints: {:#?}", infos);
@@ -139,7 +163,7 @@ fn evaluate_constraint(
             if let Some(table_width) = table_width {
                 // Get the table width minus borders
                 let width =
-                    table_width.saturating_sub(count_border_columns(&table, visible_columns));
+                    table_width.saturating_sub(count_border_columns(table, visible_columns));
 
                 // Calculate the percentage of that width.
                 let mut width = (width * usize::from(percent) / 100)
@@ -158,7 +182,7 @@ fn evaluate_constraint(
             if let Some(table_width) = table_width {
                 // Get the table width minus borders
                 let width =
-                    table_width.saturating_sub(count_border_columns(&table, visible_columns));
+                    table_width.saturating_sub(count_border_columns(table, visible_columns));
 
                 // Calculate the percentage of that width.
                 let mut width = (width * usize::from(percent) / 100)
@@ -236,7 +260,7 @@ fn dynamic_arrangement(table: &Table, infos: &mut DisplayInfos, table_width: usi
     // Find all columns that require less space than the average.
     // Returns the remaining available width and the amount of remaining columns that need handling
     let (mut remaining_width, mut remaining_columns) =
-        find_columns_less_than_average(remaining_width, column_count, &table.columns, infos);
+        find_columns_less_than_average(table, infos, table_width, remaining_width, column_count);
 
     //{
     //    println!("After less than average: {:#?}", infos);
@@ -256,11 +280,11 @@ fn dynamic_arrangement(table: &Table, infos: &mut DisplayInfos, table_width: usi
     if remaining_columns != 0 && remaining_width > (2 * remaining_columns) {
         // This is where Step 5 happens.
         let (width, columns) = optimize_space_after_split(
-            remaining_width,
-            remaining_columns,
+            table,
             &table.columns,
             infos,
-            table,
+            remaining_width,
+            remaining_columns,
         );
         remaining_width = width;
         remaining_columns = columns;
@@ -363,10 +387,11 @@ fn available_content_width(
 /// 3. `infos`: The ColumnDisplayInfos used anywhere else
 /// 4. `checked`: These are all columns which have a fixed width and are no longer need checking.
 fn find_columns_less_than_average(
+    table: &Table,
+    infos: &mut DisplayInfos,
+    table_width: usize,
     mut remaining_width: usize,
     column_count: usize,
-    columns: &[Column],
-    infos: &mut DisplayInfos,
 ) -> (usize, usize) {
     let mut found_smaller = true;
     let mut remaining_columns = count_remaining_columns(column_count, infos);
@@ -384,7 +409,7 @@ fn find_columns_less_than_average(
             break;
         }
 
-        for column in columns.iter() {
+        for column in table.columns.iter() {
             // Ignore hidden columns
             // We already checked this column, skip it
             if infos.contains_key(&column.index) {
@@ -396,7 +421,9 @@ fn find_columns_less_than_average(
             // two conditions are met:
             // - The average remaining space is bigger then the MaxWidth constraint.
             // - The actual max content of the column is bigger than the MaxWidth constraint.
-            if let Some(ColumnConstraint::MaxWidth(max_width)) = column.constraint {
+            if let Some(ColumnConstraint::MaxWidth(max_width)) =
+                get_max_constraint(table, &column.constraint, table_width, column_count)
+            {
                 // Max/Min constraints always include padding!
                 let space_after_padding = average_space + usize::from(column.get_padding_width());
 
@@ -461,11 +488,11 @@ fn find_columns_less_than_average(
 ///
 /// By doing this for each column, we can save a lot of space in some edge-cases.
 fn optimize_space_after_split(
-    mut remaining_width: usize,
-    mut remaining_columns: usize,
+    table: &Table,
     columns: &[Column],
     infos: &mut DisplayInfos,
-    table: &Table,
+    mut remaining_width: usize,
+    mut remaining_columns: usize,
 ) -> (usize, usize) {
     let mut found_smaller = true;
     // Calculate the average space that remains for each column.
@@ -524,7 +551,7 @@ fn get_longest_line_after_split(average_space: usize, column: &Column, table: &T
             continue;
         };
 
-        let delimiter = get_delimiter(cell, column, table);
+        let delimiter = get_delimiter(table, column, cell);
 
         // Create a temporary ColumnDisplayInfo with the average space as width.
         // That way we can simulate how the splitted text will look like.
