@@ -42,6 +42,22 @@ fn count_remaining_columns(column_count: usize, infos: &DisplayInfos) -> usize {
     column_count - infos.iter().filter(|(_, info)| !info.is_hidden).count()
 }
 
+fn count_border_columns(table: &Table, visible_columns: usize) -> usize {
+    let mut lines = 0;
+    // Remove space occupied by borders from remaining_width
+    if should_draw_left_border(table) {
+        lines += 1;
+    }
+    if should_draw_right_border(table) {
+        lines += 1;
+    }
+    if should_draw_vertical_lines(table) {
+        lines += visible_columns.saturating_sub(1);
+    }
+
+    lines
+}
+
 pub fn get_delimiter(cell: &Cell, column: &Column, table: &Table) -> char {
     // Determine, which delimiter should be used
     if let Some(delimiter) = cell.delimiter {
@@ -58,11 +74,13 @@ pub fn get_delimiter(cell: &Cell, column: &Column, table: &Table) -> char {
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
 pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
-    let table_width = table.get_table_width();
+    let table_width = table.get_table_width().map(|width| usize::from(width));
     let mut infos = BTreeMap::new();
+
+    let visible_columns = count_visible_columns(&table.columns);
     for column in table.columns.iter() {
         if column.constraint.is_some() {
-            evaluate_constraint(column, &mut infos, table_width);
+            evaluate_constraint(&table, column, &mut infos, table_width, visible_columns);
         }
     }
     //println!("After initial constraints: {:#?}", infos);
@@ -89,7 +107,13 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
 
 /// Look at given constraints of a column.
 /// Some of these contraints can be resolved at the very beginning
-fn evaluate_constraint(column: &Column, infos: &mut DisplayInfos, table_width: Option<u16>) {
+fn evaluate_constraint(
+    table: &Table,
+    column: &Column,
+    infos: &mut DisplayInfos,
+    table_width: Option<usize>,
+    visible_columns: usize,
+) {
     match column.constraint {
         Some(ContentWidth) => {
             let info = ColumnDisplayInfo::new(column, column.max_content_width);
@@ -112,14 +136,18 @@ fn evaluate_constraint(column: &Column, infos: &mut DisplayInfos, table_width: O
         }
         Some(Percentage(percent)) => {
             // The column should always get a fixed percentage.
-            // TODO: Check if this might lead to 1-off situations?
-            //       We might have to take the amount of borders into acount during this calculation.
             if let Some(table_width) = table_width {
-                let mut width = (i32::from(table_width) * i32::from(percent) / 100)
+                // Get the table width minus borders
+                let width =
+                    table_width.saturating_sub(count_border_columns(&table, visible_columns));
+
+                // Calculate the percentage of that width.
+                let mut width = (width * usize::from(percent) / 100)
                     .try_into()
                     .unwrap_or(u16::MAX);
-                width = absolute_width_with_padding(column, width);
 
+                // Set the width to that fixed percentage.
+                width = absolute_width_with_padding(column, width);
                 let info = ColumnDisplayInfo::new(column, width);
                 infos.insert(column.index, info);
             }
@@ -127,14 +155,18 @@ fn evaluate_constraint(column: &Column, infos: &mut DisplayInfos, table_width: O
         Some(MinPercentage(percent)) => {
             // In case a min_percentage_width is specified, we may already fix the size of the column.
             // We do this, if we know that the content is smaller than the min size.
-            // TODO: Check if this might lead to 1-off situations?
-            //       We might have to take the amount of borders into acount during this calculation.
             if let Some(table_width) = table_width {
-                let mut width = (i32::from(table_width) * i32::from(percent) / 100)
+                // Get the table width minus borders
+                let width =
+                    table_width.saturating_sub(count_border_columns(&table, visible_columns));
+
+                // Calculate the percentage of that width.
+                let mut width = (width * usize::from(percent) / 100)
                     .try_into()
                     .unwrap_or(u16::MAX);
-                width = absolute_width_with_padding(column, width);
 
+                // Set the width to that fixed percentage.
+                width = absolute_width_with_padding(column, width);
                 if column.get_max_width() <= width {
                     let info = ColumnDisplayInfo::new(column, width);
                     infos.insert(column.index, info);
@@ -188,7 +220,7 @@ fn disabled_arrangement(columns: &[Column], infos: &mut DisplayInfos) {
 ///
 /// 1. A user assigns more space to a few columns than there is on the terminal
 /// 2. A user provides more than 100% column width over a few columns.
-fn dynamic_arrangement(table: &Table, infos: &mut DisplayInfos, table_width: u16) {
+fn dynamic_arrangement(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
     let column_count = count_visible_columns(&table.columns);
 
     // Step 1
@@ -282,21 +314,11 @@ fn dynamic_arrangement(table: &Table, infos: &mut DisplayInfos, table_width: u16
 fn available_content_width(
     table: &Table,
     infos: &DisplayInfos,
-    column_count: usize,
-    table_width: u16,
+    visible_columns: usize,
+    mut width: usize,
 ) -> usize {
-    let mut width: usize = table_width.into();
-
-    // Remove space occupied by borders from remaining_width
-    if should_draw_left_border(table) {
-        width = width.saturating_sub(1);
-    }
-    if should_draw_right_border(table) {
-        width = width.saturating_sub(1);
-    }
-    if should_draw_vertical_lines(table) {
-        width = width.saturating_sub(column_count.saturating_sub(1));
-    }
+    let border_count = count_border_columns(table, visible_columns);
+    width = width.saturating_sub(border_count);
 
     // Subtract all paddings from the remaining width.
     for column in table.columns.iter() {
@@ -307,6 +329,7 @@ fn available_content_width(
         let (left, right) = column.padding;
         width = width.saturating_sub((left + right).into());
     }
+
     // Remove all already fixed sizes from the remaining_width.
     for info in infos.values() {
         if info.is_hidden {
