@@ -1,6 +1,8 @@
 use pretty_assertions::assert_eq;
 
-use comfy_table::{ColumnConstraint, ContentArrangement, Row, Table};
+use comfy_table::Boundary::*;
+use comfy_table::ColumnConstraint::*;
+use comfy_table::{ContentArrangement, Row, Table};
 
 fn assert_table_lines(table: &Table, count: usize) {
     for line in table.lines() {
@@ -97,11 +99,11 @@ fn table_with_truncate() {
     // The first column will be wider than 6 chars.
     // The second column's content is wider than 6 chars. There should be a '...'.
     let second_column = table.get_column_mut(1).unwrap();
-    second_column.set_constraint(ColumnConstraint::Width(8));
+    second_column.set_constraint(Absolute(Fixed(8)));
 
     // The third column's content is less than 6 chars width. There shouldn't be a '...'.
     let third_column = table.get_column_mut(2).unwrap();
-    third_column.set_constraint(ColumnConstraint::Width(7));
+    third_column.set_constraint(Absolute(Fixed(7)));
 
     println!("{}", table.to_string());
     let expected = "

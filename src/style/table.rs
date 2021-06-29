@@ -26,10 +26,6 @@ pub enum ContentArrangement {
     /// This is mode is the same as the [ContentArrangement::Dynamic] arrangement, but it will always use as much
     /// space as it's given. Any surplus space will be distributed between all columns.
     DynamicFullWidth,
-    // /// Same as [ContentArrangement::Dynamic], but the full width of the terminal will always be used.
-    // /// Use this, if you want tables to use as much space as possible.
-    // /// Constraints on columns are still respected.
-    // Full,
 }
 
 /// All configurable table components.

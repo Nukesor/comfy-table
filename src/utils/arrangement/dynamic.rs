@@ -198,8 +198,8 @@ fn find_columns_less_than_average(
             // two conditions are met:
             // - The average remaining space is bigger then the MaxWidth constraint.
             // - The actual max content of the column is bigger than the MaxWidth constraint.
-            if let Some(ColumnConstraint::MaxWidth(max_width)) =
-                get_max_constraint(table, &column.constraint, table_width, column_count)
+            if let Some(max_width) =
+                get_max_constraint(table, &column.constraint, Some(table_width), column_count)
             {
                 // Max/Min constraints always include padding!
                 let space_after_padding = average_space + usize::from(column.get_padding_width());
