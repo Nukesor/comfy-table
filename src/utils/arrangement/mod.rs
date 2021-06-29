@@ -53,7 +53,7 @@ mod tests {
     fn test_disabled_arrangement() {
         let mut table = Table::new();
         table.set_header(&vec!["head", "head", "head"]);
-        table.add_row(&vec!["four", "fivef", "sixsix"]);
+        table.add_row(&vec!["__", "fivef", "sixsix"]);
 
         let display_infos = arrange_content(&table);
 

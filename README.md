@@ -20,6 +20,8 @@ Features:
 - Pretty much every part of the table is customizable (borders, lines, padding, alignment).
 - Constraints on columns that allow some additional control over how to arrange content.
 - Cross plattform (Linux, macOS, Windows).
+- It's FAST!
+    Benchmarks show that a pretty big table with weird constraints is build in 4 _μs_, which is `4*1e^6`.
 
 Comfy-table is written for the current `stable` Rust version.
 Older Rust versions may work, but aren't officially supported.
