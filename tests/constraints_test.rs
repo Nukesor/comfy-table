@@ -207,6 +207,28 @@ fn percentage() {
 }
 
 #[test]
+/// A single percentage constraint should be 100% at most.
+fn max_100_percentage() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["smol"])
+        .add_row(&vec!["smol"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(40)
+        .set_constraints(vec![Absolute(Percentage(200))]);
+
+    println!("{}", table.to_string());
+    let expected = "
++--------------------------------------+
+| smol                                 |
++======================================+
+| smol                                 |
++--------------------------------------+";
+    println!("{}", expected);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
 fn percentage_second() {
     let mut table = get_constraint_table();
 
