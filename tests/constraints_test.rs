@@ -271,3 +271,42 @@ fn max_percentage() {
     println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
+
+#[test]
+/// Ensure that both min and max in [Boundaries] is respected
+fn min_max_boundary() {
+    let mut table = get_constraint_table();
+
+    table
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(40)
+        .set_constraints(vec![
+            Boundaries {
+                lower: Percentage(50),
+                upper: Fixed(2),
+            },
+            Boundaries {
+                lower: Fixed(15),
+                upper: Percentage(50),
+            },
+            Absolute(Percentage(30)),
+        ]);
+
+    println!("{}", table.to_string());
+    let expected = "
++------------------+---------------+----------+
+| smol             | Header2       | Header3  |
++=============================================+
+| smol             | This is       | This is  |
+|                  | another text  | the      |
+|                  |               | third    |
+|                  |               | text     |
+|------------------+---------------+----------|
+| smol             | Now           | This is  |
+|                  | add some      | awesome  |
+|                  | multi line    |          |
+|                  | stuff         |          |
++------------------+---------------+----------+";
+    println!("{}", expected);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}

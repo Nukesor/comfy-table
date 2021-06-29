@@ -1,6 +1,7 @@
 use std::convert::TryInto;
 
 use super::constraints::get_max_constraint;
+use super::constraints::get_min_constraint;
 use super::helper::*;
 use super::{ColumnDisplayInfo, DisplayInfos};
 use crate::style::*;
@@ -14,21 +15,25 @@ use crate::{Column, Table};
 ///    remaining space for remaining columns. (This includes the MaxWidth Constraint).
 /// 3. Take those columns, fix their size and add the surplus in space to the remaining space.
 /// 4. Repeat step 2-3 until no columns with smaller size than average remaining space are left.
-/// 5. At this point, the remaining spaces is equally distributed between all columns.
+/// 5. Now that we know how much space we have to work with, we have to check again for
+///    LowerBoundary constraints. If there are any columns that have a higher LowerBoundary,
+///    we have to fix that column to this size.
+/// 6. At this point, the remaining spaces is equally distributed between all columns.
 ///    It get's a little tricky now. Check the documentation of [optimize_space_after_split]
 ///    for more information.
-/// 6. Divide the remaining space in relatively equal chunks.
+/// 7. Divide the remaining space in relatively equal chunks.
 ///
 /// This breaks when:
 ///
 /// 1. A user assigns more space to a few columns than there is on the terminal
 /// 2. A user provides more than 100% column width over a few columns.
 pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
-    let column_count = count_visible_columns(&table.columns);
+    let visible_columns = count_visible_columns(&table.columns);
 
     // Step 1
     // Find out how much space there is left.
-    let remaining_width: usize = available_content_width(table, infos, column_count, table_width);
+    let remaining_width: usize =
+        available_content_width(table, infos, visible_columns, table_width);
 
     //println!(
     //    "Table width: {}, Start remaining width {}",
@@ -39,7 +44,25 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
     // Find all columns that require less space than the average.
     // Returns the remaining available width and the amount of remaining columns that need handling
     let (mut remaining_width, mut remaining_columns) =
-        find_columns_less_than_average(table, infos, table_width, remaining_width, column_count);
+        find_columns_less_than_average(table, infos, table_width, remaining_width, visible_columns);
+
+    // Step 5.
+    //
+    // Iterate through all undecided columns and enforce LowerBoundary constraints, if they're
+    // bigger than the current average space.
+    if remaining_columns > 0 {
+        // TODO: Refactor once destructuring assignments are stable.
+        let (width, columns) = enforce_lower_boundary_constraints(
+            table,
+            infos,
+            table_width,
+            remaining_width,
+            remaining_columns,
+            visible_columns,
+        );
+        remaining_width = width;
+        remaining_columns = columns;
+    }
 
     //{
     //    println!("After less than average: {:#?}", infos);
@@ -49,7 +72,7 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
     //    );
     //}
 
-    // Step 5
+    // Step 6
     // All remaining columns should get an equal amount of remaining space.
     // However, we check if we can save some space after the content has been split.
     //
@@ -75,7 +98,7 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
     //    );
     //}
 
-    // Early exit and one branch of Part 6.
+    // Early exit and one branch of Part 7.
     //
     // All columns have been successfully assigned a width.
     // However, in case the user specified that the full terminal width should always be fully
@@ -89,7 +112,7 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
         return;
     }
 
-    // Step 6. Equally distribute the remaining_width to all remaining columns
+    // Step 7. Equally distribute the remaining_width to all remaining columns
     // If we have less than one space per remaining column, give at least one space per column
     if remaining_width < remaining_columns {
         remaining_width = remaining_columns;
@@ -155,23 +178,25 @@ fn available_content_width(
 /// 3. Do step 1 and 2, as long as there are columns left and as long as we find columns
 ///     that take up less space than the current remaining average.
 ///
-/// Parameters
-/// 1. `remaining_width`: This is the amount of space that isn't yet reserved by any other column.
-///                         We need this to determine the average space each column has left.
-///                         Any columns that needs less than this average receives a fixed width.
-///                         The leftover space can then be used for the other columns.
-/// 2. `column_count`: The amount of non-yet determined columns. Used to calculate the average space.
-/// 3. `infos`: The ColumnDisplayInfos used anywhere else
-/// 4. `checked`: These are all columns which have a fixed width and are no longer need checking.
+/// Parameters:
+/// - `table_width`: The absolute amount of available space.
+/// - `remaining_width`: This is the amount of space that isn't yet reserved by any other column.
+///                      We need this to determine the average space each column has left.
+///                      Any columns that needs less than this average receives a fixed width.
+///                      The leftover space can then be used for the other columns.
+/// - `visible_columns`: All visible columns that should be displayed.
+///
+/// Returns:
+/// `(remaining_width: usize, remaining_columns: u16)`
 fn find_columns_less_than_average(
     table: &Table,
     infos: &mut DisplayInfos,
     table_width: usize,
     mut remaining_width: usize,
-    column_count: usize,
+    visible_coulumns: usize,
 ) -> (usize, usize) {
     let mut found_smaller = true;
-    let mut remaining_columns = count_remaining_columns(column_count, infos);
+    let mut remaining_columns = count_remaining_columns(visible_coulumns, infos);
     while found_smaller {
         found_smaller = false;
 
@@ -198,9 +223,12 @@ fn find_columns_less_than_average(
             // two conditions are met:
             // - The average remaining space is bigger then the MaxWidth constraint.
             // - The actual max content of the column is bigger than the MaxWidth constraint.
-            if let Some(max_width) =
-                get_max_constraint(table, &column.constraint, Some(table_width), column_count)
-            {
+            if let Some(max_width) = get_max_constraint(
+                table,
+                &column.constraint,
+                Some(table_width),
+                visible_coulumns,
+            ) {
                 // Max/Min constraints always include padding!
                 let space_after_padding = average_space + usize::from(column.get_padding_width());
 
@@ -241,6 +269,64 @@ fn find_columns_less_than_average(
                 found_smaller = true;
             }
         }
+    }
+
+    (remaining_width, remaining_columns)
+}
+
+/// Step 5
+///
+/// Determine, whether there are any columns that have a higher LowerBoundary than the currently
+/// available average width.
+///
+/// These columns will then get fixed to the specified amount.
+fn enforce_lower_boundary_constraints(
+    table: &Table,
+    infos: &mut DisplayInfos,
+    table_width: usize,
+    mut remaining_width: usize,
+    mut remaining_columns: usize,
+    visible_columns: usize,
+) -> (usize, usize) {
+    let mut average_space = remaining_width / remaining_columns;
+    for column in table.columns.iter() {
+        // Ignore hidden columns
+        // We already checked this column, skip it
+        if infos.contains_key(&column.index) {
+            continue;
+        }
+
+        // Check whether the column has a LowerBoundary constraint.
+        let min_width = if let Some(min_width) = get_min_constraint(
+            table,
+            &column.constraint,
+            Some(table_width),
+            visible_columns,
+        ) {
+            min_width
+        } else {
+            continue;
+        };
+
+        // Only proceed if the average spaces is smaller than the specified lower boundary.
+        if average_space >= min_width.into() {
+            continue;
+        }
+
+        // This column would get smaller than the specified lower boundary.
+        // Fix its width!!!
+        let width = absolute_width_with_padding(column, min_width);
+        let info = ColumnDisplayInfo::new(column, width);
+        infos.insert(column.index, info);
+
+        // Continue with new recalculated width
+        remaining_width = remaining_width.saturating_sub(width.into());
+        remaining_columns -= 1;
+        if remaining_columns == 0 {
+            break;
+        }
+        average_space = remaining_width / remaining_columns;
+        continue;
     }
 
     (remaining_width, remaining_columns)

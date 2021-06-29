@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed a lot of possible, but highly unlikely number conversion overflow issues.
 - Run space optimization under all circumstances.
 - Percentage constraints with values of >100 will now be capped to 100.
+- The MinConstraint would be ignored when:
+    * The content was larger than the min constraint
+    * There was less space available than specified in the constraint.
 
 # Changed
 

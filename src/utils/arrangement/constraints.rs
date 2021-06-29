@@ -123,11 +123,7 @@ pub fn absolute_value_from_boundary(
         Boundary::Fixed(width) => Some(*width),
         Boundary::Percentage(percent) => {
             // Don't return a value, if we cannot determine the current table width.
-            let table_width = if let Some(table_width) = table_width {
-                table_width
-            } else {
-                return None;
-            };
+            let table_width = table_width?;
 
             // Enforce at most 100%
             let percent = std::cmp::min(*percent, 100u16);
