@@ -1,10 +1,11 @@
 use std::collections::BTreeMap;
 use std::convert::TryInto;
 
-use super::borders::{
+use super::ColumnDisplayInfo;
+use crate::utils::formatting::borders::{
     should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
 };
-use super::ColumnDisplayInfo;
+use crate::utils::formatting::content_split::split_line;
 
 use crate::style::ColumnConstraint::*;
 use crate::table::Table;
@@ -559,7 +560,7 @@ fn get_longest_line_after_split(average_space: usize, column: &Column, table: &T
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if (line.chars().count()) > average_space {
-                let mut splitted = super::split::split_line(line, &info, delimiter);
+                let mut splitted = split_line(line, &info, delimiter);
                 column_lines.append(&mut splitted);
             } else {
                 column_lines.push(line.into());

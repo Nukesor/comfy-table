@@ -1,6 +1,6 @@
 use std::iter::FromIterator;
 
-use super::ColumnDisplayInfo;
+use crate::utils::ColumnDisplayInfo;
 
 /// Split a line if it's longer than the allowed columns (width - padding).
 ///

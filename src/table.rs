@@ -13,9 +13,7 @@ use crate::column::Column;
 use crate::row::Row;
 use crate::style::presets::ASCII_FULL;
 use crate::style::{ColumnConstraint, ContentArrangement, TableComponent};
-use crate::utils::arrangement::arrange_content;
-use crate::utils::borders::draw_borders;
-use crate::utils::format::format_content;
+use crate::utils::build_table;
 
 /// This is the main interface for building a table.
 /// Each table consists of [Rows](Row), which in turn contain [Cells](crate::cell::Cell).
@@ -79,9 +77,7 @@ impl Table {
     /// This is an alternative to `fmt`, but rather returns an iterator to each line, rather than
     /// one String separated by newlines.
     pub fn lines(&self) -> impl Iterator<Item = String> {
-        let display_info = arrange_content(self);
-        let content = format_content(self, &display_info);
-        draw_borders(self, content, &display_info).into_iter()
+        build_table(&self)
     }
 
     /// Set the header row of the table. This is usually the title of each column.\

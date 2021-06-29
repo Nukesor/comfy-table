@@ -1,11 +1,11 @@
 use crossterm::style::{style, Stylize};
 
-use super::split::split_line;
-use super::ColumnDisplayInfo;
+use super::content_split::split_line;
 use crate::cell::Cell;
 use crate::row::Row;
 use crate::style::CellAlignment;
 use crate::table::Table;
+use crate::utils::ColumnDisplayInfo;
 
 pub fn get_delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
     // Determine, which delimiter should be used
