@@ -26,9 +26,5 @@ proptest = "1"
 criterion = "0.3"
 
 [[bench]]
-name = "readme_table"
-harness = false
-
-[[bench]]
-name = "huge_table"
+name = "build_tables"
 harness = false
