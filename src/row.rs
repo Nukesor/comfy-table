@@ -135,6 +135,7 @@ mod tests {
         for cell in cells.iter() {
             row.add_cell(Cell::new(cell));
         }
+        assert_eq!(row.cell_count(), cells.len());
 
         let mut cell_content_iter = cells.iter();
         for cell in row.cell_iter() {
