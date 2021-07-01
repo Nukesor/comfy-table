@@ -231,9 +231,14 @@ impl Table {
     }
 
     /// Convenience method to set a [ColumnConstraint] for all columns at once.
+    /// Constraints are used to influence the way the columns will be arranged.
+    /// Check out their docs for more information.
     ///
-    /// Simply pass any iterable with ColumnConstraints.\
-    /// If more constraints are passed than there are columns, the superfluous constraints will be ignored.
+    /// **Attention:**
+    /// This function should be called after at least one row (or the headers) has been added to the table.
+    /// Before that, the columns won't initialized.
+    ///
+    /// If more constraints are passed than there are columns, any superfluous constraints will be ignored.
     /// ```
     /// use comfy_table::{Boundary::*, CellAlignment, ColumnConstraint::*, ContentArrangement, Table};
     ///
