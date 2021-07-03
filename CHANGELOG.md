@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 # Added
 
 - Add `Table::lines`, which returns an iterator over all lines of the final table output by [dmaahs2017](https://github.com/dmaahs2017) for [#35](https://github.com/Nukesor/comfy-table/issues/35).
-- Add `ColumnConstraints::Boundaries((MinWidt, MaxWidth))` to specify both an upper and a lower boundary.
+- Add `ColumnConstraints::Boundaries{lower: Width, upper: Width}` to specify both an upper and a lower boundary.
 
 # Fixed
 
