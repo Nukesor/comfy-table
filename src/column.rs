@@ -11,7 +11,7 @@ use crate::style::{CellAlignment, ColumnConstraint};
 /// As a result columns can only be modified after the table is populated by some data.
 ///
 /// ```
-/// use comfy_table::{Boundary::*, CellAlignment, ColumnConstraint::*, Table};
+/// use comfy_table::{Width::*, CellAlignment, ColumnConstraint::*, Table};
 ///
 /// let mut table = Table::new();
 /// table.set_header(&vec!["one", "two"]);

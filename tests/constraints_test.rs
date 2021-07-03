@@ -1,5 +1,5 @@
-use comfy_table::Boundary::*;
 use comfy_table::ColumnConstraint::*;
+use comfy_table::Width::*;
 use comfy_table::*;
 use pretty_assertions::assert_eq;
 

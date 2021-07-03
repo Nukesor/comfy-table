@@ -1,7 +1,7 @@
 use pretty_assertions::assert_eq;
 
-use comfy_table::Boundary::*;
 use comfy_table::ColumnConstraint::*;
+use comfy_table::Width::*;
 use comfy_table::{ContentArrangement, Row, Table};
 
 fn assert_table_lines(table: &Table, count: usize) {

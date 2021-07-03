@@ -1,8 +1,8 @@
 use ::proptest::prelude::*;
 use comfy_table::modifiers::UTF8_ROUND_CORNERS;
 use comfy_table::presets::UTF8_FULL;
-use comfy_table::Boundary::*;
 use comfy_table::ColumnConstraint::*;
+use comfy_table::Width::*;
 use comfy_table::*;
 
 /// Pick any of the three existing ContentArrangement types for the table.

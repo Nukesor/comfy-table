@@ -30,11 +30,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 enum ColumnConstraints {
     ...,
     /// Enforce a absolute width for a column.
-    Absolute(Boundary),
+    Absolute(Width),
     /// Specify a lower boundary, either fixed or as percentage of the total width.
-    LowerBoundary(Boundary),
+    LowerBoundary(Width),
     /// Specify a upper boundary, either fixed or as percentage of the total width.
-    UpperBoundary(Boundary),
+    UpperBoundary(Width),
 }
 
 pub enum Boundary {

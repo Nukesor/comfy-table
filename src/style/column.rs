@@ -13,17 +13,17 @@ pub enum ColumnConstraint {
     /// Use with caution! This can easily break your table, if the column's content is overly long.
     ContentWidth,
     /// Enforce a absolute width for a column.
-    Absolute(Boundary),
+    Absolute(Width),
     /// Specify a lower boundary, either fixed or as percentage of the total width.
-    LowerBoundary(Boundary),
+    LowerBoundary(Width),
     /// Specify a upper boundary, either fixed or as percentage of the total width.
-    UpperBoundary(Boundary),
+    UpperBoundary(Width),
     /// Specify both, an upper and a lower boundary.
-    Boundaries { lower: Boundary, upper: Boundary },
+    Boundaries { lower: Width, upper: Width },
 }
 
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub enum Boundary {
+pub enum Width {
     /// Specify a min amount of characters per line for a column.
     Fixed(u16),
     /// Set a a minimum percentage in respect to table_width for this column.

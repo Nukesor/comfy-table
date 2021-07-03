@@ -240,7 +240,7 @@ impl Table {
     ///
     /// If more constraints are passed than there are columns, any superfluous constraints will be ignored.
     /// ```
-    /// use comfy_table::{Boundary::*, CellAlignment, ColumnConstraint::*, ContentArrangement, Table};
+    /// use comfy_table::{Width::*, CellAlignment, ColumnConstraint::*, ContentArrangement, Table};
     ///
     /// let mut table = Table::new();
     /// table.add_row(&vec!["one", "two", "three"])
@@ -437,7 +437,7 @@ impl Table {
     /// Get a mutable iterator over all columns.
     ///
     /// ```
-    /// use comfy_table::{Boundary::*, ColumnConstraint::*, Table};
+    /// use comfy_table::{Width::*, ColumnConstraint::*, Table};
     ///
     /// let mut table = Table::new();
     /// table.add_row(&vec!["First", "Second", "Third"]);

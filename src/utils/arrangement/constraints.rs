@@ -2,7 +2,7 @@ use std::convert::TryInto;
 
 use super::helper::*;
 use super::{ColumnDisplayInfo, DisplayInfos};
-use crate::style::{Boundary, ColumnConstraint, ColumnConstraint::*};
+use crate::style::{ColumnConstraint, ColumnConstraint::*, Width};
 use crate::{Column, Table};
 
 /// Look at given constraints of a column and check if some of them can be resolved at the very
@@ -25,9 +25,9 @@ pub fn evaluate(
             let info = ColumnDisplayInfo::new(column, column.max_content_width);
             infos.insert(column.index, info);
         }
-        Some(Absolute(boundary)) => {
+        Some(Absolute(width)) => {
             if let Some(width) =
-                absolute_value_from_boundary(table, boundary, visible_columns, table_width)
+                absolute_value_from_width(table, width, visible_columns, table_width)
             {
                 // The column should get always get a fixed width.
                 let width = absolute_width_with_padding(column, width);
@@ -60,8 +60,8 @@ pub fn evaluate(
 /// the current table and terminal width.
 ///
 /// This returns the value of absolute characters that are allowed to be in this column. \
-/// Lower boundaries with [Boundary::Fixed] just return their internal value. \
-/// Lower boundaries with [Boundary::Percentage] return the percental amount of the current table
+/// Lower boundaries with [Width::Fixed] just return their internal value. \
+/// Lower boundaries with [Width::Percentage] return the percental amount of the current table
 /// width.
 pub fn get_min_constraint(
     table: &Table,
@@ -76,10 +76,9 @@ pub fn get_min_constraint(
     };
 
     match constraint {
-        LowerBoundary(boundary)
-        | Boundaries {
-            lower: boundary, ..
-        } => absolute_value_from_boundary(table, boundary, visible_columns, table_width),
+        LowerBoundary(width) | Boundaries { lower: width, .. } => {
+            absolute_value_from_width(table, width, visible_columns, table_width)
+        }
         _ => None,
     }
 }
@@ -88,8 +87,8 @@ pub fn get_min_constraint(
 /// the current table and terminal width.
 ///
 /// This returns the value of absolute characters that are allowed to be in this column. \
-/// Upper boundaries with [Boundary::Fixed] just return their internal value. \
-/// Upper boundaries with [Boundary::Percentage] return the percental amount of the current table
+/// Upper boundaries with [Width::Fixed] just return their internal value. \
+/// Upper boundaries with [Width::Percentage] return the percental amount of the current table
 /// width.
 pub fn get_max_constraint(
     table: &Table,
@@ -104,24 +103,23 @@ pub fn get_max_constraint(
     };
 
     match constraint {
-        UpperBoundary(boundary)
-        | Boundaries {
-            upper: boundary, ..
-        } => absolute_value_from_boundary(table, boundary, visible_columns, table_width),
+        UpperBoundary(width) | Boundaries { upper: width, .. } => {
+            absolute_value_from_width(table, width, visible_columns, table_width)
+        }
         _ => None,
     }
 }
 
 /// Resolve an absolute value from a given boundary
-pub fn absolute_value_from_boundary(
+pub fn absolute_value_from_width(
     table: &Table,
-    boundary: &Boundary,
+    width: &Width,
     visible_columns: usize,
     table_width: Option<usize>,
 ) -> Option<u16> {
-    match boundary {
-        Boundary::Fixed(width) => Some(*width),
-        Boundary::Percentage(percent) => {
+    match width {
+        Width::Fixed(width) => Some(*width),
+        Width::Percentage(percent) => {
             // Don't return a value, if we cannot determine the current table width.
             let table_width = table_width?;
 
