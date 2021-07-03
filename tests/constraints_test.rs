@@ -1,3 +1,5 @@
+use comfy_table::ColumnConstraint::*;
+use comfy_table::Width::*;
 use comfy_table::*;
 use pretty_assertions::assert_eq;
 
@@ -25,9 +27,9 @@ fn fixed_max_min_constraints() {
     let mut table = get_constraint_table();
 
     table.set_constraints(vec![
-        ColumnConstraint::MinWidth(10),
-        ColumnConstraint::MaxWidth(8),
-        ColumnConstraint::Width(10),
+        LowerBoundary(Fixed(10)),
+        UpperBoundary(Fixed(8)),
+        Absolute(Fixed(10)),
     ]);
 
     println!("{}", table.to_string());
@@ -103,10 +105,7 @@ fn fixed_max_min_constraints() {
 fn unnecessary_max_min_constraints() {
     let mut table = get_constraint_table();
 
-    table.set_constraints(vec![
-        ColumnConstraint::MinWidth(1),
-        ColumnConstraint::MaxWidth(30),
-    ]);
+    table.set_constraints(vec![LowerBoundary(Fixed(1)), UpperBoundary(Fixed(30))]);
 
     println!("{}", table.to_string());
     let expected = "
@@ -150,9 +149,9 @@ fn constraints_bigger_than_table_width() {
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(28)
         .set_constraints(vec![
-            ColumnConstraint::MaxWidth(50),
-            ColumnConstraint::MinWidth(30),
-            ColumnConstraint::ContentWidth,
+            UpperBoundary(Fixed(50)),
+            LowerBoundary(Fixed(30)),
+            ContentWidth,
         ]);
 
     println!("{}", table.to_string());
@@ -188,7 +187,7 @@ fn percentage() {
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(40)
-        .set_constraints(vec![ColumnConstraint::Percentage(20)]);
+        .set_constraints(vec![Absolute(Percentage(20))]);
 
     println!("{}", table.to_string());
     let expected = "
@@ -208,6 +207,28 @@ fn percentage() {
 }
 
 #[test]
+/// A single percentage constraint should be 100% at most.
+fn max_100_percentage() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["smol"])
+        .add_row(&vec!["smol"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(40)
+        .set_constraints(vec![Absolute(Percentage(200))]);
+
+    println!("{}", table.to_string());
+    let expected = "
++--------------------------------------+
+| smol                                 |
++======================================+
+| smol                                 |
++--------------------------------------+";
+    println!("{}", expected);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
 fn percentage_second() {
     let mut table = get_constraint_table();
 
@@ -215,9 +236,9 @@ fn percentage_second() {
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(40)
         .set_constraints(vec![
-            ColumnConstraint::MinPercentage(40),
-            ColumnConstraint::MaxPercentage(30),
-            ColumnConstraint::Percentage(30),
+            LowerBoundary(Percentage(40)),
+            UpperBoundary(Percentage(30)),
+            Absolute(Percentage(30)),
         ]);
 
     println!("{}", table.to_string());
@@ -248,9 +269,9 @@ fn max_percentage() {
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(40)
         .set_constraints(vec![
-            ColumnConstraint::ContentWidth,
-            ColumnConstraint::MaxPercentage(30),
-            ColumnConstraint::Percentage(30),
+            ContentWidth,
+            UpperBoundary(Percentage(30)),
+            Absolute(Percentage(30)),
         ]);
 
     println!("{}", table.to_string());
@@ -269,6 +290,45 @@ fn max_percentage() {
 |      | line     |          |
 |      | stuff    |          |
 +------+----------+----------+";
+    println!("{}", expected);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
+/// Ensure that both min and max in [Boundaries] is respected
+fn min_max_boundary() {
+    let mut table = get_constraint_table();
+
+    table
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_table_width(40)
+        .set_constraints(vec![
+            Boundaries {
+                lower: Percentage(50),
+                upper: Fixed(2),
+            },
+            Boundaries {
+                lower: Fixed(15),
+                upper: Percentage(50),
+            },
+            Absolute(Percentage(30)),
+        ]);
+
+    println!("{}", table.to_string());
+    let expected = "
++------------------+---------------+----------+
+| smol             | Header2       | Header3  |
++=============================================+
+| smol             | This is       | This is  |
+|                  | another text  | the      |
+|                  |               | third    |
+|                  |               | text     |
+|------------------+---------------+----------|
+| smol             | Now           | This is  |
+|                  | add some      | awesome  |
+|                  | multi line    |          |
+|                  | stuff         |          |
++------------------+---------------+----------+";
     println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

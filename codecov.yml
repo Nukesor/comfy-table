@@ -1,4 +1,5 @@
 ignore:
+  - "benches"
   - "examples"
   - "proptest_regressions"
   - "tests"

@@ -11,7 +11,7 @@ use crate::style::{CellAlignment, ColumnConstraint};
 /// As a result columns can only be modified after the table is populated by some data.
 ///
 /// ```
-/// use comfy_table::{Table, ColumnConstraint, CellAlignment};
+/// use comfy_table::{Width::*, CellAlignment, ColumnConstraint::*, Table};
 ///
 /// let mut table = Table::new();
 /// table.set_header(&vec!["one", "two"]);
@@ -19,7 +19,7 @@ use crate::style::{CellAlignment, ColumnConstraint};
 /// let mut column = table.get_column_mut(1).expect("This should be column two");
 ///
 /// // Set the max width for all cells of this column to 20 characters.
-/// column.set_constraint(ColumnConstraint::MaxWidth(20));
+/// column.set_constraint(UpperBoundary(Fixed(20)));
 ///
 /// // Set the left padding to 5 spaces and the right padding to 1 space
 /// column.set_padding((5, 1));

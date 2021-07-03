@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 # Added
 
 - Add `Table::lines`, which returns an iterator over all lines of the final table output by [dmaahs2017](https://github.com/dmaahs2017) for [#35](https://github.com/Nukesor/comfy-table/issues/35).
+- Add `ColumnConstraints::Boundaries((MinWidt, MaxWidth))` to specify both an upper and a lower boundary.
 
 # Fixed
 
@@ -15,6 +16,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Return `None` for `Table::get_table_width`, if getting the terminal size somehow failed.
 - Fixed a lot of possible, but highly unlikely number conversion overflow issues.
 - Run space optimization under all circumstances.
+- Percentage constraints with values of >100 will now be capped to 100.
+- The MinConstraint would be ignored when:
+    * The content was larger than the min constraint
+    * There was less space available than specified in the constraint.
+
+# Changed
+
+- The way ColumnConstraints are initialized has been changed.
+    There is now
+
+```
+enum ColumnConstraints {
+    ...,
+    /// Enforce a absolute width for a column.
+    Absolute(Width),
+    /// Specify a lower boundary, either fixed or as percentage of the total width.
+    LowerBoundary(Width),
+    /// Specify a upper boundary, either fixed or as percentage of the total width.
+    UpperBoundary(Width),
+}
+
+pub enum Boundary {
+    /// Specify a min amount of characters per line for a column.
+    Fixed(u16),
+    /// Set a a minimum percentage in respect to table_width for this column.
+    /// Values above 100 will be automatically reduced to 100.
+    /// **Warning:** This option will be ignored, if the width cannot be determined!
+    Percentage(u16),
+}
+```
+
+Instead of the old
+```
+enum ColumnConstraints {
+    ...,
+    Width(u16),
+    MinWidth(u16),
+    MaxWidth(u16),
+    Percentage(u16),
+    MinPercentage(u16),
+    MaxPercentage(u16),
+}
+```
 
 ## [3.0.0] - 2021-06-13
 

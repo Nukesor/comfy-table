@@ -231,18 +231,23 @@ impl Table {
     }
 
     /// Convenience method to set a [ColumnConstraint] for all columns at once.
+    /// Constraints are used to influence the way the columns will be arranged.
+    /// Check out their docs for more information.
     ///
-    /// Simply pass any iterable with ColumnConstraints.\
-    /// If more constraints are passed than there are columns, the superfluous constraints will be ignored.
+    /// **Attention:**
+    /// This function should be called after at least one row (or the headers) has been added to the table.
+    /// Before that, the columns won't initialized.
+    ///
+    /// If more constraints are passed than there are columns, any superfluous constraints will be ignored.
     /// ```
-    /// use comfy_table::{Table, ColumnConstraint, ContentArrangement};
+    /// use comfy_table::{Width::*, CellAlignment, ColumnConstraint::*, ContentArrangement, Table};
     ///
     /// let mut table = Table::new();
     /// table.add_row(&vec!["one", "two", "three"])
     ///     .set_content_arrangement(ContentArrangement::Dynamic)
     ///     .set_constraints(vec![
-    ///         ColumnConstraint::MaxWidth(15),
-    ///         ColumnConstraint::MinWidth(20),
+    ///         UpperBoundary(Fixed(15)),
+    ///         LowerBoundary(Fixed(20)),
     /// ]);
     /// ```
     pub fn set_constraints<T: IntoIterator<Item = ColumnConstraint>>(
@@ -432,7 +437,8 @@ impl Table {
     /// Get a mutable iterator over all columns.
     ///
     /// ```
-    /// use comfy_table::{Table, ColumnConstraint};
+    /// use comfy_table::{Width::*, ColumnConstraint::*, Table};
+    ///
     /// let mut table = Table::new();
     /// table.add_row(&vec!["First", "Second", "Third"]);
     ///
@@ -441,9 +447,9 @@ impl Table {
     /// // second -> max width of 8
     /// // third -> fixed width of 10
     /// let constraints = vec![
-    ///     ColumnConstraint::MinWidth(10),
-    ///     ColumnConstraint::MaxWidth(8),
-    ///     ColumnConstraint::Width(10),
+    ///     LowerBoundary(Fixed(10)),
+    ///     UpperBoundary(Fixed(8)),
+    ///     Absolute(Fixed(10)),
     /// ];
     ///
     /// // Add the constraints to their respective column

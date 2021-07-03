@@ -23,3 +23,8 @@ strum_macros = "^0.21"
 pretty_assertions = "0.7"
 doc-comment = "0.3"
 proptest = "1"
+criterion = "0.3"
+
+[[bench]]
+name = "build_tables"
+harness = false

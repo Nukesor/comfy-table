@@ -1,6 +1,8 @@
 use ::proptest::prelude::*;
 use comfy_table::modifiers::UTF8_ROUND_CORNERS;
 use comfy_table::presets::UTF8_FULL;
+use comfy_table::ColumnConstraint::*;
+use comfy_table::Width::*;
 use comfy_table::*;
 
 /// Pick any of the three existing ContentArrangement types for the table.
@@ -28,12 +30,12 @@ fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
         Just(None),
         Just(Some(ColumnConstraint::ContentWidth)),
         Just(Some(ColumnConstraint::Hidden)),
-        any::<u16>().prop_map(|width| { Some(ColumnConstraint::Width(width)) }),
-        any::<u16>().prop_map(|width| { Some(ColumnConstraint::MinWidth(width)) }),
-        any::<u16>().prop_map(|width| { Some(ColumnConstraint::MaxWidth(width)) }),
-        (0u16..100u16).prop_map(|percentage| { Some(ColumnConstraint::Percentage(percentage)) }),
-        (0u16..100u16).prop_map(|percentage| { Some(ColumnConstraint::MinPercentage(percentage)) }),
-        (0u16..100u16).prop_map(|percentage| { Some(ColumnConstraint::MaxPercentage(percentage)) }),
+        any::<u16>().prop_map(|width| { Some(Absolute(Fixed(width))) }),
+        any::<u16>().prop_map(|width| { Some(LowerBoundary(Fixed(width))) }),
+        any::<u16>().prop_map(|width| { Some(UpperBoundary(Fixed(width))) }),
+        (0u16..200u16).prop_map(|percentage| { Some(Absolute(Percentage(percentage))) }),
+        (0u16..200u16).prop_map(|percentage| { Some(LowerBoundary(Percentage(percentage))) }),
+        (0u16..200u16).prop_map(|percentage| { Some(UpperBoundary(Percentage(percentage))) }),
     ]
 }
 

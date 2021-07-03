@@ -30,13 +30,13 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     let table_width = match table_width {
         Some(table_width) => table_width,
         None => {
-            disabled::arrange(&table.columns, &mut infos);
+            disabled::arrange(&table, &mut infos, visible_columns);
             return infos.into_iter().map(|(_, info)| info).collect();
         }
     };
 
     match &table.arrangement {
-        ContentArrangement::Disabled => disabled::arrange(&table.columns, &mut infos),
+        ContentArrangement::Disabled => disabled::arrange(&table, &mut infos, visible_columns),
         ContentArrangement::Dynamic | ContentArrangement::DynamicFullWidth => {
             dynamic::arrange(table, &mut infos, table_width);
         }
@@ -53,7 +53,7 @@ mod tests {
     fn test_disabled_arrangement() {
         let mut table = Table::new();
         table.set_header(&vec!["head", "head", "head"]);
-        table.add_row(&vec!["four", "fivef", "sixsix"]);
+        table.add_row(&vec!["__", "fivef", "sixsix"]);
 
         let display_infos = arrange_content(&table);
 
