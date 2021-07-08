@@ -3,14 +3,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.1] - 2021-07-21
+
+### Fixed
+
+- Some docstrings on the `ColumnConstraint` and `Width` enum were wrong.
+
 ## [4.0.0] - 2021-07-03
 
-# Added
+### Added
 
 - Add `Table::lines`, which returns an iterator over all lines of the final table output by [dmaahs2017](https://github.com/dmaahs2017) for [#35](https://github.com/Nukesor/comfy-table/issues/35).
 - Add `ColumnConstraints::Boundaries{lower: Width, upper: Width}` to specify both an upper and a lower boundary.
 
-# Fixed
+### Fixed
 
 - Fixed percentages sometimes weren't correctly calculated, due to not taking border columns into account.
 - Return `None` for `Table::get_table_width`, if getting the terminal size somehow failed.
@@ -21,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
     * The content was larger than the min constraint
     * There was less space available than specified in the constraint.
 
-# Changed
+### Changed
 
 - The way ColumnConstraints are initialized has been changed.
     There is now
@@ -62,7 +68,7 @@ enum ColumnConstraints {
 
 ## [3.0.0] - 2021-06-13
 
-# Breaking changes
+### Breaking changes
 
 - Remove most custom traits and replace them with std's generic `From` trait. \
     Check the docs on the trait implementations for Cell, Row and Cells
