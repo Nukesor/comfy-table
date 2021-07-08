@@ -564,9 +564,9 @@ impl Table {
     }
 }
 
-/// This is an iterator over all cells of a specific column.
-/// A dedicated struct is necessary, since data is usually handled by rows and thereby stored in
-/// `Table::rows`. That's why this iterator also has to be implemented on the Table struct.
+/// An iterator over cells of a specific column.
+/// A dedicated struct is necessary, as data is usually handled by rows and thereby stored in
+/// `Table::rows`. This type is returned by [Table::column_cells_iter].
 pub struct ColumnCellIter<'a> {
     rows: &'a [Row],
     column_index: usize,

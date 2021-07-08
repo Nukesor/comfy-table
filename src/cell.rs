@@ -139,7 +139,9 @@ impl<T: ToString> From<T> for Cell {
     }
 }
 
-/// A simple wrapper type for a `Vec<Cell>`. Needed to support super generic functions.
+/// A simple wrapper type for a `Vec<Cell>`.
+///
+/// This wrapper is needed to support generic conversions between iterables and `Vec<Cell>`.
 /// Check the trait implementations for more docs.
 pub struct Cells(pub Vec<Cell>);
 
