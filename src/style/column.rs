@@ -3,8 +3,8 @@
 /// They allow some control over Column widths as well as the dynamic arrangement process.
 ///
 /// All percental boundaries will be ignored, if:
-/// - the terminal width cannot be determined.
-/// - you aren't doing dynamic content arrangement.
+/// - you aren't using one of ContentArrangement::{Dynamic, DynamicFullWidth}
+/// - the width of the table/terminal cannot be determined.
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum ColumnConstraint {
     /// This will completely hide a column.
@@ -24,10 +24,16 @@ pub enum ColumnConstraint {
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Width {
-    /// Specify a min amount of characters per line for a column.
+    /// A fixed amount of characters.
+    /// This can be used to specify an upper/lower boundary as well as a fixed size for the column.
     Fixed(u16),
-    /// Set a a minimum percentage in respect to table_width for this column.
+    /// A width equivalent to a certain percentage of the available width.
     /// Values above 100 will be automatically reduced to 100.
-    /// **Warning:** This option will be ignored, if the width cannot be determined!
+    ///
+    /// This can be used to specify an upper/lower boundary as well as a fixed size for the column.
+    ///
+    /// **Warning:** This option will be ignored if:
+    /// - you aren't using one of ContentArrangement::{Dynamic, DynamicFullWidth}
+    /// - the width of the table/terminal cannot be determined.
     Percentage(u16),
 }

@@ -37,7 +37,7 @@ enum ColumnConstraints {
     UpperBoundary(Width),
 }
 
-pub enum Boundary {
+pub enum Width {
     /// Specify a min amount of characters per line for a column.
     Fixed(u16),
     /// Set a a minimum percentage in respect to table_width for this column.
