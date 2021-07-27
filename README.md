@@ -10,19 +10,19 @@
 
 <!--- [![dependency status](https://deps.rs/repo/github/nukesor/comfy-table/status.svg)](https://deps.rs/repo/github/nukesor/comfy-table) -->
 
-Comfy-table tries to provide utility for building beautiful tables, while being easy to use.
+Comfy-table is designed as a library for building beautiful tables, while being easy to use.
 
-Features:
+### Features
 
-- Dynamic arrangement of content to a specific width.
-- Content styling for terminals (Colors, Bold, Blinking, etc.).
-- Presets and preset modifiers to get you started.
+- Dynamic arrangement of content depending on a given width.
+- ANSI content styling for terminals (Colors, Bold, Blinking, etc.).
+- Styling Presets and preset modifiers to get you started.
 - Pretty much every part of the table is customizable (borders, lines, padding, alignment).
 - Constraints on columns that allow some additional control over how to arrange content.
 - Cross plattform (Linux, macOS, Windows).
 - It's FAST!
     Benchmarks show that a pretty big table with weird constraints is build in 4 _μs_, which is `4*1e^6`.
-    To run the benchmarks do a `cargo install cargo-criterion` and run `cargo criterion`.
+    To run the benchmarks install criterion via `cargo install cargo-criterion` and run `cargo criterion` afterwards.
 
 Comfy-table is written for the current `stable` Rust version.
 Older Rust versions may work, but aren't officially supported.
@@ -100,11 +100,11 @@ fn main() {
 }
 ```
 
-Create a table with UTF8 styling, and apply a modifier, which gives the table round corners.\
-Additionall the content will dynamically wrap to maintain a given table width.\
-If the table width isn't explicitely set, the terminal size will be used, if this is executed in a terminal.
+Create a table with UTF8 styling, and apply a modifier that gives the table round corners.\
+Additionally, the content will dynamically wrap to maintain a given table width.\
+If the table width isn't explicitely set and the program runs in a terminal, the terminal size will be used.
 
-On top of this, we set the default alignment for the right column to `Right` and the Alignment of the left top cell to `Center`.
+On top of this, we set the default alignment for the right column to `Right` and the alignment of the left top cell to `Center`.
 
 ```text,ignore
 ╭────────────┬────────────┬────────────╮
@@ -158,19 +158,19 @@ fn main() {
 }
 ```
 
-This code generates the table that can be seen at the top of this Readme.
+This code generates the table that can be seen at the top of this document.
 
 ## Code Examples
 
-There is an example folder containing a few examples.
-To run an example, run it with `run --example`. E.g.:
+A few examples can be found in the `example` folder.
+To test an example, run it with `cargo run --example $name`. E.g.:
 
 ```bash
 cargo run --example readme_table
 ```
 
 If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).  
-There is a test for almost every feature including a visual view for each resulting table.
+There are tests for almost every feature including a visual view for each resulting table.
 
 ## Contribution Guidelines
 
