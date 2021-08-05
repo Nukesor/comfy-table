@@ -1,3 +1,4 @@
+#![forbid(unsafe_code)]
 mod cell;
 mod column;
 mod row;

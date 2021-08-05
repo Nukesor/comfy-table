@@ -27,6 +27,8 @@ Comfy-table is designed as a library for building beautiful tables, while being 
 Comfy-table is written for the current `stable` Rust version.
 Older Rust versions may work, but aren't officially supported.
 
+Comfy-table doesn't allow `unsafe` code. As it's a "simple" formatting library, it also shouldn't be needed in the future.
+
 ## Examples
 
 ```rust
