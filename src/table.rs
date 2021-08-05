@@ -77,7 +77,7 @@ impl Table {
     /// This is an alternative to `fmt`, but rather returns an iterator to each line, rather than
     /// one String separated by newlines.
     pub fn lines(&self) -> impl Iterator<Item = String> {
-        build_table(&self)
+        build_table(self)
     }
 
     /// Set the header row of the table. This is usually the title of each column.\
