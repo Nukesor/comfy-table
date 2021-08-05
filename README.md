@@ -196,7 +196,8 @@ Such features are:
 Comfy-table doesn't allow `unsafe` code in its code-base.
 As it's a "simple" formatting library, it also shouldn't be needed in the future.
 
-However, Comfy-table uses two unsafe functions calls in its dependencies.
+However, Comfy-table uses two unsafe functions calls in its dependencies. \
+Both calls can be disabled by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/4.0.1/comfy_table/struct.Table.html#method.force_no_tty).
 
 1. `crossterm::tty::IsTty`. This function is necessary to detect whether we're currently on a tty or not.
     This is only called if no explicit width is provided via `Table::set_table_width`.
