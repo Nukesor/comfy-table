@@ -27,8 +27,6 @@ Comfy-table is designed as a library for building beautiful tables, while being 
 Comfy-table is written for the current `stable` Rust version.
 Older Rust versions may work, but aren't officially supported.
 
-Comfy-table doesn't allow `unsafe` code. As it's a "simple" formatting library, it also shouldn't be needed in the future.
-
 ## Examples
 
 ```rust
@@ -192,3 +190,38 @@ Such features are:
 - Nested tables
 - Cells that span over multiple columns/rows
 - CSV to table conversion and vice versa
+
+## Unsafe
+
+Comfy-table doesn't allow `unsafe` code in its code-base.
+As it's a "simple" formatting library, it also shouldn't be needed in the future.
+
+However, Comfy-table uses two unsafe functions calls in its dependencies.
+
+1. `crossterm::tty::IsTty`. This function is necessary to detect whether we're currently on a tty or not.
+    This is only called if no explicit width is provided via `Table::set_table_width`.
+    ```
+    /// On unix, the `isatty()` function returns true if a file
+    /// descriptor is a terminal.
+    #[cfg(unix)]
+    impl<S: AsRawFd> IsTty for S {
+        fn is_tty(&self) -> bool {
+            let fd = self.as_raw_fd();
+            unsafe { libc::isatty(fd) == 1 }
+        }
+    }
+    ```
+2. `crossterm::terminal::size`. This function is necessary to detect the current terminal width, if we're on a tty.
+    This is only called if no explicit width is provided via `Table::set_table_width`.
+
+    http://rosettacode.org/wiki/Terminal_control/Dimensions#Library:_BSD_libc
+    This is another libc call with, which is used to communicate with `/dev/tty` via a file descriptor.
+    ```
+    ...
+    if wrap_with_result(unsafe { ioctl(fd, TIOCGWINSZ.into(), &mut size) }).is_ok() {
+        Ok((size.ws_col, size.ws_row))
+    } else {
+        tput_size().ok_or_else(|| std::io::Error::last_os_error().into())
+    }
+    ...
+    ```
