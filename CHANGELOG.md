@@ -3,11 +3,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0] -
+
+### Breaking
+
+- Remove `ASCII_HORIZONTAL_BORDERS_ONLY` in favor of `ASCII_HORIZONTAL_ONLY`.
+- Remove `UTF8_HORIZONTAL_BORDERS_ONLY` in favor of `UTF8_HORIZONTAL_ONLY`.
+
 ## [4.0.2] -
 
 ### Added
 
 - Add `modifiers::UTF8_SOLID_INNER_BORDERS`, which makes the inner borders solid lines: `│─` by [ModProg](https://github.com/ModProg) for [#39](https://github.com/Nukesor/comfy-table/issues/39).
+
+### Changed
+
+- Rename `ASCII_HORIZONTAL_BORDERS_ONLY` to `ASCII_HORIZONTAL_ONLY`. Old imports will still work until v5.0.
+- Rename `UTF8_HORIZONTAL_BORDERS_ONLY` to `UTF8_HORIZONTAL_ONLY`. Old imports will still work until v5.0.
 
 ## [4.0.1] - 2021-07-08
 
