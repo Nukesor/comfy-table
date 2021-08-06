@@ -435,7 +435,7 @@ fn get_longest_line_after_split(average_space: usize, column: &Column, table: &T
     // Get the longest line, default to length 0 if no lines exist.
     column_lines
         .iter()
-        .map(|line| line.len())
+        .map(|line| line.chars().count())
         .max()
         .unwrap_or(0)
 }

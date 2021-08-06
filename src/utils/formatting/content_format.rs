@@ -108,9 +108,9 @@ pub fn format_row(
                 let width: usize = info.content_width.into();
                 if width >= 6 {
                     // Truncate the line if '...' doesn't fit
-                    if last_line.len() >= width - 3 {
-                        let surplus = (last_line.len() + 3) - width;
-                        last_line.truncate(last_line.len() - surplus);
+                    if last_line.chars().count() >= width - 3 {
+                        let surplus = (last_line.chars().count() + 3) - width;
+                        last_line.truncate(last_line.chars().count() - surplus);
                     }
                     last_line.push_str("...");
                 }
