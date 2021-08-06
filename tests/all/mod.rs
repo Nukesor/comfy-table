@@ -10,3 +10,4 @@ mod presets_test;
 mod property_test;
 mod simple_test;
 mod styling_test;
+mod utf_8_characters;
