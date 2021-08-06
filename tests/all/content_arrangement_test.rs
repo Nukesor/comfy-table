@@ -3,10 +3,11 @@ use pretty_assertions::assert_eq;
 use comfy_table::ColumnConstraint::*;
 use comfy_table::Width::*;
 use comfy_table::{ContentArrangement, Row, Table};
+use unicode_width::UnicodeWidthStr;
 
 fn assert_table_lines(table: &Table, count: usize) {
     for line in table.lines() {
-        assert_eq!(line.chars().count(), count);
+        assert_eq!(line.width(), count);
     }
 }
 
@@ -66,7 +67,7 @@ fn simple_dynamic_table() {
 |        | stuff |      |
 +--------+-------+------+";
     println!("{}", expected);
-    assert!(table.lines().all(|line| line.chars().count() == 25));
+    assert!(table.lines().all(|line| line.width() == 25));
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 

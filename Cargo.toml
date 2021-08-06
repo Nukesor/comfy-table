@@ -15,9 +15,10 @@ edition = "2018"
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-crossterm = "^0.20"
-strum = "^0.21"
-strum_macros = "^0.21"
+crossterm = "0.20"
+strum = "0.21"
+strum_macros = "0.21"
+unicode-width = "0.1"
 
 [dev-dependencies]
 pretty_assertions = "0.7"

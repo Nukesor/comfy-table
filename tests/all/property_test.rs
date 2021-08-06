@@ -4,6 +4,7 @@ use comfy_table::presets::UTF8_FULL;
 use comfy_table::ColumnConstraint::*;
 use comfy_table::Width::*;
 use comfy_table::*;
+use unicode_width::UnicodeWidthStr;
 
 /// Pick any of the three existing ContentArrangement types for the table.
 fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
@@ -162,13 +163,14 @@ proptest! {
 
         let mut line_iter = lines.iter();
         let line_length = if let Some(line) = line_iter.next() {
-            line.chars().count()
+            line.width()
         } else {
             0
         };
 
         for line in line_iter {
-            if line.chars().count() != line_length {
+            if line.width() != line_length {
+                println!("{}", formatted);
                 return Err(TestCaseError::Fail("Each line of a printed table has to have the same length!".into()))
             }
         }

@@ -1,5 +1,7 @@
 use std::slice::Iter;
 
+use unicode_width::UnicodeWidthStr;
+
 use crate::cell::{Cell, Cells};
 
 /// Each row contains [Cells](crate::Cell) and can be added to a [Table](crate::Table).
@@ -65,7 +67,7 @@ impl Row {
                 // Each entry represents the longest string width for a cell.
                 cell.content
                     .iter()
-                    .map(|string| string.chars().count())
+                    .map(|string| string.width())
                     .max()
                     .unwrap_or(0)
             })
