@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Add `modifiers::UTF8_SOLID_INNER_BORDERS`, which makes the inner borders solid lines: `│─` by [ModProg](https://github.com/ModProg) for [#39](https://github.com/Nukesor/comfy-table/issues/39).
 
+### Fixed
+
+- Several preset examples weren't correct.
+
 ### Changed
 
 - Rename `ASCII_HORIZONTAL_BORDERS_ONLY` to `ASCII_HORIZONTAL_ONLY`. Old imports will still work until v5.0.

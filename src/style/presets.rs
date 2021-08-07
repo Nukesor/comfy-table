@@ -5,7 +5,7 @@
 /// | Hello | there |
 /// +===============+
 /// | a     | b     |
-/// +-------+-------+
+/// |-------+-------|
 /// | c     | d     |
 /// +-------+-------+
 /// ```
@@ -29,6 +29,7 @@ pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 /// | Hello   there |
 /// +===============+
 /// | a       b     |
+/// |               |
 /// | c       d     |
 /// +---------------+
 /// ```
@@ -41,6 +42,7 @@ pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 ///  Hello   there
 /// ===============
 ///  a       b
+/// ---------------
 ///  c       d
 /// ---------------
 /// ```
@@ -49,12 +51,10 @@ pub const ASCII_HORIZONTAL_ONLY: &str = "  -- ==  --  --    ";
 /// Markdown like table styles.
 ///
 /// ```text
-/// ---------------
-///  Hello   there
-/// ===============
-///  a       b
-///  c       d
-/// ---------------
+/// | Hello | there |
+/// |-------|-------|
+/// | a     | b     |
+/// | c     | d     |
 /// ```
 pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
 
@@ -63,7 +63,7 @@ pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
 ///
 /// ```text
 /// ┌───────┬───────┐
-/// │ Hello │ there │
+/// │ Hello ┆ there │
 /// ╞═══════╪═══════╡
 /// │ a     ┆ b     │
 /// ├╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌┤
@@ -75,7 +75,7 @@ pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐
 /// Default UTF8 style, but without any borders.
 ///
 /// ```text
-///  Hello │ there
+///  Hello ┆ there
 /// ═══════╪═══════
 ///  a     ┆ b
 /// ╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌
