@@ -5,7 +5,7 @@
 /// | Hello | there |
 /// +===============+
 /// | a     | b     |
-/// +-------+-------+
+/// |-------+-------|
 /// | c     | d     |
 /// +-------+-------+
 /// ```
@@ -29,6 +29,7 @@ pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 /// | Hello   there |
 /// +===============+
 /// | a       b     |
+/// |               |
 /// | c       d     |
 /// +---------------+
 /// ```
@@ -41,20 +42,19 @@ pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 ///  Hello   there
 /// ===============
 ///  a       b
+/// ---------------
 ///  c       d
 /// ---------------
 /// ```
-pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "  -- ==  --  --    ";
+pub const ASCII_HORIZONTAL_ONLY: &str = "  -- ==  --  --    ";
 
 /// Markdown like table styles.
 ///
 /// ```text
-/// ---------------
-///  Hello   there
-/// ===============
-///  a       b
-///  c       d
-/// ---------------
+/// | Hello | there |
+/// |-------|-------|
+/// | a     | b     |
+/// | c     | d     |
 /// ```
 pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
 
@@ -63,7 +63,7 @@ pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
 ///
 /// ```text
 /// ┌───────┬───────┐
-/// │ Hello │ there │
+/// │ Hello ┆ there │
 /// ╞═══════╪═══════╡
 /// │ a     ┆ b     │
 /// ├╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌┤
@@ -75,7 +75,7 @@ pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐
 /// Default UTF8 style, but without any borders.
 ///
 /// ```text
-///  Hello │ there
+///  Hello ┆ there
 /// ═══════╪═══════
 ///  a     ┆ b
 /// ╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌
@@ -106,9 +106,10 @@ pub const UTF8_BORDERS_ONLY: &str = "││──╞══╡     ──┌┐�
 ///  c       d
 /// ───────────────
 /// ```
-pub const UTF8_HORIZONTAL_BORDERS_ONLY: &str = "  ── ══  ──  ──    ";
+pub const UTF8_HORIZONTAL_ONLY: &str = "  ── ══  ──  ──    ";
 
-/// Don't draw any borders
+/// Don't draw any borders or other lines.
+/// Useful, if you want to simply organize some data without any cosmetics.
 ///
 /// ```text
 ///  Hello  there
@@ -116,3 +117,13 @@ pub const UTF8_HORIZONTAL_BORDERS_ONLY: &str = "  ── ══  ──  ── 
 ///  c      d
 /// ```
 pub const NOTHING: &str = "                   ";
+
+/// This is here for compatibiliity reasons.
+/// It'll be removed in the next major version update.
+/// TODO: Remove in v5.0
+pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "  -- ==  --  --    ";
+
+/// This is here for compatibiliity reasons.
+/// It'll be removed in the next major version update.
+/// TODO: Remove in v5.0
+pub const UTF8_HORIZONTAL_BORDERS_ONLY: &str = "  ── ══  ──  ──    ";
