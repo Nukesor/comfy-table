@@ -201,7 +201,7 @@ Both calls can be disabled by explicitely calling [Table::force_no_tty](https://
 
 1. `crossterm::tty::IsTty`. This function is necessary to detect whether we're currently on a tty or not.
     This is only called if no explicit width is provided via `Table::set_table_width`.
-    ```
+    ```rust,ignore
     /// On unix, the `isatty()` function returns true if a file
     /// descriptor is a terminal.
     #[cfg(unix)]
@@ -217,7 +217,7 @@ Both calls can be disabled by explicitely calling [Table::force_no_tty](https://
 
     http://rosettacode.org/wiki/Terminal_control/Dimensions#Library:_BSD_libc
     This is another libc call with, which is used to communicate with `/dev/tty` via a file descriptor.
-    ```
+    ```rust,ignore
     ...
     if wrap_with_result(unsafe { ioctl(fd, TIOCGWINSZ.into(), &mut size) }).is_ok() {
         Ok((size.ws_col, size.ws_row))
