@@ -166,14 +166,10 @@ fn split_long_word(allowed_width: usize, word: String) -> (String, String) {
 
     let mut char_iter = word.chars().peekable();
     // Check if the string might be too long, one character at a time.
-    loop {
-        // Peek into the next char and check the exit condition.
-        // That is, pushing the next character would result in the string being too long.
-        if let Some(c) = char_iter.peek() {
-            if (current_width + c.width().unwrap_or(1)) > allowed_width {
-                break;
-            }
-        } else {
+    // Peek into the next char and check the exit condition.
+    // That is, pushing the next character would result in the string being too long.
+    while let Some(c) = char_iter.peek() {
+        if (current_width + c.width().unwrap_or(1)) > allowed_width {
             break;
         }
 
