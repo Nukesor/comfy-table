@@ -56,5 +56,6 @@ fn full_custom_delimiters() {
 |                   | phens or anythin |
 |                   | g else.          |
 +-------------------+------------------+";
+    println!("{}", expected);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

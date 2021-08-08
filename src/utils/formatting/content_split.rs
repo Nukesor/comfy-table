@@ -1,6 +1,4 @@
-use std::iter::FromIterator;
-
-use unicode_width::UnicodeWidthStr;
+use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 use crate::utils::ColumnDisplayInfo;
 
@@ -76,25 +74,45 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
         // Ok. There's still enough space to fit something in (more than MIN_FREE_CHARS characters)
         // There are two scenarios:
         //
-        // 1. The word is short enough to fit as a whole into a line
-        //    In that case we simply push the current line and start a new one with the current element
-        // 2. The word is too long for a single line.
+        // 1. The word is too long for a single line.
         //    In this case, we have to split the element anyways. Let's fill the remaining space on
         //    the current line with, start a new line and push the remaining part on the stack.
+        // 2. The word is short enough to fit as a whole into a line
+        //    In that case we simply push the current line and start a new one with the current element
 
         // Case 1
         // The element is longer than the specified content_width
         // Split the word, push the remaining string back on the stack
         if next_length > content_width {
-            let mut next: Vec<char> = next.chars().collect();
+            let new_line = current_line.is_empty();
+
             // Only add delimiter, if we're not on a fresh line
-            if !current_line.is_empty() {
+            if !new_line {
                 current_line.push(delimiter);
+                //remaining_width = remaining_width.saturating_sub(1);
             }
 
-            let remaining = next.split_off(remaining_width);
-            current_line += &String::from_iter(next);
-            elements.push(String::from_iter(remaining));
+            let (mut next, mut remaining) = split_long_word(remaining_width, next);
+
+            // TODO: This is a pretty hefty hack, but it's needed for now.
+            //
+            // Scenario: We try to split a word that doesn't fit into the current line.
+            // It's supposed to be a new line, with a width of 1. However, the next char in line
+            // is a multi-character UTF-8 symbol.
+            //
+            // Since a, for instance, two-character wide symbol doesn't fit into a 1-character
+            // column, this code would loop endlessly. (There's no legitimate way to split that
+            // word.)
+            // Hence, we have to live with the fact, that this line will look broken, as we put a
+            // two-character wide symbol into it.
+            if new_line && next.is_empty() {
+                let mut chars = remaining.chars();
+                next.push(chars.next().unwrap());
+                remaining = chars.collect();
+            }
+
+            current_line += &next;
+            elements.push(remaining);
 
             // Push the finished line, and start a new one
             lines.push(current_line);
@@ -136,4 +154,43 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
     }
 
     current_line
+}
+
+/// Splits a long word at a given character width.
+/// This needs some special logic, as we have to take multi-character UTF-8 symbols into account.
+/// When simply splitting at a certain char position, we might end up with a string that's has a
+/// wider display width than allowed.
+fn split_long_word(allowed_width: usize, word: String) -> (String, String) {
+    let mut current_width = 0;
+    let mut splitted = String::new();
+
+    let mut char_iter = word.chars().peekable();
+    // Check if the string might be too long, one character at a time.
+    loop {
+        // Peek into the next char and check the exit condition.
+        // That is, pushing the next character would result in the string being too long.
+        if let Some(c) = char_iter.peek() {
+            if (current_width + c.width().unwrap_or(1)) > allowed_width {
+                break;
+            }
+        } else {
+            break;
+        }
+
+        // We can unwrap, as we just checked that a suitable character is next in line.
+        let c = char_iter.next().unwrap();
+
+        // We default to 1 char, if the character length cannot be determined.
+        // The user has to live with this, if they decide to add control characters or some fancy
+        // stuff into their tables. This is considered undefined behavior and we try to handle this
+        // to the best of our capabilities.
+        let character_width = c.width().unwrap_or(1);
+
+        current_width += character_width;
+        splitted.push(c);
+    }
+
+    // Collect the remaining characters.
+    let remaining = char_iter.collect();
+    (splitted, remaining)
 }

@@ -19,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - Several preset examples weren't correct.
+- Multi-character UTF8 symbols are now handled correctly in most situations.
+    Table-layout might still break for 1-character columns.
+- Mid-word splitting now takes multi-character utf8 characters into account.
 
 ### Changed
 
