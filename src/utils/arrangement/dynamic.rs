@@ -127,7 +127,7 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
 
 /// Step 1
 ///
-/// This function calculates the amount of remaining space that can to be distributed between
+/// This function calculates the amount of remaining space that can be distributed between
 /// all remaining columns.
 ///
 /// Take the current terminal width and
