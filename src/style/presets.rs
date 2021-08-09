@@ -35,7 +35,7 @@ pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 /// ```
 pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 
-/// Just like ASCII_BORDERS_ONLY, but without a delimiter between rows.
+/// Just like ASCII_BORDERS_ONLY, but without spacing between rows.
 ///
 /// ```text
 /// +---------------+
