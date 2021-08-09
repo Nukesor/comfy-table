@@ -35,6 +35,18 @@ pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 /// ```
 pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 
+/// Just like ASCII_BORDERS_ONLY, but without a delimiter between rows.
+///
+/// ```text
+/// +---------------+
+/// | Hello   there |
+/// +===============+
+/// | a       b     |
+/// | c       d     |
+/// +---------------+
+/// ```
+pub const ASCII_BORDERS_ONLY_CONDENSED: &str = "||--+==+     --++++";
+
 /// Just like ASCII_FULL, but without vertical/horizontal middle lines and no side borders.
 ///
 /// ```text

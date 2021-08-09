@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Add `modifiers::UTF8_SOLID_INNER_BORDERS`, which makes the inner borders solid lines: `│─` by [ModProg](https://github.com/ModProg) for [#39](https://github.com/Nukesor/comfy-table/issues/39).
+- Add `presets::ASCII_BORDERS_ONLY_CONDENSED`, which is `ASCII_BORDERS_ONLY` but without horizontal delimiters between rows [#43](https://github.com/Nukesor/comfy-table/issues/43).
 
 ### Fixed
 

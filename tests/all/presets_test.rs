@@ -63,6 +63,22 @@ fn test_ascii_borders_only() {
 }
 
 #[test]
+fn test_ascii_borders_only_condensed() {
+    let mut table = get_preset_table();
+    table.load_preset(ASCII_BORDERS_ONLY_CONDENSED);
+    println!("{}", table.to_string());
+    let expected = "
++---------------+
+| Hello   there |
++===============+
+| a       b     |
+| c       d     |
++---------------+";
+    println!("{}", expected);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
 fn test_ascii_horizontal_only() {
     let mut table = get_preset_table();
     table.load_preset(ASCII_HORIZONTAL_ONLY);
