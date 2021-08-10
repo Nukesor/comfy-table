@@ -1,3 +1,4 @@
+#[cfg(feature = "tty")]
 use crossterm::style::{style, Stylize};
 use unicode_width::UnicodeWidthStr;
 
@@ -123,13 +124,17 @@ pub fn format_row(
             .iter()
             .map(|line| align_line(line.to_string(), info, cell));
 
-        // Style the cell if necessary.
+        // Style the cell if necessary
+        #[cfg(feature = "tty")]
         if table.should_style() {
             let cell_lines = cell_lines.map(|line| style_line(line, cell));
             temp_row_content.push(cell_lines.collect());
         } else {
             temp_row_content.push(cell_lines.collect());
         }
+
+        #[cfg(not(feature = "tty"))]
+        temp_row_content.push(cell_lines.collect());
     }
 
     // Right now, we have a different structure than desired.
@@ -223,6 +228,7 @@ fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
     padded_line
 }
 
+#[cfg(feature = "tty")]
 fn style_line(line: String, cell: &Cell) -> String {
     let mut content = style(line);
 

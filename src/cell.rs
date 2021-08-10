@@ -1,3 +1,4 @@
+#[cfg(feature = "tty")]
 use crossterm::style::{Attribute, Color};
 
 use crate::style::CellAlignment;
@@ -13,8 +14,11 @@ pub struct Cell {
     /// The default is ` `.
     pub(crate) delimiter: Option<char>,
     pub(crate) alignment: Option<CellAlignment>,
+    #[cfg(feature = "tty")]
     pub(crate) fg: Option<Color>,
+    #[cfg(feature = "tty")]
     pub(crate) bg: Option<Color>,
+    #[cfg(feature = "tty")]
     pub(crate) attributes: Vec<Attribute>,
 }
 
@@ -29,8 +33,11 @@ impl Cell {
                 .collect(),
             delimiter: None,
             alignment: None,
+            #[cfg(feature = "tty")]
             fg: None,
+            #[cfg(feature = "tty")]
             bg: None,
+            #[cfg(feature = "tty")]
             attributes: Vec::new(),
         }
     }
@@ -77,6 +84,7 @@ impl Cell {
     /// let mut cell = Cell::new("Some content")
     ///     .fg(Color::Red);
     /// ```
+    #[cfg(feature = "tty")]
     pub fn fg(mut self, color: Color) -> Self {
         self.fg = Some(color);
 
@@ -94,6 +102,7 @@ impl Cell {
     /// let mut cell = Cell::new("Some content")
     ///     .bg(Color::Red);
     /// ```
+    #[cfg(feature = "tty")]
     pub fn bg(mut self, color: Color) -> Self {
         self.bg = Some(color);
 
@@ -112,6 +121,7 @@ impl Cell {
     /// let mut cell = Cell::new("Some content")
     ///     .add_attribute(Attribute::Bold);
     /// ```
+    #[cfg(feature = "tty")]
     pub fn add_attribute(mut self, attribute: Attribute) -> Self {
         self.attributes.push(attribute);
 
@@ -119,6 +129,7 @@ impl Cell {
     }
 
     /// Same as add_attribute, but you can pass a vector of [Attributes](Attribute)
+    #[cfg(feature = "tty")]
     pub fn add_attributes(mut self, mut attribute: Vec<Attribute>) -> Self {
         self.attributes.append(&mut attribute);
 

@@ -17,6 +17,8 @@ pub use column::{ColumnConstraint, Width};
 pub use table::{ContentArrangement, TableComponent};
 
 /// Attributes used for styling cell content. Reexport of crossterm's [Attributes](crossterm::style::Attribute) enum.
+#[cfg(feature = "tty")]
 pub use crossterm::style::Attribute;
 /// Colors used for styling cell content. Reexport of crossterm's [Color](crossterm::style::Color) enum.
+#[cfg(feature = "tty")]
 pub use crossterm::style::Color;

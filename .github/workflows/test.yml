@@ -46,3 +46,27 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
+  wasm:
+    name: Check wasm32-wasi support with ${{ matrix.toolchain }} toolchain
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain: [stable, nightly]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          target: wasm32-wasi
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+
+      - name: cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --no-default-features --target wasm32-wasi
