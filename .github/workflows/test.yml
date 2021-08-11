@@ -18,12 +18,33 @@ on:
 
 jobs:
   test:
-    name: Tests on ${{ matrix.os }} for ${{ matrix.toolchain }}
+    name: Test target ${{ matrix.target }} on ${{ matrix.os }} for ${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        target:
+            - x86_64-unknown-linux-gnu
+            - x86_64-pc-windows-msvc
+            - x86_64-apple-darwin
+            - wasm32-wasi
         toolchain: [stable, nightly]
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            minimal_setup: false
+          - target: wasm32-wasi
+            os: ubuntu-latest
+            minimal_setup: true
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            minimal_setup: false
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            minimal_setup: false
+
+# minimal_setup: This is needed for targets that don't support our dev dependencies.
+#                It also excludes the default features, i.e. [tty].
+#                For instance, "wasm32-wasi" is such a target.
 
     steps:
       - name: Checkout code
@@ -33,6 +54,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
+          target: ${{ matrix.target }}
           toolchain: ${{ matrix.toolchain }}
           override: true
           components: rustfmt, clippy
@@ -41,32 +63,19 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
+          args: --target=${{ matrix.target }}
+        if: ${{ !matrix.minimal_setup }}
 
       - name: cargo test
         uses: actions-rs/cargo@v1
         with:
           command: test
-  wasm:
-    name: Check wasm32-wasi support with ${{ matrix.toolchain }} toolchain
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        toolchain: [stable, nightly]
+          args: --target=${{ matrix.target }}
+        if: ${{ !matrix.minimal_setup }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          target: wasm32-wasi
-          toolchain: ${{ matrix.toolchain }}
-          override: true
-
-      - name: cargo build
+      - name: cargo build without default features and without dev dependencies
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --no-default-features --target wasm32-wasi
+          args: --release --target=${{ matrix.target }} --no-default-features
+        if: ${{ matrix.minimal_setup }}
