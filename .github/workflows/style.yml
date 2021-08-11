@@ -23,7 +23,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        toolchain: [stable]
 
     steps:
       - name: Checkout code
@@ -33,7 +32,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: ${{ matrix.toolchain }}
+          toolchain: stable
           override: true
           components: rustfmt, clippy
 
@@ -46,12 +45,15 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all -- --check
-        if: matrix.toolchain == 'stable'
 
       - name: cargo clippy
         uses: actions-rs/cargo@v1
         with:
           command: clippy
           args: -- -D warnings
-        if: matrix.toolchain == 'stable'
+
+      - name: cargo clippy without default features
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --no-default-features -- -D warnings
