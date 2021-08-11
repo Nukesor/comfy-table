@@ -4,7 +4,9 @@ use std::fmt;
 use std::iter::IntoIterator;
 use std::slice::{Iter, IterMut};
 
+#[cfg(feature = "tty")]
 use crossterm::terminal::size;
+#[cfg(feature = "tty")]
 use crossterm::tty::IsTty;
 use strum::IntoEnumIterator;
 
@@ -137,6 +139,7 @@ impl Table {
     ///
     /// If neither is not possible, `None` will be returned.\
     /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::ColumnConstraint::Percentage) constraint won't work.
+    #[cfg(feature = "tty")]
     pub fn get_table_width(&self) -> Option<u16> {
         if let Some(width) = self.table_width {
             Some(width)
@@ -146,6 +149,15 @@ impl Table {
             } else {
                 None
             }
+        } else {
+            None
+        }
+    }
+
+    #[cfg(not(feature = "tty"))]
+    pub fn get_table_width(&self) -> Option<u16> {
+        if let Some(width) = self.table_width {
+            Some(width)
         } else {
             None
         }
@@ -196,12 +208,18 @@ impl Table {
     ///
     /// This function respects the [Table::force_no_tty] function.\
     /// Otherwise we try to determine, if we are on a tty.
+    #[cfg(feature = "tty")]
     pub fn is_tty(&self) -> bool {
         if self.no_tty {
             return false;
         }
 
         ::std::io::stdout().is_tty()
+    }
+
+    #[cfg(not(feature = "tty"))]
+    pub fn is_tty(&self) -> bool {
+        false
     }
 
     /// Enforce terminal styling.
@@ -215,6 +233,7 @@ impl Table {
     /// table.force_no_tty()
     ///     .enforce_styling();
     /// ```
+    #[cfg(feature = "tty")]
     pub fn enforce_styling(&mut self) -> &mut Self {
         self.enforce_styling = true;
 

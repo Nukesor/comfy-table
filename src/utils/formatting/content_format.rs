@@ -1,3 +1,4 @@
+#[cfg(feature = "tty")]
 use crossterm::style::{style, Stylize};
 use unicode_width::UnicodeWidthStr;
 
@@ -123,12 +124,26 @@ pub fn format_row(
             .iter()
             .map(|line| align_line(line.to_string(), info, cell));
 
-        // Style the cell if necessary.
+        // Apply tty styling for this cell.
+        #[cfg(feature = "tty")]
+        let cell_lines = apply_tty_styling(table, cell, cell_lines).into_iter();
+
+        temp_row_content.push(cell_lines.collect());
+    }
+
+    #[cfg(feature = "tty")]
+    /// A small wrapper around the top-level cell styling logic. It's only used to have a clear
+    /// separation of our tty styling logic for the `tty` feature flag.
+    fn apply_tty_styling(
+        table: &Table,
+        cell: &Cell,
+        cell_lines: impl Iterator<Item = String>,
+    ) -> Vec<String> {
         if table.should_style() {
             let cell_lines = cell_lines.map(|line| style_line(line, cell));
-            temp_row_content.push(cell_lines.collect());
+            cell_lines.collect()
         } else {
-            temp_row_content.push(cell_lines.collect());
+            cell_lines.collect()
         }
     }
 
@@ -223,6 +238,7 @@ fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
     padded_line
 }
 
+#[cfg(feature = "tty")]
 fn style_line(line: String, cell: &Cell) -> String {
     let mut content = style(line);
 
