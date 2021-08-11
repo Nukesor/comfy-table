@@ -156,11 +156,7 @@ impl Table {
 
     #[cfg(not(feature = "tty"))]
     pub fn get_table_width(&self) -> Option<u16> {
-        if let Some(width) = self.table_width {
-            Some(width)
-        } else {
-            None
-        }
+        self.table_width
     }
 
     /// Specify how Comfy Table should arrange the content in your table.
