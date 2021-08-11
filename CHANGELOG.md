@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Remove `ASCII_HORIZONTAL_BORDERS_ONLY` in favor of `ASCII_HORIZONTAL_ONLY`.
 - Remove `UTF8_HORIZONTAL_BORDERS_ONLY` in favor of `UTF8_HORIZONTAL_ONLY`.
 
+## [4.1.1] -
+
+### Added
+
+- `tty` feature flag, which enables tty related functionality.
+    This includes styling and terminal-width detection.
+    The `tty` feature flag is enabled by default.
+    Implemented by [roee88](https://github.com/roee88) in [#47](https://github.com/Nukesor/comfy-table/pull/47).
+
+
 ## [4.1.0] - 2021-08-09
 
 ### Added
