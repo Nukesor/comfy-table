@@ -5,7 +5,7 @@ use std::iter::IntoIterator;
 use std::slice::{Iter, IterMut};
 
 #[cfg(feature = "tty")]
-use crossterm::terminal::size;
+use crossterm::terminal;
 #[cfg(feature = "tty")]
 use crossterm::tty::IsTty;
 use strum::IntoEnumIterator;
@@ -31,6 +31,7 @@ pub struct Table {
     pub(crate) arrangement: ContentArrangement,
     pub(crate) delimiter: Option<char>,
     no_tty: bool,
+    use_stderr: bool,
     table_width: Option<u16>,
     enforce_styling: bool,
 }
@@ -57,6 +58,7 @@ impl Table {
             arrangement: ContentArrangement::Disabled,
             delimiter: None,
             no_tty: false,
+            use_stderr: false,
             table_width: None,
             style: HashMap::new(),
             enforce_styling: false,
@@ -144,7 +146,7 @@ impl Table {
         if let Some(width) = self.table_width {
             Some(width)
         } else if self.is_tty() {
-            if let Ok((table_width, _)) = size() {
+            if let Ok((table_width, _)) = terminal::size() {
                 Some(table_width)
             } else {
                 None
@@ -200,17 +202,31 @@ impl Table {
         self
     }
 
+    /// Use this function to check whether `stderr` is a tty.
+    ///
+    /// The default is `stdout`.
+    #[cfg(feature = "tty")]
+    pub fn use_stderr(&mut self) -> &mut Self {
+        self.use_stderr = true;
+
+        self
+    }
+
     /// Returns whether the table will be handled as if it's printed to a tty.
     ///
-    /// This function respects the [Table::force_no_tty] function.\
-    /// Otherwise we try to determine, if we are on a tty.
+    /// By default, comfy-table looks at `stdout` and checks whether it's a tty.
+    /// This behavior can be changed via [Table::force_no_tty] and [Table::use_stderr].
     #[cfg(feature = "tty")]
     pub fn is_tty(&self) -> bool {
         if self.no_tty {
             return false;
         }
 
-        ::std::io::stdout().is_tty()
+        if self.use_stderr {
+            ::std::io::stderr().is_tty()
+        } else {
+            ::std::io::stdout().is_tty()
+        }
     }
 
     #[cfg(not(feature = "tty"))]
