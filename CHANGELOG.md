@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [5.0.0] -
 
+### Added
+
+- Add option to use `stderr` for `is_tty` check [#25](https://github.com/Nukesor/comfy-table/pull/47).
+
 ### Breaking
 
-- Remove `ASCII_HORIZONTAL_BORDERS_ONLY` in favor of `ASCII_HORIZONTAL_ONLY`.
-- Remove `UTF8_HORIZONTAL_BORDERS_ONLY` in favor of `UTF8_HORIZONTAL_ONLY`.
+- TODO: Remove `ASCII_HORIZONTAL_BORDERS_ONLY` in favor of `ASCII_HORIZONTAL_ONLY`.
+- TODO: Remove `UTF8_HORIZONTAL_BORDERS_ONLY` in favor of `UTF8_HORIZONTAL_ONLY`.
 
 ## [4.1.1] - 2021-08-11
 

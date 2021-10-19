@@ -131,9 +131,9 @@ pub fn format_row(
         temp_row_content.push(cell_lines.collect());
     }
 
-    #[cfg(feature = "tty")]
     /// A small wrapper around the top-level cell styling logic. It's only used to have a clear
     /// separation of our tty styling logic for the `tty` feature flag.
+    #[cfg(feature = "tty")]
     fn apply_tty_styling(
         table: &Table,
         cell: &Cell,
