@@ -9,13 +9,13 @@ documentation = "https://docs.rs/comfy-table/"
 license = "MIT"
 keywords = ["shell", "commandline", "table", "unicode"]
 readme = "README.md"
-edition = "2018"
+edition = "2021"
 
 [badges]
-maintenance = { status = "actively-developed" }
+maintenance = { status="actively-developed" }
 
 [dependencies]
-crossterm = {version = "0.20", optional = true }
+crossterm = { version="0.20", optional=true }
 strum = "0.21"
 strum_macros = "0.21"
 unicode-width = "0.1"
