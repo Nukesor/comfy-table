@@ -129,13 +129,3 @@ pub const UTF8_HORIZONTAL_ONLY: &str = "  ── ══  ──  ──    ";
 ///  c      d
 /// ```
 pub const NOTHING: &str = "                   ";
-
-/// This is here for compatibiliity reasons.
-/// It'll be removed in the next major version update.
-/// TODO: Remove in v5.0
-pub const ASCII_HORIZONTAL_BORDERS_ONLY: &str = "  -- ==  --  --    ";
-
-/// This is here for compatibiliity reasons.
-/// It'll be removed in the next major version update.
-/// TODO: Remove in v5.0
-pub const UTF8_HORIZONTAL_BORDERS_ONLY: &str = "  ── ══  ──  ──    ";
