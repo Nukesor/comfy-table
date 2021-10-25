@@ -14,23 +14,6 @@ edition = "2021"
 [badges]
 maintenance = { status="actively-developed" }
 
-[dependencies]
-crossterm = { version="0.22", optional=true }
-strum = "0.22"
-strum_macros = "0.22"
-unicode-width = "0.1"
-
-
-[features]
-default = ["tty"]
-tty = ["crossterm"]
-
-[dev-dependencies]
-pretty_assertions = "1"
-doc-comment = "0.3"
-proptest = "1"
-criterion = "0.3"
-
 [[bench]]
 name = "build_tables"
 harness = false
@@ -42,3 +25,19 @@ path = "examples/readme_table_no_tty.rs"
 [[example]]
 name = "readme_table"
 path = "examples/readme_table.rs"
+
+[features]
+default = ["tty"]
+tty = ["crossterm"]
+
+[dependencies]
+crossterm = { version="0.22", optional=true }
+strum = "0.22"
+strum_macros = "0.22"
+unicode-width = "0.1"
+
+[dev-dependencies]
+pretty_assertions = "1"
+doc-comment = "0.3"
+proptest = "1"
+criterion = "0.3"
