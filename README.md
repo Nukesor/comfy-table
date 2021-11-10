@@ -2,11 +2,11 @@
 
 [![GitHub Actions Workflow](https://github.com/Nukesor/comfy-table/workflows/Tests/badge.svg)](https://github.com/Nukesor/comfy-table/actions)
 [![docs](https://docs.rs/comfy-table/badge.svg)](https://docs.rs/comfy-table/)
-[![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nukesor/comfy-table/blob/master/LICENSE)
+[![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nukesor/comfy-table/blob/main/LICENSE)
 [![Crates.io](https://img.shields.io/crates/v/comfy-table.svg)](https://crates.io/crates/comfy-table)
-[![codecov](https://codecov.io/gh/nukesor/comfy-table/branch/master/graph/badge.svg)](https://codecov.io/gh/nukesor/comfy-table)
+[![codecov](https://codecov.io/gh/nukesor/comfy-table/branch/main/graph/badge.svg)](https://codecov.io/gh/nukesor/comfy-table)
 
-![comfy-table](https://raw.githubusercontent.com/Nukesor/images/master/comfy_table.gif)
+![comfy-table](https://raw.githubusercontent.com/Nukesor/images/main/comfy_table.gif)
 
 <!--- [![dependency status](https://deps.rs/repo/github/nukesor/comfy-table/status.svg)](https://deps.rs/repo/github/nukesor/comfy-table) -->
 
@@ -169,7 +169,7 @@ To test an example, run it with `cargo run --example $name`. E.g.:
 cargo run --example readme_table
 ```
 
-If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/master/tests).  
+If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/main/tests).  
 There are tests for almost every feature including a visual view for each resulting table.
 
 ## Contribution Guidelines

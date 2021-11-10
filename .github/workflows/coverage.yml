@@ -2,14 +2,14 @@ name: Coverage
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - '.github/workflows/coverage.yml'
       - '**.rs'
       - 'Cargo.toml'
       - 'Cargo.lock'
   pull_request:
-    branches: [master]
+    branches: [main]
     paths:
       - '.github/workflows/coverage.yml'
       - '**.rs'
