@@ -22,7 +22,7 @@ fn custom_padding() {
     let column = table.get_column_mut(2).unwrap();
     column.set_padding((0, 0));
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +-------------------+-----------+-----------+
 |     Header1       | Header2   |Header3    |

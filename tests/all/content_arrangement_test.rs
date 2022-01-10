@@ -29,7 +29,7 @@ fn simple_dynamic_table() {
             "smol",
         ]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +--------+-------+------+
 | Header | Heade | Head |
@@ -106,7 +106,7 @@ fn table_with_truncate() {
     let third_column = table.get_column_mut(2).unwrap();
     third_column.set_constraint(Absolute(Fixed(7)));
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +----------------+--------+-------+
 | Header1        | Header | Head  |
@@ -144,7 +144,7 @@ fn distribute_space_after_split() {
             "smol",
         ]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +-----------------------------------------+-----------------------------+------+
 | Header1                                 | Header2                     | Head |
@@ -169,7 +169,7 @@ fn unused_space_after_split() {
         .set_table_width(30)
         .add_row(&vec!["This is text with a anotherverylongtext"]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +---------------------+
 | Header1             |
@@ -192,7 +192,7 @@ fn dynamic_full_width_after_split() {
         .set_table_width(50)
         .add_row(&vec!["This is text with a anotherverylongtexttesttestaa"]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +------------------------------------------------+
 | Header1                                        |
@@ -217,7 +217,7 @@ fn dynamic_full_width() {
         .set_table_width(80)
         .add_row(&vec!["This is a short line", "small", "smol"]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +-----------------------------------+----------------------+-------------------+
 | Header1                           | Header2              | smol              |

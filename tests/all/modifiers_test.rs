@@ -29,6 +29,6 @@ fn utf8_round_corners() {
 │ One One ┆ One Two ┆ One Three │
 ╰─────────┴─────────┴───────────╯";
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
