@@ -92,7 +92,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
                 //remaining_width = remaining_width.saturating_sub(1);
             }
 
-            let (mut next, mut remaining) = split_long_word(remaining_width, next);
+            let (mut next, mut remaining) = split_long_word(remaining_width, &next);
 
             // TODO: This is a pretty hefty hack, but it's needed for now.
             //
@@ -160,7 +160,7 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
 /// This needs some special logic, as we have to take multi-character UTF-8 symbols into account.
 /// When simply splitting at a certain char position, we might end up with a string that's has a
 /// wider display width than allowed.
-fn split_long_word(allowed_width: usize, word: String) -> (String, String) {
+fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     let mut current_width = 0;
     let mut splitted = String::new();
 

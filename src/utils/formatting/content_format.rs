@@ -220,15 +220,15 @@ fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String
         }
     }
 
-    pad_line(line, info)
+    pad_line(&line, info)
 }
 
 /// Apply the column's padding to this line
-fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
+fn pad_line(line: &str, info: &ColumnDisplayInfo) -> String {
     let mut padded_line = String::new();
 
     padded_line += &" ".repeat(info.padding.0.into());
-    padded_line += &line;
+    padded_line += line;
     padded_line += &" ".repeat(info.padding.1.into());
 
     padded_line

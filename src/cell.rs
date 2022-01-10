@@ -24,6 +24,7 @@ pub struct Cell {
 
 impl Cell {
     /// Create a new Cell
+    #[allow(clippy::needless_pass_by_value)]
     pub fn new<T: ToString>(content: T) -> Self {
         Cell {
             content: content
