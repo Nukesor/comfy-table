@@ -46,7 +46,7 @@ pub enum ContentArrangement {
 /// |   |   |   |    The inner "+" chars are MiddleIntersections
 /// +---+---+---+
 /// ```
-#[derive(Debug, PartialEq, Eq, Hash, EnumIter)]
+#[derive(Debug, PartialEq, Eq, Hash, EnumIter, Clone, Copy)]
 pub enum TableComponent {
     LeftBorder,
     RightBorder,
