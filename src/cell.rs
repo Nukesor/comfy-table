@@ -50,6 +50,7 @@ impl Cell {
     /// Set the delimiter used to split text for this cell. \
     /// Normal text uses spaces (` `) as delimiters. This is necessary to help comfy-table
     /// understand the concept of _words_.
+    #[must_use]
     pub fn set_delimiter(mut self, delimiter: char) -> Self {
         self.delimiter = Some(delimiter);
 
@@ -67,6 +68,7 @@ impl Cell {
     /// let mut cell = Cell::new("Some content")
     ///     .set_alignment(CellAlignment::Center);
     /// ```
+    #[must_use]
     pub fn set_alignment(mut self, alignment: CellAlignment) -> Self {
         self.alignment = Some(alignment);
 
@@ -85,6 +87,7 @@ impl Cell {
     ///     .fg(Color::Red);
     /// ```
     #[cfg(feature = "tty")]
+    #[must_use]
     pub fn fg(mut self, color: Color) -> Self {
         self.fg = Some(color);
 
@@ -103,6 +106,7 @@ impl Cell {
     ///     .bg(Color::Red);
     /// ```
     #[cfg(feature = "tty")]
+    #[must_use]
     pub fn bg(mut self, color: Color) -> Self {
         self.bg = Some(color);
 
@@ -122,6 +126,7 @@ impl Cell {
     ///     .add_attribute(Attribute::Bold);
     /// ```
     #[cfg(feature = "tty")]
+    #[must_use]
     pub fn add_attribute(mut self, attribute: Attribute) -> Self {
         self.attributes.push(attribute);
 
@@ -130,6 +135,7 @@ impl Cell {
 
     /// Same as add_attribute, but you can pass a vector of [Attributes](Attribute)
     #[cfg(feature = "tty")]
+    #[must_use]
     pub fn add_attributes(mut self, mut attribute: Vec<Attribute>) -> Self {
         self.attributes.append(&mut attribute);
 
