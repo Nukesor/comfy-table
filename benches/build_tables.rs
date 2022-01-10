@@ -100,9 +100,9 @@ fn build_huge_table() {
 }
 
 pub fn build_tables(crit: &mut Criterion) {
-    crit.bench_function("Huge table", |b| b.iter(|| build_huge_table()));
+    crit.bench_function("Huge table", |b| b.iter(build_huge_table));
 
-    crit.bench_function("Readme table", |b| b.iter(|| build_readme_table()));
+    crit.bench_function("Readme table", |b| b.iter(build_readme_table));
 }
 
 criterion_group!(benches, build_tables);

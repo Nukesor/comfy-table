@@ -162,11 +162,7 @@ pub fn format_row(
     //  tc[0][0][0]     tc[0][0][1]
     //  tc[0][1][0]     tc[0][1][1]
     //  tc[0][2][0]     tc[0][2][1] <- Now filled with placeholder (spaces)
-    let max_lines = temp_row_content
-        .iter()
-        .map(|cell| cell.len())
-        .max()
-        .unwrap_or(0);
+    let max_lines = temp_row_content.iter().map(Vec::len).max().unwrap_or(0);
     let mut row_content = Vec::new();
     for index in 0..max_lines {
         let mut line = Vec::new();

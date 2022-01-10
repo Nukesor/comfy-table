@@ -29,7 +29,7 @@ impl Cell {
             content: content
                 .to_string()
                 .split('\n')
-                .map(|content| content.to_string())
+                .map(ToString::to_string)
                 .collect(),
             delimiter: None,
             alignment: None,
@@ -172,7 +172,7 @@ where
     T::Item: Into<Cell>,
 {
     fn from(cells: T) -> Cells {
-        Cells(cells.into_iter().map(|item| item.into()).collect())
+        Cells(cells.into_iter().map(Into::into).collect())
     }
 }
 

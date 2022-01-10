@@ -22,7 +22,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
     // due to early drops of borrowed values that need to be inserted into `Vec<&str>`
     let mut elements = line
         .split(delimiter)
-        .map(|element| element.to_string())
+        .map(ToString::to_string)
         .collect::<Vec<String>>();
     elements.reverse();
 

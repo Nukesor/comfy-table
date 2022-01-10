@@ -58,7 +58,7 @@ mod tests {
         let display_infos = arrange_content(&table);
 
         // The width should be the width of the rows + padding
-        let widths: Vec<u16> = display_infos.iter().map(|info| info.width()).collect();
+        let widths: Vec<u16> = display_infos.iter().map(ColumnDisplayInfo::width).collect();
         assert_eq!(widths, vec![6, 7, 8]);
     }
 }
