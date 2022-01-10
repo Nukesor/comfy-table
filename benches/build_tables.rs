@@ -78,7 +78,7 @@ fn build_huge_table() {
     for row_index in 0..10 {
         let mut row = Vec::new();
         for column in 0..10 {
-            row.push("SomeWord ".repeat((column + row_index * 2) % 10))
+            row.push("SomeWord ".repeat((column + row_index * 2) % 10));
         }
         table.add_row(row);
     }

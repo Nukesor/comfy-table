@@ -16,7 +16,7 @@ pub fn absolute_width_with_padding(column: &Column, width: u16) -> u16 {
     let (left, right) = column.padding;
     let mut content_width = i32::from(width) - i32::from(left) - i32::from(right);
     if content_width <= 0 {
-        content_width = 1
+        content_width = 1;
     }
 
     content_width.try_into().unwrap_or(u16::MAX)
