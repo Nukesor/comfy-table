@@ -142,7 +142,7 @@ mod tests {
         let mut cell_content_iter = cells.iter();
         for cell in row.cell_iter() {
             assert_eq!(
-                cell.get_content(),
+                cell.content(),
                 cell_content_iter.next().unwrap().to_string()
             );
         }

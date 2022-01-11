@@ -16,7 +16,7 @@ use crate::style::{CellAlignment, ColumnConstraint};
 /// let mut table = Table::new();
 /// table.set_header(&vec!["one", "two"]);
 ///
-/// let mut column = table.get_column_mut(1).expect("This should be column two");
+/// let mut column = table.column_mut(1).expect("This should be column two");
 ///
 /// // Set the max width for all cells of this column to 20 characters.
 /// column.set_constraint(UpperBoundary(Fixed(20)));
@@ -65,7 +65,7 @@ impl Column {
     }
 
     /// Internal convenience helper that returns the total width of the combined padding.
-    pub(crate) fn get_padding_width(&self) -> u16 {
+    pub(crate) fn padding_width(&self) -> u16 {
         self.padding.0 + self.padding.1
     }
 
@@ -82,13 +82,13 @@ impl Column {
 
     /// Get the width in characters of the widest line in this column.\
     /// This doesn't include padding yet!
-    pub fn get_max_content_width(&self) -> u16 {
+    pub fn max_content_width(&self) -> u16 {
         self.max_content_width
     }
 
     /// Get the maximum possible width for this column.\
     /// This means widest line in this column + padding
-    pub fn get_max_width(&self) -> u16 {
+    pub fn max_width(&self) -> u16 {
         self.max_content_width + self.padding.0 + self.padding.1
     }
 
@@ -101,7 +101,7 @@ impl Column {
     }
 
     /// Get the constraint that is used for this column.
-    pub fn get_constraint(&self) -> Option<&ColumnConstraint> {
+    pub fn constraint(&self) -> Option<&ColumnConstraint> {
         self.constraint.as_ref()
     }
 
@@ -132,15 +132,12 @@ mod tests {
     fn test_column() {
         let mut column = Column::new(0);
         column.set_padding((0, 0));
-        assert_eq!(column.get_max_content_width(), 0);
+        assert_eq!(column.max_content_width(), 0);
 
         column.set_constraint(ColumnConstraint::ContentWidth);
-        assert_eq!(
-            column.get_constraint(),
-            Some(&ColumnConstraint::ContentWidth)
-        );
+        assert_eq!(column.constraint(), Some(&ColumnConstraint::ContentWidth));
 
         column.remove_constraint();
-        assert_eq!(column.get_constraint(), None);
+        assert_eq!(column.constraint(), None);
     }
 }

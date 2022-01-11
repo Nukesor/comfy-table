@@ -99,11 +99,11 @@ fn table_with_truncate() {
 
     // The first column will be wider than 6 chars.
     // The second column's content is wider than 6 chars. There should be a '...'.
-    let second_column = table.get_column_mut(1).unwrap();
+    let second_column = table.column_mut(1).unwrap();
     second_column.set_constraint(Absolute(Fixed(8)));
 
     // The third column's content is less than 6 chars width. There shouldn't be a '...'.
-    let third_column = table.get_column_mut(2).unwrap();
+    let third_column = table.column_mut(2).unwrap();
     third_column.set_constraint(Absolute(Fixed(7)));
 
     println!("{}", table);

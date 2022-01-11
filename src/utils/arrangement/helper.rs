@@ -53,7 +53,7 @@ pub fn count_border_columns(table: &Table, visible_columns: usize) -> usize {
 
 /// Get the delimiter for a Cell.
 /// Priority is in decreasing order: Cell -> Column -> Table.
-pub fn get_delimiter(table: &Table, column: &Column, cell: &Cell) -> char {
+pub fn delimiter(table: &Table, column: &Column, cell: &Cell) -> char {
     // Determine, which delimiter should be used
     if let Some(delimiter) = cell.delimiter {
         delimiter

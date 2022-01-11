@@ -29,7 +29,7 @@ fn full_custom_delimiters() {
         .set_delimiter('/'),
     ]);
 
-    let column = table.get_column_mut(1).unwrap();
+    let column = table.column_mut(1).unwrap();
     column.set_delimiter('_');
 
     println!("{}", table);

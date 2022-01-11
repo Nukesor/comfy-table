@@ -14,7 +14,7 @@ type DisplayInfos = BTreeMap<usize, ColumnDisplayInfo>;
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
 pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
-    let table_width = table.get_table_width().map(usize::from);
+    let table_width = table.table_width().map(usize::from);
     let mut infos = BTreeMap::new();
 
     let visible_columns = helper::count_visible_columns(&table.columns);

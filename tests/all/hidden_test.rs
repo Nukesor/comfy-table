@@ -35,20 +35,20 @@ fn get_table() -> Table {
 
     // Hide the first, third and 6th column
     table
-        .get_column_mut(0)
+        .column_mut(0)
         .unwrap()
         .set_constraint(ColumnConstraint::Hidden);
     table
-        .get_column_mut(2)
+        .column_mut(2)
         .unwrap()
         .set_constraint(ColumnConstraint::Hidden);
     table
-        .get_column_mut(3)
+        .column_mut(3)
         .unwrap()
         .set_constraint(ColumnConstraint::Hidden);
 
     table
-        .get_column_mut(6)
+        .column_mut(6)
         .unwrap()
         .set_constraint(ColumnConstraint::Hidden);
 

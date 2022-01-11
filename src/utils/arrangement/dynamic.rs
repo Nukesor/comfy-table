@@ -1,7 +1,7 @@
 use unicode_width::UnicodeWidthStr;
 
-use super::constraints::get_max_constraint;
-use super::constraints::get_min_constraint;
+use super::constraints::max_constraint;
+use super::constraints::min_constraint;
 use super::helper::*;
 use super::{ColumnDisplayInfo, DisplayInfos};
 use crate::style::*;
@@ -223,18 +223,17 @@ fn find_columns_less_than_average(
             // two conditions are met:
             // - The average remaining space is bigger then the MaxWidth constraint.
             // - The actual max content of the column is bigger than the MaxWidth constraint.
-            if let Some(max_width) = get_max_constraint(
+            if let Some(max_width) = max_constraint(
                 table,
                 &column.constraint,
                 Some(table_width),
                 visible_coulumns,
             ) {
                 // Max/Min constraints always include padding!
-                let space_after_padding = average_space + usize::from(column.get_padding_width());
+                let space_after_padding = average_space + usize::from(column.padding_width());
 
                 // Check that both conditions mentioned above are met.
-                if usize::from(max_width) <= space_after_padding
-                    && column.get_max_width() >= max_width
+                if usize::from(max_width) <= space_after_padding && column.max_width() >= max_width
                 {
                     // Save the calculated info, this column has been handled.
                     let width = absolute_width_with_padding(column, max_width);
@@ -255,8 +254,8 @@ fn find_columns_less_than_average(
 
             // The column has a smaller max_content_width than the average space.
             // Fix the width to max_content_width and mark it as checked
-            if usize::from(column.get_max_content_width()) < average_space {
-                let info = ColumnDisplayInfo::new(column, column.get_max_content_width());
+            if usize::from(column.max_content_width()) < average_space {
+                let info = ColumnDisplayInfo::new(column, column.max_content_width());
                 infos.insert(column.index, info);
 
                 // Continue with new recalculated width
@@ -297,7 +296,7 @@ fn enforce_lower_boundary_constraints(
         }
 
         // Check whether the column has a LowerBoundary constraint.
-        let min_width = if let Some(min_width) = get_min_constraint(
+        let min_width = if let Some(min_width) = min_constraint(
             table,
             &column.constraint,
             Some(table_width),
@@ -370,7 +369,7 @@ fn optimize_space_after_split(
                 continue;
             }
 
-            let longest_line = get_longest_line_after_split(average_space, column, table);
+            let longest_line = longest_line_after_split(average_space, column, table);
 
             // If there's a considerable amount space left after splitting, we freeze the column and
             // set its content width to the calculated post-split width.
@@ -400,7 +399,7 @@ fn optimize_space_after_split(
 /// existing line after the split.
 ///
 /// A lot of this logic is duplicated from the [utils::format::format_row] function.
-fn get_longest_line_after_split(average_space: usize, column: &Column, table: &Table) -> usize {
+fn longest_line_after_split(average_space: usize, column: &Column, table: &Table) -> usize {
     // Collect all resulting lines of the column in a single vector.
     // That way we can easily determine the longest line afterwards.
     let mut column_lines = Vec::new();
@@ -414,7 +413,7 @@ fn get_longest_line_after_split(average_space: usize, column: &Column, table: &T
             continue;
         };
 
-        let delimiter = get_delimiter(table, column, cell);
+        let delimiter = delimiter(table, column, cell);
 
         // Create a temporary ColumnDisplayInfo with the average space as width.
         // That way we can simulate how the splitted text will look like.

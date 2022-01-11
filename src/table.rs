@@ -105,7 +105,7 @@ impl Table {
         self
     }
 
-    pub fn get_header(&self) -> Option<&Row> {
+    pub fn header(&self) -> Option<&Row> {
         self.header.as_ref()
     }
 
@@ -143,7 +143,7 @@ impl Table {
     /// If neither is not possible, `None` will be returned.\
     /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::ColumnConstraint::Percentage) constraint won't work.
     #[cfg(feature = "tty")]
-    pub fn get_table_width(&self) -> Option<u16> {
+    pub fn table_width(&self) -> Option<u16> {
         if let Some(width) = self.table_width {
             Some(width)
         } else if self.is_tty() {
@@ -158,7 +158,7 @@ impl Table {
     }
 
     #[cfg(not(feature = "tty"))]
-    pub fn get_table_width(&self) -> Option<u16> {
+    pub fn table_width(&self) -> Option<u16> {
         self.table_width
     }
 
@@ -349,7 +349,7 @@ impl Table {
         let mut preset_string = String::new();
 
         for component in components {
-            match self.get_style(component) {
+            match self.style(component) {
                 None => preset_string.push(' '),
                 Some(character) => preset_string.push(character),
             }
@@ -437,7 +437,7 @@ impl Table {
     /// assert_eq!(table.get_style(TopLeftCorner), Some('+'));
     /// ```
 
-    pub fn get_style(&mut self, component: TableComponent) -> Option<char> {
+    pub fn style(&mut self, component: TableComponent) -> Option<char> {
         self.style.get(&component).copied()
     }
 
@@ -451,12 +451,12 @@ impl Table {
     }
 
     /// Get a reference to a specific column.
-    pub fn get_column(&self, index: usize) -> Option<&Column> {
+    pub fn column(&self, index: usize) -> Option<&Column> {
         self.columns.get(index)
     }
 
     /// Get a mutable reference to a specific column.
-    pub fn get_column_mut(&mut self, index: usize) -> Option<&mut Column> {
+    pub fn column_mut(&mut self, index: usize) -> Option<&mut Column> {
         self.columns.get_mut(index)
     }
 
@@ -520,12 +520,12 @@ impl Table {
     }
 
     /// Reference to a specific row
-    pub fn get_row(&self, index: usize) -> Option<&Row> {
+    pub fn row(&self, index: usize) -> Option<&Row> {
         self.rows.get(index)
     }
 
     /// Mutable reference to a specific row
-    pub fn get_row_mut(&mut self, index: usize) -> Option<&mut Row> {
+    pub fn row_mut(&mut self, index: usize) -> Option<&mut Row> {
         self.rows.get_mut(index)
     }
 

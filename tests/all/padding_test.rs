@@ -17,9 +17,9 @@ fn custom_padding() {
         .add_row(&vec!["Two One", "Two Two", "Two Three"])
         .add_row(&vec!["Three One", "Three Two", "Three Three"]);
 
-    let column = table.get_column_mut(0).unwrap();
+    let column = table.column_mut(0).unwrap();
     column.set_padding((5, 5));
-    let column = table.get_column_mut(2).unwrap();
+    let column = table.column_mut(2).unwrap();
     column.set_padding((0, 0));
 
     println!("{}", table);
