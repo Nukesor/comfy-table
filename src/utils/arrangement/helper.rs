@@ -1,5 +1,3 @@
-use std::convert::TryInto;
-
 use super::DisplayInfos;
 use crate::utils::formatting::borders::{
     should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
