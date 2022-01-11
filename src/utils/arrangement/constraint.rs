@@ -41,8 +41,7 @@ pub fn evaluate(
         _ => {}
     }
 
-    if let Some(min_width) = min_constraint(table, &column.constraint, table_width, visible_columns)
-    {
+    if let Some(min_width) = min(table, &column.constraint, table_width, visible_columns) {
         // In case a min_width is specified, we may already fix the size of the column.
         // We do this, if we know that the content is smaller than the min size.
         if column.max_width() <= min_width {
@@ -60,7 +59,7 @@ pub fn evaluate(
 /// Lower boundaries with [Width::Fixed] just return their internal value. \
 /// Lower boundaries with [Width::Percentage] return the percental amount of the current table
 /// width.
-pub fn min_constraint(
+pub fn min(
     table: &Table,
     constraint: &Option<ColumnConstraint>,
     table_width: Option<usize>,
@@ -87,7 +86,7 @@ pub fn min_constraint(
 /// Upper boundaries with [Width::Fixed] just return their internal value. \
 /// Upper boundaries with [Width::Percentage] return the percental amount of the current table
 /// width.
-pub fn max_constraint(
+pub fn max(
     table: &Table,
     constraint: &Option<ColumnConstraint>,
     table_width: Option<usize>,

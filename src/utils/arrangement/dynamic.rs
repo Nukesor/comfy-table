@@ -1,7 +1,6 @@
 use unicode_width::UnicodeWidthStr;
 
-use super::constraints::max_constraint;
-use super::constraints::min_constraint;
+use super::constraint;
 use super::helper::*;
 use super::{ColumnDisplayInfo, DisplayInfos};
 use crate::style::*;
@@ -223,7 +222,7 @@ fn find_columns_less_than_average(
             // two conditions are met:
             // - The average remaining space is bigger then the MaxWidth constraint.
             // - The actual max content of the column is bigger than the MaxWidth constraint.
-            if let Some(max_width) = max_constraint(
+            if let Some(max_width) = constraint::max(
                 table,
                 &column.constraint,
                 Some(table_width),
@@ -296,7 +295,7 @@ fn enforce_lower_boundary_constraints(
         }
 
         // Check whether the column has a LowerBoundary constraint.
-        let min_width = if let Some(min_width) = min_constraint(
+        let min_width = if let Some(min_width) = constraint::min(
             table,
             &column.constraint,
             Some(table_width),

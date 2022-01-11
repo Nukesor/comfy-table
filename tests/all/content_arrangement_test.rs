@@ -17,7 +17,7 @@ fn simple_dynamic_table() {
     let mut table = Table::new();
     table.set_header(&vec!["Header1", "Header2", "Head"])
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(25)
+        .set_width(25)
         .add_row(&vec![
             "This is a very long line with a lot of text",
             "This is anotherverylongtextwithlongwords text",
@@ -93,7 +93,7 @@ fn table_with_truncate() {
     table
         .set_header(&vec!["Header1", "Header2", "Head"])
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(35)
+        .set_width(35)
         .add_row(first_row)
         .add_row(second_row);
 
@@ -137,7 +137,7 @@ fn distribute_space_after_split() {
     table
         .set_header(&vec!["Header1", "Header2", "Head"])
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(80)
+        .set_width(80)
         .add_row(&vec![
             "This is a very long line with a lot of text",
             "This is text with a anotherverylongtexttesttest",
@@ -166,7 +166,7 @@ fn unused_space_after_split() {
     table
         .set_header(&vec!["Header1"])
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(30)
+        .set_width(30)
         .add_row(&vec!["This is text with a anotherverylongtext"]);
 
     println!("{}", table);
@@ -189,7 +189,7 @@ fn dynamic_full_width_after_split() {
     table
         .set_header(&vec!["Header1"])
         .set_content_arrangement(ContentArrangement::DynamicFullWidth)
-        .set_table_width(50)
+        .set_width(50)
         .add_row(&vec!["This is text with a anotherverylongtexttesttestaa"]);
 
     println!("{}", table);
@@ -214,7 +214,7 @@ fn dynamic_full_width() {
     table
         .set_header(&vec!["Header1", "Header2", "smol"])
         .set_content_arrangement(ContentArrangement::DynamicFullWidth)
-        .set_table_width(80)
+        .set_width(80)
         .add_row(&vec!["This is a short line", "small", "smol"]);
 
     println!("{}", table);

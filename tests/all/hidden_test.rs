@@ -77,7 +77,7 @@ fn hidden_columns() {
 #[test]
 fn hidden_columns_with_dynamic_adjustment() {
     let mut table = get_table();
-    table.set_table_width(25);
+    table.set_width(25);
     table.set_content_arrangement(ContentArrangement::Dynamic);
 
     println!("{}", table);

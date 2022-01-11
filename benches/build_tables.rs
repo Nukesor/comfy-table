@@ -11,7 +11,7 @@ fn build_readme_table() {
     let mut table = Table::new();
     table.load_preset(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(80)
+        .set_width(80)
         .set_header(vec![
             Cell::new("Header1").add_attribute(Attribute::Bold),
             Cell::new("Header2").fg(Color::Green),
@@ -43,7 +43,7 @@ fn build_readme_table() {
     let mut table = Table::new();
     table.load_preset(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(80)
+        .set_width(80)
         .set_header(vec![
             Cell::new("Header1"),
             Cell::new("Header2"),
@@ -71,7 +71,7 @@ fn build_huge_table() {
     table
         .load_preset(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::DynamicFullWidth)
-        .set_table_width(400)
+        .set_width(400)
         .set_header(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
     // Create a 10x10 grid
