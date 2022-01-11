@@ -33,7 +33,7 @@ fn cell_alignment() {
         column.set_cell_alignment(*alignment);
     }
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +---------------------+---------------------+---------------------+
 | Header1             |       Header2       |             Header3 |

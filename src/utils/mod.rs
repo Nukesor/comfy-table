@@ -48,5 +48,5 @@ impl ColumnDisplayInfo {
 pub fn build_table(table: &Table) -> impl Iterator<Item = String> {
     let display_info = arrange_content(table);
     let content = format_content(table, &display_info);
-    draw_borders(table, content, &display_info).into_iter()
+    draw_borders(table, &content, &display_info).into_iter()
 }

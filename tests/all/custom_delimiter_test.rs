@@ -32,7 +32,7 @@ fn full_custom_delimiters() {
     let column = table.get_column_mut(1).unwrap();
     column.set_delimiter('_');
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +-------------------+------------------+
 | Header1           | Header2          |

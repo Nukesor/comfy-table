@@ -27,12 +27,11 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
 
     // Fallback to `ContentArrangement::Disabled`, if we don't have any information
     // on how wide the table should be.
-    let table_width = match table_width {
-        Some(table_width) => table_width,
-        None => {
-            disabled::arrange(table, &mut infos, visible_columns);
-            return infos.into_iter().map(|(_, info)| info).collect();
-        }
+    let table_width = if let Some(table_width) = table_width {
+        table_width
+    } else {
+        disabled::arrange(table, &mut infos, visible_columns);
+        return infos.into_iter().map(|(_, info)| info).collect();
     };
 
     match &table.arrangement {
@@ -58,7 +57,7 @@ mod tests {
         let display_infos = arrange_content(&table);
 
         // The width should be the width of the rows + padding
-        let widths: Vec<u16> = display_infos.iter().map(|info| info.width()).collect();
+        let widths: Vec<u16> = display_infos.iter().map(ColumnDisplayInfo::width).collect();
         assert_eq!(widths, vec![6, 7, 8]);
     }
 }

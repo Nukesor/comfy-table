@@ -32,7 +32,7 @@ fn fixed_max_min_constraints() {
         Absolute(Fixed(10)),
     ]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +----------+--------+----------+
 | smol     | Header | Header3  |
@@ -62,7 +62,7 @@ fn fixed_max_min_constraints() {
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_table_width(28);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +----------+----+----------+
 | smol     | He | Header3  |
@@ -107,7 +107,7 @@ fn unnecessary_max_min_constraints() {
 
     table.set_constraints(vec![LowerBoundary(Fixed(1)), UpperBoundary(Fixed(30))]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +------+----------------------+------------------------+
 | smol | Header2              | Header3                |
@@ -123,7 +123,7 @@ fn unnecessary_max_min_constraints() {
 
     // Now test for dynamic content arrangement
     table.set_content_arrangement(ContentArrangement::Dynamic);
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +------+----------------------+------------------------+
 | smol | Header2              | Header3                |
@@ -154,7 +154,7 @@ fn constraints_bigger_than_table_width() {
             ContentWidth,
         ]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +---+------------------------------+------------------------+
 | s | Header2                      | Header3                |
@@ -189,7 +189,7 @@ fn percentage() {
         .set_table_width(40)
         .set_constraints(vec![Absolute(Percentage(20))]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +-------+---------------+--------------+
 | smol  | Header2       | Header3      |
@@ -217,7 +217,7 @@ fn max_100_percentage() {
         .set_table_width(40)
         .set_constraints(vec![Absolute(Percentage(200))]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +--------------------------------------+
 | smol                                 |
@@ -241,7 +241,7 @@ fn percentage_second() {
             Absolute(Percentage(30)),
         ]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +--------------+----------+----------+
 | smol         | Header2  | Header3  |
@@ -274,7 +274,7 @@ fn max_percentage() {
             Absolute(Percentage(30)),
         ]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +------+----------+----------+
 | smol | Header2  | Header3  |
@@ -314,7 +314,7 @@ fn min_max_boundary() {
             Absolute(Percentage(30)),
         ]);
 
-    println!("{}", table.to_string());
+    println!("{}", table);
     let expected = "
 +------------------+---------------+----------+
 | smol             | Header2       | Header3  |

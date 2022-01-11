@@ -78,7 +78,7 @@ fn build_huge_table() {
     for row_index in 0..10 {
         let mut row = Vec::new();
         for column in 0..10 {
-            row.push("SomeWord ".repeat((column + row_index * 2) % 10))
+            row.push("SomeWord ".repeat((column + row_index * 2) % 10));
         }
         table.add_row(row);
     }
@@ -100,9 +100,9 @@ fn build_huge_table() {
 }
 
 pub fn build_tables(crit: &mut Criterion) {
-    crit.bench_function("Huge table", |b| b.iter(|| build_huge_table()));
+    crit.bench_function("Huge table", |b| b.iter(build_huge_table));
 
-    crit.bench_function("Readme table", |b| b.iter(|| build_readme_table()));
+    crit.bench_function("Readme table", |b| b.iter(build_readme_table));
 }
 
 criterion_group!(benches, build_tables);

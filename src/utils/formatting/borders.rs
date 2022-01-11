@@ -4,7 +4,7 @@ use crate::utils::ColumnDisplayInfo;
 
 pub(crate) fn draw_borders(
     table: &Table,
-    rows: Vec<Vec<Vec<String>>>,
+    rows: &[Vec<Vec<String>>],
     display_info: &[ColumnDisplayInfo],
 ) -> Vec<String> {
     let mut lines = Vec::new();
@@ -56,7 +56,7 @@ fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String 
 }
 
 fn draw_rows(
-    rows: Vec<Vec<Vec<String>>>,
+    rows: &[Vec<Vec<String>>],
     table: &Table,
     display_info: &[ColumnDisplayInfo],
 ) -> Vec<String> {

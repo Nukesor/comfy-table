@@ -162,11 +162,7 @@ pub fn format_row(
     //  tc[0][0][0]     tc[0][0][1]
     //  tc[0][1][0]     tc[0][1][1]
     //  tc[0][2][0]     tc[0][2][1] <- Now filled with placeholder (spaces)
-    let max_lines = temp_row_content
-        .iter()
-        .map(|cell| cell.len())
-        .max()
-        .unwrap_or(0);
+    let max_lines = temp_row_content.iter().map(Vec::len).max().unwrap_or(0);
     let mut row_content = Vec::new();
     for index in 0..max_lines {
         let mut line = Vec::new();
@@ -224,15 +220,15 @@ fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String
         }
     }
 
-    pad_line(line, info)
+    pad_line(&line, info)
 }
 
 /// Apply the column's padding to this line
-fn pad_line(line: String, info: &ColumnDisplayInfo) -> String {
+fn pad_line(line: &str, info: &ColumnDisplayInfo) -> String {
     let mut padded_line = String::new();
 
     padded_line += &" ".repeat(info.padding.0.into());
-    padded_line += &line;
+    padded_line += line;
     padded_line += &" ".repeat(info.padding.1.into());
 
     padded_line
