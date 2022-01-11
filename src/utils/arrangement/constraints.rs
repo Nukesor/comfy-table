@@ -1,5 +1,3 @@
-use std::convert::TryInto;
-
 use super::helper::*;
 use super::{ColumnDisplayInfo, DisplayInfos};
 use crate::style::{ColumnConstraint, ColumnConstraint::*, Width};

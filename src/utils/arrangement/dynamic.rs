@@ -1,5 +1,3 @@
-use std::convert::TryInto;
-
 use unicode_width::UnicodeWidthStr;
 
 use super::constraints::get_max_constraint;
