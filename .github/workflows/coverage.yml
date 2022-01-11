@@ -22,10 +22,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: hecrj/setup-rust-action@v1
+    - name: Setup Rust toolchain
+      uses: actions-rs/toolchain@v1
       with:
-        rust-version: nightly
-    - uses: actions/checkout@v1
+        profile: minimal
+        toolchain: nightly
+        override: true
 
     - run: cargo build
     - run: cargo install cargo-tarpaulin

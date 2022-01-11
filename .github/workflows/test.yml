@@ -57,7 +57,6 @@ jobs:
           target: ${{ matrix.target }}
           toolchain: ${{ matrix.toolchain }}
           override: true
-          components: rustfmt, clippy
 
       - name: cargo build
         uses: actions-rs/cargo@v1
