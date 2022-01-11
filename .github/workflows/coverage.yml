@@ -25,7 +25,7 @@ jobs:
     - uses: hecrj/setup-rust-action@v1
       with:
         rust-version: nightly
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2.4.0
 
     - run: cargo build
     - run: cargo install cargo-tarpaulin
