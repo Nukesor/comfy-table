@@ -3,18 +3,7 @@ name: Coverage
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/coverage.yml'
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
   pull_request:
-    branches: [main]
-    paths:
-      - '.github/workflows/coverage.yml'
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
 
 jobs:
   coverage:
@@ -29,12 +18,9 @@ jobs:
         toolchain: nightly
         override: true
 
-    - run: cargo build
-    - run: cargo install cargo-tarpaulin
-    - run: cargo tarpaulin --run-types Tests,Doctests --out Xml
+    - name: Run cargo-tarpaulin
+      uses: actions-rs/tarpaulin@v0.1
 
-    - uses: codecov/codecov-action@v1
+    - uses: codecov/codecov-action@v2.1.0
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./cobertura.xml
         fail_ci_if_error: true
