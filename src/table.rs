@@ -31,6 +31,7 @@ pub struct Table {
     pub(crate) arrangement: ContentArrangement,
     pub(crate) delimiter: Option<char>,
     no_tty: bool,
+    #[cfg(feature = "tty")]
     use_stderr: bool,
     table_width: Option<u16>,
     enforce_styling: bool,
@@ -58,6 +59,7 @@ impl Table {
             arrangement: ContentArrangement::Disabled,
             delimiter: None,
             no_tty: false,
+            #[cfg(feature = "tty")]
             use_stderr: false,
             table_width: None,
             style: HashMap::new(),
@@ -370,7 +372,6 @@ impl Table {
     /// table.load_preset(UTF8_FULL);
     /// table.apply_modifier(UTF8_ROUND_CORNERS);
     /// ```
-
     pub fn apply_modifier(&mut self, modifier: &str) -> &mut Self {
         let mut components = TableComponent::iter();
 
