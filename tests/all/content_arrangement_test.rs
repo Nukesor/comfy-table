@@ -29,7 +29,7 @@ fn simple_dynamic_table() {
             "smol",
         ]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +--------+-------+------+
 | Header | Heade | Head |
@@ -66,7 +66,7 @@ fn simple_dynamic_table() {
 |        | line  |      |
 |        | stuff |      |
 +--------+-------+------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert!(table.lines().all(|line| line.width() == 25));
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
@@ -106,7 +106,7 @@ fn table_with_truncate() {
     let third_column = table.get_column_mut(2).unwrap();
     third_column.set_constraint(Absolute(Fixed(7)));
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +----------------+--------+-------+
 | Header1        | Header | Head  |
@@ -122,7 +122,7 @@ fn table_with_truncate() {
 | long line in   | ther   |       |
 | the middle ... | text   |       |
 +----------------+--------+-------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_table_lines(&table, 35);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
@@ -144,7 +144,7 @@ fn distribute_space_after_split() {
             "smol",
         ]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +-----------------------------------------+-----------------------------+------+
 | Header1                                 | Header2                     | Head |
@@ -152,7 +152,7 @@ fn distribute_space_after_split() {
 | This is a very long line with a lot of  | This is text with a         | smol |
 | text                                    | anotherverylongtexttesttest |      |
 +-----------------------------------------+-----------------------------+------+";
-    println!("{}", expected);
+    println!("{expected}");
 
     assert_table_lines(&table, 80);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
@@ -169,7 +169,7 @@ fn unused_space_after_split() {
         .set_table_width(30)
         .add_row(&vec!["This is text with a anotherverylongtext"]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +---------------------+
 | Header1             |
@@ -177,7 +177,7 @@ fn unused_space_after_split() {
 | This is text with a |
 | anotherverylongtext |
 +---------------------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_table_lines(&table, 23);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
@@ -192,7 +192,7 @@ fn dynamic_full_width_after_split() {
         .set_table_width(50)
         .add_row(&vec!["This is text with a anotherverylongtexttesttestaa"]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +------------------------------------------------+
 | Header1                                        |
@@ -200,7 +200,7 @@ fn dynamic_full_width_after_split() {
 | This is text with a                            |
 | anotherverylongtexttesttestaa                  |
 +------------------------------------------------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_table_lines(&table, 50);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
@@ -217,14 +217,14 @@ fn dynamic_full_width() {
         .set_table_width(80)
         .add_row(&vec!["This is a short line", "small", "smol"]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +-----------------------------------+----------------------+-------------------+
 | Header1                           | Header2              | smol              |
 +==============================================================================+
 | This is a short line              | small                | smol              |
 +-----------------------------------+----------------------+-------------------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_table_lines(&table, 80);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

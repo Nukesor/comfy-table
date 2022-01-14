@@ -49,7 +49,7 @@ fn main() {
                  "This is awesome",
         ]);
 
-    println!("{}", table);
+    println!("{table}");
 }
 ```
 
@@ -98,7 +98,7 @@ fn main() {
     let column = table.get_column_mut(2).expect("Our table has three columns");
     column.set_cell_alignment(CellAlignment::Right);
 
-    println!("{}", table);
+    println!("{table}");
 }
 ```
 
@@ -156,7 +156,7 @@ fn main() {
                  ])
         ]);
 
-    println!("{}", table);
+    println!("{table}");
 }
 ```
 

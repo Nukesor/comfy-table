@@ -34,7 +34,7 @@ fn get_preset_table() -> Table {
 fn styled_table() {
     let mut table = get_preset_table();
     table.force_no_tty().enforce_styling();
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 ┌─────────────────────┬──────────────────────┬───────────────────────────────┐
 │\u{1b}[1m Header1             \u{1b}[0m┆\u{1b}[38;5;10m Header2              \u{1b}[39m┆\u{1b}[48;5;0m Header3                       \u{1b}[49m│
@@ -53,7 +53,7 @@ fn no_style_styled_table() {
     let mut table = get_preset_table();
     table.force_no_tty();
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 ┌─────────────────────┬──────────────────────┬───────────────────────────────┐
 │ Header1             ┆ Header2              ┆ Header3                       │

@@ -32,7 +32,7 @@ fn full_custom_delimiters() {
     let column = table.get_column_mut(1).unwrap();
     column.set_delimiter('_');
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +-------------------+------------------+
 | Header1           | Header2          |
@@ -56,6 +56,6 @@ fn full_custom_delimiters() {
 |                   | phens or anythin |
 |                   | g else.          |
 +-------------------+------------------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

@@ -59,7 +59,7 @@ fn get_table() -> Table {
 #[test]
 fn hidden_columns() {
     let table = get_table();
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 ┌──────┬──────────────────────┬────────────────────────┐
 │ smol ┆ Header2              ┆ Header3                │
@@ -80,7 +80,7 @@ fn hidden_columns_with_dynamic_adjustment() {
     table.set_table_width(25);
     table.set_content_arrangement(ContentArrangement::Dynamic);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 ┌──────┬────────┬───────┐
 │ smol ┆ Header ┆ Heade │
@@ -115,7 +115,7 @@ fn only_hidden_columns() {
         ColumnConstraint::Hidden,
     ]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 ┌┐
 ╞╡

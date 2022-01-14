@@ -17,7 +17,7 @@ fn get_preset_table() -> Table {
 fn test_ascii_full() {
     let mut table = get_preset_table();
     table.load_preset(ASCII_FULL);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +-------+-------+
 | Hello | there |
@@ -26,7 +26,7 @@ fn test_ascii_full() {
 |-------+-------|
 | c     | d     |
 +-------+-------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -34,14 +34,14 @@ fn test_ascii_full() {
 fn test_ascii_no_borders() {
     let mut table = get_preset_table();
     table.load_preset(ASCII_NO_BORDERS);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
  Hello | there
 ===============
  a     | b
 -------+-------
  c     | d";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
 }
 
@@ -49,7 +49,7 @@ fn test_ascii_no_borders() {
 fn test_ascii_borders_only() {
     let mut table = get_preset_table();
     table.load_preset(ASCII_BORDERS_ONLY);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +---------------+
 | Hello   there |
@@ -58,7 +58,7 @@ fn test_ascii_borders_only() {
 |               |
 | c       d     |
 +---------------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -66,7 +66,7 @@ fn test_ascii_borders_only() {
 fn test_ascii_borders_only_condensed() {
     let mut table = get_preset_table();
     table.load_preset(ASCII_BORDERS_ONLY_CONDENSED);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +---------------+
 | Hello   there |
@@ -74,7 +74,7 @@ fn test_ascii_borders_only_condensed() {
 | a       b     |
 | c       d     |
 +---------------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -82,7 +82,7 @@ fn test_ascii_borders_only_condensed() {
 fn test_ascii_horizontal_only() {
     let mut table = get_preset_table();
     table.load_preset(ASCII_HORIZONTAL_ONLY);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 ---------------
  Hello   there
@@ -91,7 +91,7 @@ fn test_ascii_horizontal_only() {
 ---------------
  c       d
 ---------------";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
 }
 
@@ -99,13 +99,13 @@ fn test_ascii_horizontal_only() {
 fn test_ascii_markdown() {
     let mut table = get_preset_table();
     table.load_preset(ASCII_MARKDOWN);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 | Hello | there |
 |-------|-------|
 | a     | b     |
 | c     | d     |";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
 }
 
@@ -113,7 +113,7 @@ fn test_ascii_markdown() {
 fn test_utf8_full() {
     let mut table = get_preset_table();
     table.load_preset(UTF8_FULL);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 ┌───────┬───────┐
 │ Hello ┆ there │
@@ -122,7 +122,7 @@ fn test_utf8_full() {
 ├╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌┤
 │ c     ┆ d     │
 └───────┴───────┘";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
 }
 
@@ -130,14 +130,14 @@ fn test_utf8_full() {
 fn test_utf8_no_borders() {
     let mut table = get_preset_table();
     table.load_preset(UTF8_NO_BORDERS);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
  Hello ┆ there
 ═══════╪═══════
  a     ┆ b
 ╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌
  c     ┆ d";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
 }
 
@@ -145,7 +145,7 @@ fn test_utf8_no_borders() {
 fn test_utf8_horizontal_only() {
     let mut table = get_preset_table();
     table.load_preset(UTF8_HORIZONTAL_ONLY);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 ───────────────
  Hello   there
@@ -154,7 +154,7 @@ fn test_utf8_horizontal_only() {
 ───────────────
  c       d
 ───────────────";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
 }
 
@@ -162,11 +162,11 @@ fn test_utf8_horizontal_only() {
 fn test_nothing() {
     let mut table = get_preset_table();
     table.load_preset(NOTHING);
-    println!("{}", table);
+    println!("{table}");
     let expected = "
  Hello  there
  a      b
  c      d";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
 }

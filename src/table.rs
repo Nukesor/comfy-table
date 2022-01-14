@@ -645,6 +645,6 @@ mod tests {
         table.add_row(&vec!["", "", "shorter"]);
         assert_eq!(table.column_max_content_widths(), vec![4, 5, 22]);
 
-        println!("{}", table);
+        println!("{table}");
     }
 }

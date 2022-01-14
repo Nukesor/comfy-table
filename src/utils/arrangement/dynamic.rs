@@ -35,10 +35,8 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
     let remaining_width: usize =
         available_content_width(table, infos, visible_columns, table_width);
 
-    //println!(
-    //    "Table width: {}, Start remaining width {}",
-    //    table_width, remaining_width
-    //);
+    #[cfg(feature = "debug")]
+    println!("Table width: {table_width}, Start remaining width {remaining_width}");
 
     // Step 2-4.
     // Find all columns that require less space than the average.
@@ -64,13 +62,11 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
         remaining_columns = columns;
     }
 
-    //{
-    //    println!("After less than average: {:#?}", infos);
-    //    println!(
-    //        "Remaining width {}, column {}",
-    //        remaining_width, remaining_columns
-    //    );
-    //}
+    #[cfg(feature = "debug")]
+    {
+        println!("After less than average: {infos:#?}");
+        println!("Remaining width {remaining_width}, column {remaining_columns}");
+    }
 
     // Step 6
     // All remaining columns should get an equal amount of remaining space.
@@ -90,13 +86,11 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
         remaining_columns = columns;
     }
 
-    //{
-    //    println!("After optimize: {:#?}", infos);
-    //    println!(
-    //        "Remaining width {}, column {}",
-    //        remaining_width, remaining_columns
-    //    );
-    //}
+    #[cfg(feature = "debug")]
+    {
+        println!("After optimize: {infos:#?}",);
+        println!("Remaining width {remaining_width}, column {remaining_columns}",);
+    }
 
     // Early exit and one branch of Part 7.
     //
@@ -107,7 +101,8 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
         if remaining_width > 0 && matches!(table.arrangement, ContentArrangement::DynamicFullWidth)
         {
             use_full_width(infos, remaining_width);
-            //println!("After full width: {:#?}", infos);
+            #[cfg(feature = "debug")]
+            println!("After full width: {infos:#?}");
         }
         return;
     }
@@ -120,7 +115,8 @@ pub fn arrange(table: &Table, infos: &mut DisplayInfos, table_width: usize) {
 
     distribute_remaining_space(&table.columns, infos, remaining_width, remaining_columns);
 
-    //println!("After distribute: {:#?}", infos);
+    #[cfg(feature = "debug")]
+    println!("After distribute: {infos:#?}");
 }
 
 /// Step 1

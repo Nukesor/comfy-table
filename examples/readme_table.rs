@@ -28,5 +28,5 @@ fn main() {
             ])
         ]);
 
-    println!("{}", table);
+    println!("{table}");
 }

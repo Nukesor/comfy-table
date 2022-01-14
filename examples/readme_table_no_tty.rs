@@ -25,5 +25,5 @@ fn main() {
             Cell::new("Done"),
         ]);
 
-    println!("{}", table);
+    println!("{table}");
 }

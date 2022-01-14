@@ -23,7 +23,8 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
             constraints::evaluate(table, column, &mut infos, table_width, visible_columns);
         }
     }
-    //println!("After initial constraints: {:#?}", infos);
+    #[cfg(feature = "debug")]
+    println!("After initial constraints: {infos:#?}");
 
     // Fallback to `ContentArrangement::Disabled`, if we don't have any information
     // on how wide the table should be.

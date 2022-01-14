@@ -21,7 +21,7 @@ fn multi_character_utf8_symbols() {
             "✅",
         ]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +----------------------+----------------------+------------------------+
 | Header1              | Header2              | Header3                |
@@ -45,7 +45,7 @@ fn multi_character_utf8_word_splitting() {
         .set_header(&vec!["test"])
         .add_row(&vec!["abc✅def"]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +------+
 | test |
@@ -54,6 +54,6 @@ fn multi_character_utf8_word_splitting() {
 | ✅de |
 | f    |
 +------+";
-    println!("{}", expected);
+    println!("{expected}");
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

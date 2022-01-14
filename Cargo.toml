@@ -29,6 +29,8 @@ path = "examples/readme_table.rs"
 [features]
 default = ["tty"]
 tty = ["crossterm"]
+# This flag is for debugging only!
+debug = []
 
 [dependencies]
 crossterm = { version="0.22", optional=true }

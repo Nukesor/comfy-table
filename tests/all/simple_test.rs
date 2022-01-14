@@ -18,7 +18,7 @@ fn simple_table() {
             "This is awesome",
         ]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +----------------------+----------------------+------------------------+
 | Header1              | Header2              | Header3                |
@@ -41,7 +41,7 @@ fn missing_column_table() {
         .add_row(&vec!["Two One", "Two Two"])
         .add_row(&vec!["Three One"]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +-----------+---------+-----------+
 | Header1   | Header2 | Header3   |
@@ -64,7 +64,7 @@ fn single_column_table() {
         .add_row(&vec!["Two One"])
         .add_row(&vec!["Three One"]);
 
-    println!("{}", table);
+    println!("{table}");
     let expected = "
 +-----------+
 | Header1   |
