@@ -15,8 +15,8 @@ pub struct Row {
 }
 
 impl Row {
-    pub fn new() -> Row {
-        Row::default()
+    pub fn new() -> Self {
+        Self::default()
     }
 
     /// Add a cell to the row.
@@ -92,8 +92,8 @@ impl Row {
 /// let row = Row::from(vec![1, 2, 3, 4]);
 /// ```
 impl<T: Into<Cells>> From<T> for Row {
-    fn from(cells: T) -> Row {
-        Row {
+    fn from(cells: T) -> Self {
+        Self {
             index: None,
             cells: cells.into().0,
             max_height: None,

@@ -26,7 +26,7 @@ impl Cell {
     /// Create a new Cell
     #[allow(clippy::needless_pass_by_value)]
     pub fn new<T: ToString>(content: T) -> Self {
-        Cell {
+        Self {
             content: content
                 .to_string()
                 .split('\n')
@@ -152,8 +152,8 @@ impl Cell {
 /// let cell: Cell = 5u32.into();
 /// ```
 impl<T: ToString> From<T> for Cell {
-    fn from(content: T) -> Cell {
-        Cell::new(content)
+    fn from(content: T) -> Self {
+        Self::new(content)
     }
 }
 
@@ -178,8 +178,8 @@ where
     T: IntoIterator,
     T::Item: Into<Cell>,
 {
-    fn from(cells: T) -> Cells {
-        Cells(cells.into_iter().map(Into::into).collect())
+    fn from(cells: T) -> Self {
+        Self(cells.into_iter().map(Into::into).collect())
     }
 }
 

@@ -51,7 +51,7 @@ impl Default for Table {
 impl Table {
     /// Create a new table with default ASCII styling.
     pub fn new() -> Self {
-        let mut table = Table {
+        let mut table = Self {
             columns: Vec::new(),
             header: None,
             rows: Vec::new(),
