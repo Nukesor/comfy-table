@@ -5,7 +5,7 @@ use unicode_width::UnicodeWidthStr;
 use crate::cell::{Cell, Cells};
 
 /// Each row contains [Cells](crate::Cell) and can be added to a [Table](crate::Table).
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Row {
     /// Index of the row.
     /// This will be set as soon as the row is added to the table.
@@ -14,19 +14,9 @@ pub struct Row {
     pub(crate) max_height: Option<usize>,
 }
 
-impl Default for Row {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl Row {
     pub fn new() -> Row {
-        Row {
-            index: None,
-            cells: Vec::new(),
-            max_height: None,
-        }
+        Row::default()
     }
 
     /// Add a cell to the row.
