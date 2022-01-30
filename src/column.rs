@@ -44,7 +44,7 @@ pub struct Column {
 
 impl Column {
     pub fn new(index: usize) -> Self {
-        Column {
+        Self {
             index,
             padding: (1, 1),
             delimiter: None,

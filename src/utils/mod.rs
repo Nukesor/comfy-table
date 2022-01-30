@@ -31,7 +31,7 @@ impl ColumnDisplayInfo {
         if content_width == 0 {
             content_width = 1;
         }
-        ColumnDisplayInfo {
+        Self {
             padding: column.padding,
             delimiter: column.delimiter,
             content_width,
