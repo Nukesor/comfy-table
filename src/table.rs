@@ -141,7 +141,7 @@ impl Table {
     /// This will be `Some(width)`, if the terminal width can be detected or if the table width is set via [set_table_width](Table::set_table_width).
     ///
     /// If neither is not possible, `None` will be returned.\
-    /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::ColumnConstraint::Percentage) constraint won't work.
+    /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::Width::Percentage) constraint won't work.
     #[cfg(feature = "tty")]
     pub fn get_table_width(&self) -> Option<u16> {
         if let Some(width) = self.table_width {
