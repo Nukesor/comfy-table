@@ -34,9 +34,9 @@ tty = ["crossterm"]
 debug = []
 
 [dependencies]
-crossterm = { version="0.22", optional=true }
-strum = "0.22"
-strum_macros = "0.22"
+crossterm = { version="0.23", optional=true }
+strum = "0.23"
+strum_macros = "0.23"
 unicode-width = "0.1"
 
 [dev-dependencies]
