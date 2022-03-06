@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - unreleased
+
+### Changed
+
+- Don't build `Table::force_no_tty` and `Table::should_style` if `tty` feature isn't enabled.
+- Remove `Table::is_tty` for non-`tty` feature.
+
 ## [5.0.1] - 2022-02-18
 
 ### Updates

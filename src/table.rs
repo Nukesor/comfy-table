@@ -29,10 +29,12 @@ pub struct Table {
     pub(crate) rows: Vec<Row>,
     pub(crate) arrangement: ContentArrangement,
     pub(crate) delimiter: Option<char>,
+    #[cfg(feature = "tty")]
     no_tty: bool,
     #[cfg(feature = "tty")]
     use_stderr: bool,
     width: Option<u16>,
+    #[cfg(feature = "tty")]
     enforce_styling: bool,
 }
 
@@ -57,11 +59,13 @@ impl Table {
             rows: Vec::new(),
             arrangement: ContentArrangement::Disabled,
             delimiter: None,
+            #[cfg(feature = "tty")]
             no_tty: false,
             #[cfg(feature = "tty")]
             use_stderr: false,
             width: None,
             style: HashMap::new(),
+            #[cfg(feature = "tty")]
             enforce_styling: false,
         };
 
@@ -197,6 +201,7 @@ impl Table {
     ///
     /// If you use the [dynamic content arrangement](ContentArrangement::Dynamic),
     /// you need to set the width of your desired table manually with [set_width](Table::set_width).
+    #[cfg(feature = "tty")]
     pub fn force_no_tty(&mut self) -> &mut Self {
         self.no_tty = true;
 
@@ -230,11 +235,6 @@ impl Table {
         }
     }
 
-    #[cfg(not(feature = "tty"))]
-    pub fn is_tty(&self) -> bool {
-        false
-    }
-
     /// Enforce terminal styling.
     ///
     /// Only useful if you forcefully disabled tty, but still want those fancy terminal styles.
@@ -255,6 +255,7 @@ impl Table {
 
     /// Returns whether the content of this table should be styled with the current settings and
     /// environment.
+    #[cfg(feature = "tty")]
     pub fn should_style(&self) -> bool {
         if self.enforce_styling {
             return true;
