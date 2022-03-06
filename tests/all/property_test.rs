@@ -140,7 +140,7 @@ prop_compose! {
 
         }
 
-        table.set_table_width(table_width)
+        table.set_width(table_width)
             .set_content_arrangement(arrangement)
             .load_preset(UTF8_FULL)
             .apply_modifier(UTF8_ROUND_CORNERS);

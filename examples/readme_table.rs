@@ -5,7 +5,7 @@ fn main() {
     let mut table = Table::new();
     table.load_preset(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(80)
+        .set_width(80)
         .set_header(vec![
             Cell::new("Header1").add_attribute(Attribute::Bold),
             Cell::new("Header2").fg(Color::Green),

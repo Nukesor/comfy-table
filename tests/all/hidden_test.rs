@@ -35,20 +35,20 @@ fn get_table() -> Table {
 
     // Hide the first, third and 6th column
     table
-        .get_column_mut(0)
+        .column_mut(0)
         .unwrap()
         .set_constraint(ColumnConstraint::Hidden);
     table
-        .get_column_mut(2)
+        .column_mut(2)
         .unwrap()
         .set_constraint(ColumnConstraint::Hidden);
     table
-        .get_column_mut(3)
+        .column_mut(3)
         .unwrap()
         .set_constraint(ColumnConstraint::Hidden);
 
     table
-        .get_column_mut(6)
+        .column_mut(6)
         .unwrap()
         .set_constraint(ColumnConstraint::Hidden);
 
@@ -77,7 +77,7 @@ fn hidden_columns() {
 #[test]
 fn hidden_columns_with_dynamic_adjustment() {
     let mut table = get_table();
-    table.set_table_width(25);
+    table.set_width(25);
     table.set_content_arrangement(ContentArrangement::Dynamic);
 
     println!("{table}");

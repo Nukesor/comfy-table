@@ -40,7 +40,7 @@ fn multi_character_utf8_symbols() {
 fn multi_character_utf8_word_splitting() {
     let mut table = Table::new();
     table
-        .set_table_width(8)
+        .set_width(8)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_header(&vec!["test"])
         .add_row(&vec!["abc✅def"]);

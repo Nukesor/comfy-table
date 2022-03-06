@@ -41,12 +41,10 @@ pub fn evaluate(
         _ => {}
     }
 
-    if let Some(min_width) =
-        get_min_constraint(table, &column.constraint, table_width, visible_columns)
-    {
+    if let Some(min_width) = min(table, &column.constraint, table_width, visible_columns) {
         // In case a min_width is specified, we may already fix the size of the column.
         // We do this, if we know that the content is smaller than the min size.
-        if column.get_max_width() <= min_width {
+        if column.max_width() <= min_width {
             let width = absolute_width_with_padding(column, min_width);
             let info = ColumnDisplayInfo::new(column, width);
             infos.insert(column.index, info);
@@ -61,7 +59,7 @@ pub fn evaluate(
 /// Lower boundaries with [Width::Fixed] just return their internal value. \
 /// Lower boundaries with [Width::Percentage] return the percental amount of the current table
 /// width.
-pub fn get_min_constraint(
+pub fn min(
     table: &Table,
     constraint: &Option<ColumnConstraint>,
     table_width: Option<usize>,
@@ -88,7 +86,7 @@ pub fn get_min_constraint(
 /// Upper boundaries with [Width::Fixed] just return their internal value. \
 /// Upper boundaries with [Width::Percentage] return the percental amount of the current table
 /// width.
-pub fn get_max_constraint(
+pub fn max(
     table: &Table,
     constraint: &Option<ColumnConstraint>,
     table_width: Option<usize>,

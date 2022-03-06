@@ -4,7 +4,7 @@ use super::ColumnDisplayInfo;
 use crate::style::ContentArrangement;
 use crate::table::Table;
 
-mod constraints;
+mod constraint;
 mod disabled;
 mod dynamic;
 mod helper;
@@ -14,13 +14,13 @@ type DisplayInfos = BTreeMap<usize, ColumnDisplayInfo>;
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
 pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
-    let table_width = table.get_table_width().map(usize::from);
+    let table_width = table.width().map(usize::from);
     let mut infos = BTreeMap::new();
 
     let visible_columns = helper::count_visible_columns(&table.columns);
     for column in table.columns.iter() {
         if column.constraint.is_some() {
-            constraints::evaluate(table, column, &mut infos, table_width, visible_columns);
+            constraint::evaluate(table, column, &mut infos, table_width, visible_columns);
         }
     }
     #[cfg(feature = "debug")]

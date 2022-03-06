@@ -81,7 +81,7 @@ fn main() {
         .load_preset(UTF8_FULL)
         .apply_modifier(UTF8_ROUND_CORNERS)
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(40)
+        .set_width(40)
         .set_header(vec!["Header1", "Header2", "Header3"])
         .add_row(vec![
                  Cell::new("Center aligned").set_alignment(CellAlignment::Center),
@@ -95,7 +95,7 @@ fn main() {
         ]);
 
     // Set the default alignment for the third column to right
-    let column = table.get_column_mut(2).expect("Our table has three columns");
+    let column = table.column_mut(2).expect("Our table has three columns");
     column.set_cell_alignment(CellAlignment::Right);
 
     println!("{table}");
@@ -133,7 +133,7 @@ fn main() {
     let mut table = Table::new();
     table.load_preset(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(80)
+        .set_width(80)
         .set_header(vec![
                     Cell::new("Header1").add_attribute(Attribute::Bold),
                     Cell::new("Header2").fg(Color::Green),
@@ -205,7 +205,7 @@ Furthermore, all terminal related functionality, including styling, can be disab
 Without this flag no `unsafe` code is used as far as I know.
 
 1. `crossterm::tty::IsTty`. This function is necessary to detect whether we're currently on a tty or not.
-    This is only called if no explicit width is provided via `Table::set_table_width`.
+    This is only called if no explicit width is provided via `Table::set_width`.
     ```rust,ignore
     /// On unix the `isatty()` function returns true if a file
     /// descriptor is a terminal.
@@ -218,7 +218,7 @@ Without this flag no `unsafe` code is used as far as I know.
     }
     ```
 2. `crossterm::terminal::size`. This function is necessary to detect the current terminal width if we're on a tty.
-    This is only called if no explicit width is provided via `Table::set_table_width`.
+    This is only called if no explicit width is provided via `Table::set_width`.
 
     http://rosettacode.org/wiki/Terminal_control/Dimensions#Library:_BSD_libc
     This is another libc call which is used to communicate with `/dev/tty` via a file descriptor.

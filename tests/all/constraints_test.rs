@@ -60,7 +60,7 @@ fn fixed_max_min_constraints() {
     // Since the left and right column are fixed, the middle column should only get a width of 2
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(28);
+        .set_width(28);
 
     println!("{table}");
     let expected = "
@@ -147,7 +147,7 @@ fn constraints_bigger_than_table_width() {
 
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(28)
+        .set_width(28)
         .set_constraints(vec![
             UpperBoundary(Fixed(50)),
             LowerBoundary(Fixed(30)),
@@ -186,7 +186,7 @@ fn percentage() {
     // The the rest should arrange accordingly.
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(40)
+        .set_width(40)
         .set_constraints(vec![Absolute(Percentage(20))]);
 
     println!("{table}");
@@ -214,7 +214,7 @@ fn max_100_percentage() {
         .set_header(&vec!["smol"])
         .add_row(&vec!["smol"])
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(40)
+        .set_width(40)
         .set_constraints(vec![Absolute(Percentage(200))]);
 
     println!("{table}");
@@ -234,7 +234,7 @@ fn percentage_second() {
 
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(40)
+        .set_width(40)
         .set_constraints(vec![
             LowerBoundary(Percentage(40)),
             UpperBoundary(Percentage(30)),
@@ -267,7 +267,7 @@ fn max_percentage() {
 
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(40)
+        .set_width(40)
         .set_constraints(vec![
             ContentWidth,
             UpperBoundary(Percentage(30)),
@@ -301,7 +301,7 @@ fn min_max_boundary() {
 
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_table_width(40)
+        .set_width(40)
         .set_constraints(vec![
             Boundaries {
                 lower: Percentage(50),

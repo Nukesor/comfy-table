@@ -32,7 +32,7 @@ pub struct Table {
     no_tty: bool,
     #[cfg(feature = "tty")]
     use_stderr: bool,
-    table_width: Option<u16>,
+    width: Option<u16>,
     enforce_styling: bool,
 }
 
@@ -60,7 +60,7 @@ impl Table {
             no_tty: false,
             #[cfg(feature = "tty")]
             use_stderr: false,
-            table_width: None,
+            width: None,
             style: HashMap::new(),
             enforce_styling: false,
         };
@@ -105,7 +105,7 @@ impl Table {
         self
     }
 
-    pub fn get_header(&self) -> Option<&Row> {
+    pub fn header(&self) -> Option<&Row> {
         self.header.as_ref()
     }
 
@@ -130,25 +130,25 @@ impl Table {
     /// Enforce a max width that should be used in combination with [dynamic content arrangement](ContentArrangement::Dynamic).\
     /// This is usually not necessary, if you plan to output your table to a tty,
     /// since the terminal width can be automatically determined.
-    pub fn set_table_width(&mut self, table_width: u16) -> &mut Self {
-        self.table_width = Some(table_width);
+    pub fn set_width(&mut self, width: u16) -> &mut Self {
+        self.width = Some(width);
 
         self
     }
 
     /// Get the expected width of the table.
     ///
-    /// This will be `Some(width)`, if the terminal width can be detected or if the table width is set via [set_table_width](Table::set_table_width).
+    /// This will be `Some(width)`, if the terminal width can be detected or if the table width is set via [set_width](Table::set_width).
     ///
     /// If neither is not possible, `None` will be returned.\
     /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::Width::Percentage) constraint won't work.
     #[cfg(feature = "tty")]
-    pub fn get_table_width(&self) -> Option<u16> {
-        if let Some(width) = self.table_width {
+    pub fn width(&self) -> Option<u16> {
+        if let Some(width) = self.width {
             Some(width)
         } else if self.is_tty() {
-            if let Ok((table_width, _)) = terminal::size() {
-                Some(table_width)
+            if let Ok((width, _)) = terminal::size() {
+                Some(width)
             } else {
                 None
             }
@@ -158,8 +158,8 @@ impl Table {
     }
 
     #[cfg(not(feature = "tty"))]
-    pub fn get_table_width(&self) -> Option<u16> {
-        self.table_width
+    pub fn width(&self) -> Option<u16> {
+        self.width
     }
 
     /// Specify how Comfy Table should arrange the content in your table.
@@ -192,11 +192,11 @@ impl Table {
     ///
     /// This disables:
     ///
-    /// - table_width lookup from the current tty
+    /// - width lookup from the current tty
     /// - Styling and attributes on cells (unless you use [Table::enforce_styling])
     ///
     /// If you use the [dynamic content arrangement](ContentArrangement::Dynamic),
-    /// you need to set the width of your desired table manually with [set_table_width](Table::set_table_width).
+    /// you need to set the width of your desired table manually with [set_width](Table::set_width).
     pub fn force_no_tty(&mut self) -> &mut Self {
         self.no_tty = true;
 
@@ -349,7 +349,7 @@ impl Table {
         let mut preset_string = String::new();
 
         for component in components {
-            match self.get_style(component) {
+            match self.style(component) {
                 None => preset_string.push(' '),
                 Some(character) => preset_string.push(character),
             }
@@ -434,10 +434,10 @@ impl Table {
     /// use comfy_table::TableComponent::*;
     ///
     /// let mut table = Table::new();
-    /// assert_eq!(table.get_style(TopLeftCorner), Some('+'));
+    /// assert_eq!(table.style(TopLeftCorner), Some('+'));
     /// ```
 
-    pub fn get_style(&mut self, component: TableComponent) -> Option<char> {
+    pub fn style(&mut self, component: TableComponent) -> Option<char> {
         self.style.get(&component).copied()
     }
 
@@ -451,12 +451,12 @@ impl Table {
     }
 
     /// Get a reference to a specific column.
-    pub fn get_column(&self, index: usize) -> Option<&Column> {
+    pub fn column(&self, index: usize) -> Option<&Column> {
         self.columns.get(index)
     }
 
     /// Get a mutable reference to a specific column.
-    pub fn get_column_mut(&mut self, index: usize) -> Option<&mut Column> {
+    pub fn column_mut(&mut self, index: usize) -> Option<&mut Column> {
         self.columns.get_mut(index)
     }
 
@@ -506,9 +506,9 @@ impl Table {
     ///
     /// // Create an iterator over the second column
     /// let mut cell_iter = table.column_cells_iter(1);
-    /// assert_eq!(cell_iter.next().unwrap().unwrap().get_content(), "Second");
+    /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "Second");
     /// assert!(cell_iter.next().unwrap().is_none());
-    /// assert_eq!(cell_iter.next().unwrap().unwrap().get_content(), "Fifth");
+    /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "Fifth");
     /// assert!(cell_iter.next().is_none());
     /// ```
     pub fn column_cells_iter(&self, column_index: usize) -> ColumnCellIter {
@@ -520,12 +520,12 @@ impl Table {
     }
 
     /// Reference to a specific row
-    pub fn get_row(&self, index: usize) -> Option<&Row> {
+    pub fn row(&self, index: usize) -> Option<&Row> {
         self.rows.get(index)
     }
 
     /// Mutable reference to a specific row
-    pub fn get_row_mut(&mut self, index: usize) -> Option<&mut Row> {
+    pub fn row_mut(&mut self, index: usize) -> Option<&mut Row> {
         self.rows.get_mut(index)
     }
 

@@ -9,7 +9,7 @@ use crate::style::CellAlignment;
 use crate::table::Table;
 use crate::utils::ColumnDisplayInfo;
 
-pub fn get_delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
+pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
     // Determine, which delimiter should be used
     if let Some(delimiter) = cell.delimiter {
         delimiter
@@ -43,7 +43,7 @@ pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<
     let mut table_content = Vec::new();
 
     // Format table header if it exists
-    if let Some(header) = table.get_header() {
+    if let Some(header) = table.header() {
         table_content.push(format_row(header, display_info, table));
     }
 
@@ -82,7 +82,7 @@ pub fn format_row(
             continue;
         };
 
-        let delimiter = get_delimiter(cell, info, table);
+        let delimiter = delimiter(cell, info, table);
 
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.

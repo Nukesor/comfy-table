@@ -14,7 +14,7 @@ fn full_custom_delimiters() {
         .set_header(&vec!["Header1", "Header2"])
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_delimiter('-')
-        .set_table_width(40)
+        .set_width(40)
         .add_row(&vec![
             "This shouldn't be split with any logic, since there's no matching delimiter",
             "Test-Test-Test-Test-Test-This_should_only_be_splitted_by_underscore_and not by space or hyphens",
@@ -29,7 +29,7 @@ fn full_custom_delimiters() {
         .set_delimiter('/'),
     ]);
 
-    let column = table.get_column_mut(1).unwrap();
+    let column = table.column_mut(1).unwrap();
     column.set_delimiter('_');
 
     println!("{table}");

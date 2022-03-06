@@ -44,7 +44,7 @@ impl Cell {
     }
 
     /// Return a copy of the content contained in this cell.
-    pub fn get_content(&self) -> String {
+    pub fn content(&self) -> String {
         self.content.join("\n")
     }
 
@@ -192,6 +192,6 @@ mod tests {
         let content = "This is\nsome multiline\nstring".to_string();
         let cell = Cell::new(content.clone());
 
-        assert_eq!(cell.get_content(), content);
+        assert_eq!(cell.content(), content);
     }
 }
