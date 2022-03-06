@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [6.0.0] - unreleased
 
+### Breaking Changes
+
+- `Table::column_max_content_widths` is no longer public, as we cannot guarantee that these numbers are always correct.
+- `Column::get_max_width` and `Column::get_max_content_width` have been removed for the same reason.
+
 ### Changed
 
 - Don't build `Table::force_no_tty` and `Table::should_style` if `tty` feature isn't enabled.

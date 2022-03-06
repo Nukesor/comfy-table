@@ -17,10 +17,21 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     let table_width = table.width().map(usize::from);
     let mut infos = BTreeMap::new();
 
+    let max_content_widths = table.column_max_content_widths();
+
+    // Check if we can already resolve some constraints.
+    // This step also populates the ColumnDisplayInfo structs.
     let visible_columns = helper::count_visible_columns(&table.columns);
     for column in table.columns.iter() {
         if column.constraint.is_some() {
-            constraint::evaluate(table, column, &mut infos, table_width, visible_columns);
+            constraint::evaluate(
+                table,
+                table_width,
+                visible_columns,
+                &mut infos,
+                column,
+                max_content_widths[column.index],
+            );
         }
     }
     #[cfg(feature = "debug")]
@@ -31,14 +42,16 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     let table_width = if let Some(table_width) = table_width {
         table_width
     } else {
-        disabled::arrange(table, &mut infos, visible_columns);
+        disabled::arrange(table, &mut infos, visible_columns, &max_content_widths);
         return infos.into_iter().map(|(_, info)| info).collect();
     };
 
     match &table.arrangement {
-        ContentArrangement::Disabled => disabled::arrange(table, &mut infos, visible_columns),
+        ContentArrangement::Disabled => {
+            disabled::arrange(table, &mut infos, visible_columns, &max_content_widths)
+        }
         ContentArrangement::Dynamic | ContentArrangement::DynamicFullWidth => {
-            dynamic::arrange(table, &mut infos, table_width);
+            dynamic::arrange(table, &mut infos, table_width, &max_content_widths);
         }
     }
 
