@@ -565,8 +565,9 @@ impl Table {
     }
 
     /// Return a vector representing the maximum amount of characters in any line of this column.\
-    /// This is needed for internal testing and formatting.
-    pub(crate) fn column_max_content_widths(&self) -> Vec<u16> {
+    ///
+    /// **Attention** This scans the whole current content of the table.
+    pub fn column_max_content_widths(&self) -> Vec<u16> {
         fn set_max_content_widths(max_widths: &mut [u16], row: &Row) {
             // Get the max width for each cell of the row
             let row_max_widths = row.max_content_widths();
@@ -610,6 +611,25 @@ impl Table {
         if row.cell_count() > self.columns.len() {
             for index in self.columns.len()..row.cell_count() {
                 self.columns.push(Column::new(index));
+            }
+        }
+    }
+
+    /// Calling this might be necessary if you add new cells to rows that're already added to the
+    /// table.
+    ///
+    /// If more cells than're currently know to the table are added to that row,
+    /// the table cannot know about these, since new [Column]s are only
+    /// automatically detected when a new row is added.
+    ///
+    /// To make sure everything works as expected, just call this function if you're adding cells
+    /// to rows that're already added to the table.
+    pub fn discover_columns(&mut self) {
+        for row in self.rows.iter() {
+            if row.cell_count() > self.columns.len() {
+                for index in self.columns.len()..row.cell_count() {
+                    self.columns.push(Column::new(index));
+                }
             }
         }
     }

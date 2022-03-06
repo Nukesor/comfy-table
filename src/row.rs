@@ -21,6 +21,12 @@ impl Row {
 
     /// Add a cell to the row.
     ///
+    /// **Attention:**
+    /// If a row has already been added to a table and you add more cells to it
+    /// than there're columns currently know to the [Table](crate::Table) struct,
+    /// these columns won't be known to the table unless you call
+    /// [Table::discover_columns].
+    ///
     /// ```rust
     /// use comfy_table::{Row, Cell};
     ///
