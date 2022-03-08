@@ -109,7 +109,6 @@ impl Table {
     pub fn set_header<T: Into<Row>>(&mut self, row: T) -> &mut Self {
         let row = row.into();
         self.autogenerate_columns(&row);
-        self.adjust_max_column_widths(&row);
         self.header = Some(row);
 
         self
@@ -131,7 +130,6 @@ impl Table {
     pub fn add_row<T: Into<Row>>(&mut self, row: T) -> &mut Self {
         let mut row = row.into();
         self.autogenerate_columns(&row);
-        self.adjust_max_column_widths(&row);
         row.index = Some(self.rows.len());
         self.rows.push(row);
 
@@ -567,13 +565,34 @@ impl Table {
     }
 
     /// Return a vector representing the maximum amount of characters in any line of this column.\
-    /// This is mostly needed for internal testing and formatting, but can be interesting
-    /// if you want to see the widths of the longest lines for each column.
+    ///
+    /// **Attention** This scans the whole current content of the table.
     pub fn column_max_content_widths(&self) -> Vec<u16> {
-        self.columns
-            .iter()
-            .map(|column| column.max_content_width)
-            .collect()
+        fn set_max_content_widths(max_widths: &mut [u16], row: &Row) {
+            // Get the max width for each cell of the row
+            let row_max_widths = row.max_content_widths();
+            for (index, width) in row_max_widths.iter().enumerate() {
+                let width = (*width).try_into().unwrap_or(u16::MAX);
+
+                // Set a new max, if the current cell is the longest for that column.
+                let current_max = max_widths[index];
+                if current_max < width {
+                    max_widths[index] = width;
+                }
+            }
+        }
+        // The vector that'll contain the max widths per column.
+        let mut max_widths = vec![0; self.columns.len()];
+
+        if let Some(header) = &self.header {
+            set_max_content_widths(&mut max_widths, header);
+        }
+        // Iterate through all rows of the table.
+        for row in self.rows.iter() {
+            set_max_content_widths(&mut max_widths, row);
+        }
+
+        max_widths
     }
 
     pub(crate) fn style_or_default(&self, component: TableComponent) -> String {
@@ -596,15 +615,21 @@ impl Table {
         }
     }
 
-    /// Update the max_content_width for all columns depending on the new row
-    fn adjust_max_column_widths(&mut self, row: &Row) {
-        let max_widths = row.max_content_widths();
-        for (index, width) in max_widths.iter().enumerate() {
-            let width = (*width).try_into().unwrap_or(u16::MAX);
-            // We expect this column to exist, since we autoenerate columns just before calling this function
-            let mut column = self.columns.get_mut(index).unwrap();
-            if column.max_content_width < width {
-                column.max_content_width = width;
+    /// Calling this might be necessary if you add new cells to rows that're already added to the
+    /// table.
+    ///
+    /// If more cells than're currently know to the table are added to that row,
+    /// the table cannot know about these, since new [Column]s are only
+    /// automatically detected when a new row is added.
+    ///
+    /// To make sure everything works as expected, just call this function if you're adding cells
+    /// to rows that're already added to the table.
+    pub fn discover_columns(&mut self) {
+        for row in self.rows.iter() {
+            if row.cell_count() > self.columns.len() {
+                for index in self.columns.len()..row.cell_count() {
+                    self.columns.push(Column::new(index));
+                }
             }
         }
     }

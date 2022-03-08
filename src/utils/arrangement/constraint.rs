@@ -13,14 +13,15 @@ use crate::{Column, Table};
 /// - The Column is supposed to be hidden.
 pub fn evaluate(
     table: &Table,
-    column: &Column,
-    infos: &mut DisplayInfos,
     table_width: Option<usize>,
     visible_columns: usize,
+    infos: &mut DisplayInfos,
+    column: &Column,
+    max_content_width: u16,
 ) {
     match &column.constraint {
         Some(ContentWidth) => {
-            let info = ColumnDisplayInfo::new(column, column.max_content_width);
+            let info = ColumnDisplayInfo::new(column, max_content_width);
             infos.insert(column.index, info);
         }
         Some(Absolute(width)) => {
@@ -34,7 +35,7 @@ pub fn evaluate(
             }
         }
         Some(Hidden) => {
-            let mut info = ColumnDisplayInfo::new(column, column.max_content_width);
+            let mut info = ColumnDisplayInfo::new(column, max_content_width);
             info.is_hidden = true;
             infos.insert(column.index, info);
         }
@@ -44,7 +45,7 @@ pub fn evaluate(
     if let Some(min_width) = min(table, &column.constraint, table_width, visible_columns) {
         // In case a min_width is specified, we may already fix the size of the column.
         // We do this, if we know that the content is smaller than the min size.
-        if column.max_width() <= min_width {
+        if max_content_width <= min_width {
             let width = absolute_width_with_padding(column, min_width);
             let info = ColumnDisplayInfo::new(column, width);
             infos.insert(column.index, info);

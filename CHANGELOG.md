@@ -5,14 +5,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [6.0.0] - unreleased
 
-### Changed
-
-- Don't build `Table::force_no_tty` and `Table::should_style` if `tty` feature isn't enabled.
-- Remove `Table::is_tty` for non-`tty` feature.
-
 ### Added
 
 - Add `Table::style_text_only()`, which prevents non-delimiter whitespaces in cells to be styled.
+- Add the `Table::discover_columns` function and add info on when to use it to `Row::add_cell`.
+
+### Breaking Changes
+
+- Renaming of several functions to be Rust idiomatic:
+    * `Cell::get_content` -> `Cell::content`
+    * `Column::get_padding_width` -> `Column::padding_width`
+    * `Column::get_constraint` -> `Column::constraint`
+    * `Table::get_header` -> `Table::header`
+    * `Table::get_table_width` -> `Table::width`
+    * `Table::set_table_width` -> `Table::set_width`
+    * `Table::set_style` -> `Table::style`
+    * `Table::get_column` -> `Table::column`
+    * `Table::get_column_mut` -> `Table::column_mut`
+    * `Table::get_row` -> `Table::row`
+    * `Table::get_row_mut` -> `Table::row_mut`
+- `Column::get_max_width` and `Column::get_max_content_width` have been removed as we cannot guarantee that these numbers are always correct.
+    Use `Table::column_max_content_widths` instead
+
+### Changed
+
+- `Table::column_max_content_widths` now performs a full scan of the table's content, which might take a bit.
+- Don't build `Table::force_no_tty` and `Table::should_style` if `tty` feature isn't enabled.
+- Remove `Table::is_tty` for non-`tty` feature.
 
 ## [5.0.1] - 2022-02-18
 

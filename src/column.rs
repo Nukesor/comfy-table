@@ -38,7 +38,6 @@ pub struct Column {
     pub(crate) delimiter: Option<char>,
     /// Define the [CellAlignment] for all cells of this column
     pub(crate) cell_alignment: Option<CellAlignment>,
-    pub(crate) max_content_width: u16,
     pub(crate) constraint: Option<ColumnConstraint>,
 }
 
@@ -49,7 +48,6 @@ impl Column {
             padding: (1, 1),
             delimiter: None,
             constraint: None,
-            max_content_width: 0,
             cell_alignment: None,
         }
     }
@@ -78,18 +76,6 @@ impl Column {
         self.delimiter = Some(delimiter);
 
         self
-    }
-
-    /// Get the width in characters of the widest line in this column.\
-    /// This doesn't include padding yet!
-    pub fn max_content_width(&self) -> u16 {
-        self.max_content_width
-    }
-
-    /// Get the maximum possible width for this column.\
-    /// This means widest line in this column + padding
-    pub fn max_width(&self) -> u16 {
-        self.max_content_width + self.padding.0 + self.padding.1
     }
 
     /// Constraints allow to influence the auto-adjustment behavior of columns.\
@@ -132,7 +118,6 @@ mod tests {
     fn test_column() {
         let mut column = Column::new(0);
         column.set_padding((0, 0));
-        assert_eq!(column.max_content_width(), 0);
 
         column.set_constraint(ColumnConstraint::ContentWidth);
         assert_eq!(column.constraint(), Some(&ColumnConstraint::ContentWidth));
