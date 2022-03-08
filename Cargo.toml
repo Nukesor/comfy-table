@@ -19,6 +19,10 @@ maintenance = { status="actively-developed" }
 name = "build_tables"
 harness = false
 
+[[bench]]
+name = "build_large_table"
+harness = false
+
 [[example]]
 name = "no_tty"
 path = "examples/readme_table_no_tty.rs"
@@ -44,3 +48,4 @@ pretty_assertions = "1"
 doc-comment = "0.3"
 proptest = "1"
 criterion = "0.3"
+rand = "0.8"
