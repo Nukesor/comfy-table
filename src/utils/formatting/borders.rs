@@ -7,12 +7,21 @@ pub(crate) fn draw_borders(
     rows: &[Vec<Vec<String>>],
     display_info: &[ColumnDisplayInfo],
 ) -> Vec<String> {
-    let mut lines = Vec::new();
+    // We know how many lines there should be. Initialize the vector with the rough correct amount.
+    // We might over allocate a bit, but that's better than under allocating.
+    let mut lines = if let Some(capacity) = rows.get(0).map(|lines| lines.len()) {
+        // Lines * 2 -> Lines + delimiters
+        // + 5 -> header delimiters + header + bottom/top borders
+        Vec::with_capacity(capacity * 2 + 5)
+    } else {
+        Vec::new()
+    };
+
     if should_draw_top_border(table) {
         lines.push(draw_top_border(table, display_info));
     }
 
-    lines.append(&mut draw_rows(rows, table, display_info));
+    draw_rows(&mut lines, rows, table, display_info);
 
     if should_draw_bottom_border(table) {
         lines.push(draw_bottom_border(table, display_info));
@@ -56,11 +65,11 @@ fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String 
 }
 
 fn draw_rows(
+    lines: &mut Vec<String>,
     rows: &[Vec<Vec<String>>],
     table: &Table,
     display_info: &[ColumnDisplayInfo],
-) -> Vec<String> {
-    let mut lines = Vec::new();
+) {
     // Iterate over all rows
     let mut row_iter = rows.iter().enumerate().peekable();
     while let Some((row_index, row)) = row_iter.next() {
@@ -82,8 +91,6 @@ fn draw_rows(
             lines.push(draw_horizontal_lines(table, display_info, false));
         }
     }
-
-    lines
 }
 
 // Takes the parts of a single line, surrounds them with borders and adds vertical lines.

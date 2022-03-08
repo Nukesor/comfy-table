@@ -28,19 +28,19 @@ pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
 /// tc stands for table content and represents the returned value
 /// ``` text
 ///      column1          column2
-/// row1 tc[0][0][0]      tc[0][0][1]
-///      tc[0][1][0]      tc[0][1][1]
-///      tc[0][2][0]      tc[0][2][1]
+/// row1 tc[0][0][0]      tc[0][0][1] <-line1
+///      tc[0][1][0]      tc[0][1][1] <-line2
+///      tc[0][2][0]      tc[0][2][1] <-line3
 ///
-/// row2 tc[1][0][0]      tc[1][0][1]
-///      tc[1][1][0]      tc[1][1][1]
-///      tc[1][2][0]      tc[1][2][1]
+/// row2 tc[1][0][0]      tc[1][0][1] <-line1
+///      tc[1][1][0]      tc[1][1][1] <-line2
+///      tc[1][2][0]      tc[1][2][1] <-line3
 /// ```
 ///
 /// The strings for each row will be padded and aligned according to their respective column.
 pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<Vec<Vec<String>>> {
     // The content of the whole table
-    let mut table_content = Vec::new();
+    let mut table_content = Vec::with_capacity(table.rows.len() + 1);
 
     // Format table header if it exists
     if let Some(header) = table.header() {
@@ -59,7 +59,7 @@ pub fn format_row(
     table: &Table,
 ) -> Vec<Vec<String>> {
     // The content of this specific row
-    let mut temp_row_content = Vec::new();
+    let mut temp_row_content = Vec::with_capacity(display_infos.len());
 
     let mut cell_iter = row.cells.iter();
     // Now iterate over all cells and handle them according to their alignment
@@ -130,7 +130,7 @@ pub fn format_row(
     // Right now, we have a different structure than desired.
     // The content is organized by `row->cell->line`.
     // We want to remove the cell from our datastructure, since this makes the next step a lot easier.
-    // In the end it should look like this: `row->line->column`.
+    // In the end it should look like this: `row->lines->column`.
     // To achieve this, we calculate the max amount of lines for the current row.
     // Afterwards, we iterate over each cell and convert the current structure to the desired one.
     // This step basically transforms this:
@@ -143,10 +143,14 @@ pub fn format_row(
     //  tc[0][1][0]     tc[0][1][1]
     //  tc[0][2][0]     tc[0][2][1] <- Now filled with placeholder (spaces)
     let max_lines = temp_row_content.iter().map(Vec::len).max().unwrap_or(0);
-    let mut row_content = Vec::new();
+    let mut row_content = Vec::with_capacity(max_lines * display_infos.len());
+
+    // Each column should have `max_lines` for this row.
+    // Cells content with fewer lines will simply be topped up with empty strings.
     for index in 0..max_lines {
-        let mut line = Vec::new();
+        let mut line = Vec::with_capacity(display_infos.len());
         let mut cell_iter = temp_row_content.iter();
+
         for info in display_infos.iter() {
             if info.is_hidden {
                 continue;

@@ -66,7 +66,7 @@ fn build_readme_table() {
 
 /// Create a dynamic 10x10 Table with width 400 and unevenly distributed content.
 /// On top of that, most of the columns have some kind of constraint.
-fn build_huge_table() {
+fn build_big_table() {
     let mut table = Table::new();
     table
         .load_preset(UTF8_FULL)
@@ -100,9 +100,9 @@ fn build_huge_table() {
 }
 
 pub fn build_tables(crit: &mut Criterion) {
-    crit.bench_function("Huge table", |b| b.iter(build_huge_table));
-
     crit.bench_function("Readme table", |b| b.iter(build_readme_table));
+
+    crit.bench_function("Big table", |b| b.iter(build_big_table));
 }
 
 criterion_group!(benches, build_tables);
