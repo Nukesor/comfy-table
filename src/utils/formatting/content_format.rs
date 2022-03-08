@@ -122,29 +122,9 @@ pub fn format_row(
         // Iterate over all generated lines of this cell and align them
         let cell_lines = cell_lines
             .iter()
-            .map(|line| align_line(line.to_string(), info, cell));
-
-        // Apply tty styling for this cell.
-        #[cfg(feature = "tty")]
-        let cell_lines = apply_tty_styling(table, cell, cell_lines).into_iter();
+            .map(|line| align_line(table, info, cell, line.to_string()));
 
         temp_row_content.push(cell_lines.collect());
-    }
-
-    /// A small wrapper around the top-level cell styling logic. It's only used to have a clear
-    /// separation of our tty styling logic for the `tty` feature flag.
-    #[cfg(feature = "tty")]
-    fn apply_tty_styling(
-        table: &Table,
-        cell: &Cell,
-        cell_lines: impl Iterator<Item = String>,
-    ) -> Vec<String> {
-        if table.should_style() {
-            let cell_lines = cell_lines.map(|line| style_line(line, cell));
-            cell_lines.collect()
-        } else {
-            cell_lines.collect()
-        }
     }
 
     // Right now, we have a different structure than desired.
@@ -190,9 +170,17 @@ pub fn format_row(
 /// In every case all lines will be exactly the same character length `info.width - padding long`
 /// This is needed, so we can simply insert it into the border frame later on.
 /// Padding is applied in this function as well.
-fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String {
+#[allow(unused_variables)]
+fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: String) -> String {
     let content_width = info.content_width;
     let remaining: usize = usize::from(content_width).saturating_sub(line.width());
+
+    // Apply the styling before aligning the line, if the user requests it.
+    // That way non-delimiter whitespaces won't have stuff like underlines.
+    #[cfg(feature = "tty")]
+    if table.should_style() && table.style_text_only {
+        line = style_line(line, cell);
+    }
 
     // Determine the alignment of the column cells.
     // Cell settings overwrite the columns Alignment settings.
@@ -220,7 +208,14 @@ fn align_line(mut line: String, info: &ColumnDisplayInfo, cell: &Cell) -> String
         }
     }
 
-    pad_line(&line, info)
+    line = pad_line(&line, info);
+
+    #[cfg(feature = "tty")]
+    if table.should_style() && !table.style_text_only {
+        return style_line(line, cell);
+    }
+
+    line
 }
 
 /// Apply the column's padding to this line
