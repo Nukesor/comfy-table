@@ -36,6 +36,10 @@ pub struct Table {
     width: Option<u16>,
     #[cfg(feature = "tty")]
     enforce_styling: bool,
+    /// Define whether everything in a cells should be styled, including whitespaces
+    /// or whether only the text should be styled.
+    #[cfg(feature = "tty")]
+    pub(crate) style_text_only: bool,
 }
 
 impl fmt::Display for Table {
@@ -67,6 +71,8 @@ impl Table {
             style: HashMap::new(),
             #[cfg(feature = "tty")]
             enforce_styling: false,
+            #[cfg(feature = "tty")]
+            style_text_only: false,
         };
 
         table.load_preset(ASCII_FULL);
@@ -261,6 +267,14 @@ impl Table {
             return true;
         }
         self.is_tty()
+    }
+
+    /// By default, the whole content of a cells will be styled.
+    /// Calling this function disables this behavior for all cells, resulting in
+    /// only the text of cells being styled.
+    #[cfg(feature = "tty")]
+    pub fn style_text_only(&mut self) {
+        self.style_text_only = true;
     }
 
     /// Convenience method to set a [ColumnConstraint] for all columns at once.

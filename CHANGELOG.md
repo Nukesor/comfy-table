@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Don't build `Table::force_no_tty` and `Table::should_style` if `tty` feature isn't enabled.
 - Remove `Table::is_tty` for non-`tty` feature.
 
+### Added
+
+- Add `Table::style_text_only()`, which prevents non-delimiter whitespaces in cells to be styled.
+
 ## [5.0.1] - 2022-02-18
 
 ### Updates
