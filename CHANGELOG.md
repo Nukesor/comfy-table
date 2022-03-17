@@ -29,9 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- `Table::column_max_content_widths` now performs a full scan of the table's content, which might take a bit.
-- Don't build `Table::force_no_tty` and `Table::should_style` if `tty` feature isn't enabled.
-- Remove `Table::is_tty` for non-`tty` feature.
+- `Table::column_max_content_widths` now performs a full scan of the table's content when called.
+- Don't include `Table::is_tty`, `Table::force_no_tty` and `Table::should_style` if `tty` feature isn't enabled.
 
 ## [5.0.1] - 2022-02-18
 
