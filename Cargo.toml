@@ -7,13 +7,13 @@ homepage = "https://github.com/nukesor/comfy-table"
 repository = "https://github.com/nukesor/comfy-table"
 documentation = "https://docs.rs/comfy-table/"
 license = "MIT"
-keywords = ["shell", "commandline", "table", "unicode"]
+keywords = ["terminal", "table", "unicode"]
 readme = "README.md"
 rust-version = "1.58"
 edition = "2021"
 
 [badges]
-maintenance = { status="actively-developed" }
+maintenance = { status = "actively-developed" }
 
 [[bench]]
 name = "build_tables"
@@ -38,7 +38,7 @@ tty = ["crossterm"]
 debug = []
 
 [dependencies]
-crossterm = { version="0.23", optional=true }
+crossterm = { version = "0.23", optional = true }
 strum = "0.23"
 strum_macros = "0.23"
 unicode-width = "0.1"
