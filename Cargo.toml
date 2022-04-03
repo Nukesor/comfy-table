@@ -9,7 +9,7 @@ documentation = "https://docs.rs/comfy-table/"
 license = "MIT"
 keywords = ["terminal", "table", "unicode"]
 readme = "README.md"
-rust-version = "1.58"
+rust-version = "1.59"
 edition = "2021"
 
 [badges]
