@@ -31,7 +31,7 @@ jobs:
     - run: cargo install cargo-tarpaulin
     - run: cargo tarpaulin --run-types Tests,Doctests --out Xml
 
-    - uses: codecov/codecov-action@v2.1.0
+    - uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./cobertura.xml
