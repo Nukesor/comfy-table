@@ -174,9 +174,9 @@ cargo run --example readme_table
 If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/main/tests).  
 There are tests for almost every feature including a visual view for each resulting table.
 
-## Contribution Guidelines
+## Contributions
 
-Comfy-table is supposed to be minimalistic.
+Comfy-table's main focus is on being minimalistic and reliable.
 A fixed set of features that just work for "normal" use-cases:
 
 - Normal tables (columns, rows, one cell per column/row).
@@ -231,3 +231,34 @@ Without this flag no `unsafe` code is used as far as I know.
     }
     ...
     ```
+
+
+## Comparison with other libraries
+
+The following are official statements of the other crate authors.
+[This ticket](https://github.com/Nukesor/comfy-table/issues/76) can be used as an entry to find all other sibling tickets in the other projects.
+
+### Cli-Table
+
+The main focus of `cli-table` is to support all platforms and at the same time limit the dependencies to keep the compile times and crate size low.
+
+Currently, this create only pulls two external dependencies (other than cli-table-derive):
+
+- termcolor
+- unicode-width
+
+With csv feature enabled, it also pulls csv crate as dependency.
+
+### Prettytables-rs
+
+`prettytables-rs` provides functionality for formatting and aligning tables.
+It his however abandoned since over three years and a [rustsec/advisory-db](https://github.com/rustsec/advisory-db/issues/1173) entry has been requested.
+
+### Comfy-table
+
+One of `comfy-table`'s big foci is on being providing a minimalistic, but rock-solid library for building text-based tables.
+This means that the code is very well tested, no usage of `unsafe` and `unwrap` is only used if we can be absolutely sure that it's safe.
+There're only two occurrences of `unsafe` in all of comfy-table's dependencies, to be exact inside the `tty` communication code, which can be explicitly disabled.
+
+The other focus is on dynamic-length content arrangement.
+This means that a lot of work went into building an algorithm that finds a (near) optimal table layout for any given text and terminal width.
