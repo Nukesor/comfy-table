@@ -12,7 +12,15 @@
 
 Comfy-table is designed as a library for building beautiful tables, while being easy to use.
 
-### Features
+## Table of Contents
+
+- [Features](#features)
+- [Examples](#examples)
+- [Usage of unsafe](#unsafe)
+- [Comparison with other libraries](#comparison-with-other-libraries)
+- [Contributing](#contributing)
+
+## Features
 
 - Dynamic arrangement of content depending on a given width.
 - ANSI content styling for terminals (Colors, Bold, Blinking, etc.).
@@ -174,7 +182,7 @@ cargo run --example readme_table
 If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/main/tests).  
 There are tests for almost every feature including a visual view for each resulting table.
 
-## Contributions
+## Contributing
 
 Comfy-table's main focus is on being minimalistic and reliable.
 A fixed set of features that just work for "normal" use-cases:
