@@ -249,6 +249,12 @@ Currently, this create only pulls two external dependencies (other than cli-tabl
 
 With csv feature enabled, it also pulls csv crate as dependency.
 
+### Term-table-cli
+
+`term-table-rs` is pretty basic in terms of features.
+My goal with the project is to provide a good set of tools for rendering CLI tables, while also allowing users to bring their own tools for things like colours.
+One thing that is unique to term-table-rs(as far as I'm aware) is the ability to have different number of columns in each row of the table.
+
 ### Prettytables-rs
 
 `prettytables-rs` provides functionality for formatting and aligning tables.
@@ -256,7 +262,7 @@ It his however abandoned since over three years and a [rustsec/advisory-db](http
 
 ### Comfy-table
 
-One of `comfy-table`'s big foci is on being providing a minimalistic, but rock-solid library for building text-based tables.
+One of `comfy-table`'s big foci is on providing a minimalistic, but rock-solid library for building text-based tables.
 This means that the code is very well tested, no usage of `unsafe` and `unwrap` is only used if we can be absolutely sure that it's safe.
 There're only two occurrences of `unsafe` in all of comfy-table's dependencies, to be exact inside the `tty` communication code, which can be explicitly disabled.
 
