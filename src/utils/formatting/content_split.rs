@@ -1,4 +1,4 @@
-use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+use unicode_width::UnicodeWidthChar;
 
 use crate::utils::ColumnDisplayInfo;
 
@@ -28,8 +28,8 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
 
     let mut current_line = String::new();
     while let Some(next) = elements.pop() {
-        let current_length = current_line.width();
-        let next_length = next.width();
+        let current_length = textwrap::core::display_width(&current_line);
+        let next_length = textwrap::core::display_width(&next);
 
         // Some helper variables
         // The length of the current line when combining it with the next element
@@ -39,7 +39,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             added_length += 1;
         }
         // The remaining width for this column. If we are on a non-empty line, subtract 1 for the delimiter.
-        let mut remaining_width = content_width - current_line.width();
+        let mut remaining_width = content_width - textwrap::core::display_width(&current_line);
         if !current_line.is_empty() {
             remaining_width = remaining_width.saturating_sub(1);
         }
@@ -148,7 +148,7 @@ const MIN_FREE_CHARS: usize = 2;
 /// Otherwise, we simply return the current line and basically don't do anything.
 fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: String) -> String {
     // Already complete the current line, if there isn't space for more than two chars
-    if current_line.width() > content_width.saturating_sub(MIN_FREE_CHARS) {
+    if textwrap::core::display_width(&current_line) > content_width.saturating_sub(MIN_FREE_CHARS) {
         lines.push(current_line);
         return String::new();
     }

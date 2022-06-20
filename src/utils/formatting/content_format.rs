@@ -1,6 +1,5 @@
 #[cfg(feature = "tty")]
 use crossterm::style::{style, Stylize};
-use unicode_width::UnicodeWidthStr;
 
 use super::content_split::split_line;
 use crate::cell::Cell;
@@ -87,7 +86,7 @@ pub fn format_row(
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if line.width() > info.content_width.into() {
+            if textwrap::core::display_width(line) > info.content_width.into() {
                 let mut splitted = split_line(line, info, delimiter);
                 cell_lines.append(&mut splitted);
             } else {
@@ -110,9 +109,9 @@ pub fn format_row(
                 let width: usize = info.content_width.into();
                 if width >= 6 {
                     // Truncate the line if '...' doesn't fit
-                    if last_line.width() >= width - 3 {
-                        let surplus = (last_line.width() + 3) - width;
-                        last_line.truncate(last_line.width() - surplus);
+                    if textwrap::core::display_width(last_line) >= width - 3 {
+                        let surplus = (textwrap::core::display_width(last_line) + 3) - width;
+                        last_line.truncate(textwrap::core::display_width(last_line) - surplus);
                     }
                     last_line.push_str("...");
                 }
@@ -177,7 +176,8 @@ pub fn format_row(
 #[allow(unused_variables)]
 fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: String) -> String {
     let content_width = info.content_width;
-    let remaining: usize = usize::from(content_width).saturating_sub(line.width());
+    let remaining: usize =
+        usize::from(content_width).saturating_sub(textwrap::core::display_width(&line));
 
     // Apply the styling before aligning the line, if the user requests it.
     // That way non-delimiter whitespaces won't have stuff like underlines.

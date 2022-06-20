@@ -1,5 +1,3 @@
-use unicode_width::UnicodeWidthStr;
-
 use super::constraint;
 use super::helper::*;
 use super::{ColumnDisplayInfo, DisplayInfos};
@@ -429,7 +427,7 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if line.width() > average_space {
+            if textwrap::core::display_width(line) > average_space {
                 let mut splitted = split_line(line, &info, delimiter);
                 column_lines.append(&mut splitted);
             } else {
@@ -441,7 +439,7 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
     // Get the longest line, default to length 0 if no lines exist.
     column_lines
         .iter()
-        .map(|line| line.width())
+        .map(|line| textwrap::core::display_width(line))
         .max()
         .unwrap_or(0)
 }
