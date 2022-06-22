@@ -22,17 +22,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: nightly
-    - uses: actions/checkout@v3
+      - name: Checkout sources
+        uses: actions/checkout@v2
 
-    - run: cargo build
-    - run: cargo install cargo-tarpaulin
-    - run: cargo tarpaulin --run-types Tests,Doctests --out Xml
+      - name: Install Rust
+        run: rustup toolchain install stable --component llvm-tools-preview
 
-    - uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./cobertura.xml
-        fail_ci_if_error: true
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Generate code coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          files: lcov.info
+          fail_ci_if_error: true
