@@ -235,6 +235,11 @@ fn pad_line(line: &str, info: &ColumnDisplayInfo) -> String {
 
 #[cfg(feature = "tty")]
 fn style_line(line: String, cell: &Cell) -> String {
+    // Just return the line, if there's no need to style.
+    if cell.fg.is_none() && cell.bg.is_none() && cell.attributes.is_empty() {
+        return line;
+    }
+
     let mut content = style(line);
 
     // Apply text color
