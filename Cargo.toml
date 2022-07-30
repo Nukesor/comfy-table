@@ -34,7 +34,7 @@ path = "examples/readme_table.rs"
 [features]
 default = ["tty"]
 tty = ["crossterm"]
-# This flag is for debugging only!
+# This flag is for library debugging only!
 debug = []
 
 [dependencies]

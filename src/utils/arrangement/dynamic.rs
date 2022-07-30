@@ -9,9 +9,9 @@ use crate::{Column, Table};
 
 /// Try to find the best fit for a given content and table_width
 ///
-/// 1. Determine the amount of available space, after applying fixed columns, padding and borders.
+/// 1. Determine the amount of available space after applying fixed columns, padding, and borders.
 /// 2. Check if there are any columns that require less space than the average
-///    remaining space for remaining columns. (This includes the MaxWidth Constraint).
+///    remaining space for the remaining columns. (This includes the MaxWidth constraint).
 /// 3. Take those columns, fix their size and add the surplus in space to the remaining space.
 /// 4. Repeat step 2-3 until no columns with smaller size than average remaining space are left.
 /// 5. Now that we know how much space we have to work with, we have to check again for
@@ -24,8 +24,8 @@ use crate::{Column, Table};
 ///
 /// This breaks when:
 ///
-/// 1. A user assigns more space to a few columns than there is on the terminal
-/// 2. A user provides more than 100% column width over a few columns.
+/// 1. A user assigns fixed sizes to a few columns, which are larger than the terminal when combined.
+/// 2. A user provides more than 100% column width across a few columns.
 pub fn arrange(
     table: &Table,
     infos: &mut DisplayInfos,
