@@ -5,7 +5,7 @@
 /// All percental boundaries will be ignored, if:
 /// - you aren't using one of ContentArrangement::{Dynamic, DynamicFullWidth}
 /// - the width of the table/terminal cannot be determined.
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum ColumnConstraint {
     /// This will completely hide a column.
     Hidden,
@@ -22,7 +22,7 @@ pub enum ColumnConstraint {
     Boundaries { lower: Width, upper: Width },
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Width {
     /// A fixed amount of characters.
     /// This can be used to specify an upper/lower boundary as well as a fixed size for the column.
