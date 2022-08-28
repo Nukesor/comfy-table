@@ -135,6 +135,34 @@ impl Table {
 
         self
     }
+
+    /// Add multiple rows to the table.
+    ///
+    /// ```
+    /// use comfy_table::{Table, Row};
+    ///
+    /// let mut table = Table::new();
+    /// let rows = vec![
+    ///     Row::from(vec!["One", "Two"]),
+    ///     Row::from(vec!["Three", "Four"])
+    /// ];
+    /// table.add_rows(rows);
+    /// ```
+    pub fn add_rows<I>(&mut self, rows: I) -> &mut Self
+    where
+        I: IntoIterator,
+        I::Item: Into<Row>,
+    {
+        for row in rows.into_iter() {
+            let mut row = row.into();
+            self.autogenerate_columns(&row);
+            row.index = Some(self.rows.len());
+            self.rows.push(row);
+        }
+
+        self
+    }
+
     /// Enforce a max width that should be used in combination with [dynamic content arrangement](ContentArrangement::Dynamic).\
     /// This is usually not necessary, if you plan to output your table to a tty,
     /// since the terminal width can be automatically determined.
