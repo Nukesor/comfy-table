@@ -29,31 +29,18 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
           components: rustfmt, clippy
 
       - name: cargo build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
+        run: cargo build
 
       - name: cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
+        run: cargo fmt
 
       - name: cargo clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+        run: cargo clippy -- -D warnings
 
       - name: cargo clippy without default features
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --no-default-features -- -D warnings
+        run: cargo clippy --no-default-features -- -D warnings
