@@ -5,7 +5,7 @@ fn main() {
     let mut table = Table::new();
     table.load_preset(comfy_table::presets::NOTHING);
     table.set_content_arrangement(ContentArrangement::Dynamic);
-    table.set_width(90);
+    table.set_width(85);
 
     let mut row = Row::new();
     row.add_cell(Cell::new(

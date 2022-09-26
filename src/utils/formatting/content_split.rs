@@ -1,4 +1,4 @@
-use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+use unicode_width::{UnicodeWidthChar};
 
 use crate::utils::ColumnDisplayInfo;
 
@@ -28,8 +28,8 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
 
     let mut current_line = String::new();
     while let Some(next) = elements.pop() {
-        let current_length = current_line.width();
-        let next_length = next.width();
+        let current_length = console::measure_text_width(&current_line);
+        let next_length = console::measure_text_width(&next);
 
         // Some helper variables
         // The length of the current line when combining it with the next element
@@ -39,7 +39,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             added_length += 1;
         }
         // The remaining width for this column. If we are on a non-empty line, subtract 1 for the delimiter.
-        let mut remaining_width = content_width - current_line.width();
+        let mut remaining_width = content_width - current_length;
         if !current_line.is_empty() {
             remaining_width = remaining_width.saturating_sub(1);
         }
@@ -148,7 +148,7 @@ const MIN_FREE_CHARS: usize = 2;
 /// Otherwise, we simply return the current line and basically don't do anything.
 fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: String) -> String {
     // Already complete the current line, if there isn't space for more than two chars
-    if current_line.width() > content_width.saturating_sub(MIN_FREE_CHARS) {
+    if console::measure_text_width(&current_line) > content_width.saturating_sub(MIN_FREE_CHARS) {
         lines.push(current_line);
         return String::new();
     }
@@ -161,32 +161,45 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
 /// When simply splitting at a certain char position, we might end up with a string that's has a
 /// wider display width than allowed.
 fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
-    let mut current_width = 0;
-    let mut splitted = String::new();
+    let mut iter = console::AnsiCodeIterator::new(word);
+    let mut current_len = 0;
 
-    let mut char_iter = word.chars().peekable();
-    // Check if the string might be too long, one character at a time.
-    // Peek into the next char and check the exit condition.
-    // That is, pushing the next character would result in the string being too long.
-    while let Some(c) = char_iter.peek() {
-        if (current_width + c.width().unwrap_or(1)) > allowed_width {
-            break;
+    let mut escapes = Vec::new();
+    let mut head = String::with_capacity(word.len());
+    let mut tail = String::with_capacity(word.len());
+
+    #[allow(clippy::while_let_on_iterator)]
+    while let Some((val,is_esc)) = iter.next(){
+        if is_esc {
+            escapes.push(val);
+            if val == crossterm::style::Attribute::Reset.to_string() {
+                tail.clear();
+            }
         }
 
-        // We can unwrap, as we just checked that a suitable character is next in line.
-        let c = char_iter.next().unwrap();
+        let len = match is_esc {
+            true => 0,
+            false => val.chars().count(),
+        };
+        
+        if current_len + len <= allowed_width {
+            head.push_str(val);
+            current_len += len;
+        }else{
+            assert!(! is_esc);
+            let split = val.split_at(allowed_width - current_len);
 
-        // We default to 1 char, if the character length cannot be determined.
-        // The user has to live with this, if they decide to add control characters or some fancy
-        // stuff into their tables. This is considered undefined behavior and we try to handle this
-        // to the best of our capabilities.
-        let character_width = c.width().unwrap_or(1);
+            head.push_str(split.0);
+            head.push_str(crossterm::style::Attribute::Reset.to_string().as_str());
 
-        current_width += character_width;
-        splitted.push(c);
+            for esc in escapes{
+                tail.push_str(esc);
+            }
+            tail.push_str(split.1);
+            break;
+        }
     }
 
-    // Collect the remaining characters.
-    let remaining = char_iter.collect();
-    (splitted, remaining)
+    iter.for_each(|s| tail.push_str(s.0));
+    (head, tail)
 }

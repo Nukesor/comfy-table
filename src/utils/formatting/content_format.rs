@@ -1,3 +1,4 @@
+use console::strip_ansi_codes;
 #[cfg(feature = "tty")]
 use crossterm::style::{style, Stylize};
 use unicode_width::UnicodeWidthStr;
@@ -105,6 +106,11 @@ pub fn format_row(
                 let last_line = cell_lines
                     .get_mut(lines - 1)
                     .expect("We know it's this long.");
+
+                // we are truncate the line, so we might cuttoff a ansi code
+                let stripped = strip_ansi_codes(last_line).to_string();
+                last_line.clear();
+                last_line.push_str( &stripped );
 
                 // Don't do anything if the collumn is smaller then 6 characters
                 let width: usize = info.content_width.into();
