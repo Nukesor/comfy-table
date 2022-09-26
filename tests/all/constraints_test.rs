@@ -3,6 +3,8 @@ use comfy_table::Width::*;
 use comfy_table::*;
 use pretty_assertions::assert_eq;
 
+use super::assert_table_line_width;
+
 fn get_constraint_table() -> Table {
     let mut table = Table::new();
     table
@@ -225,6 +227,7 @@ fn max_100_percentage() {
 | smol                                 |
 +--------------------------------------+";
     println!("{expected}");
+    assert_table_line_width(&table, 40);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 

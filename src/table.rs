@@ -560,6 +560,37 @@ impl Table {
         }
     }
 
+    /// Get a mutable iterator over cells of a column, including the header cell.
+    /// The header cell will be the very first cell returned.
+    /// The iterator returns a nested Option<Option<Cell>>, since there might be
+    /// rows that are missing this specific Cell.
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    /// let mut table = Table::new();
+    /// table.set_header(&vec!["A", "B"]);
+    /// table.add_row(&vec!["First", "Second"]);
+    /// table.add_row(&vec!["Third"]);
+    /// table.add_row(&vec!["Fourth", "Fifth"]);
+    ///
+    /// // Create an iterator over the second column
+    /// let mut cell_iter = table.column_cells_with_header_iter(1);
+    /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "B");
+    /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "Second");
+    /// assert!(cell_iter.next().unwrap().is_none());
+    /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "Fifth");
+    /// assert!(cell_iter.next().is_none());
+    /// ```
+    pub fn column_cells_with_header_iter(&self, column_index: usize) -> ColumnCellsWithHeaderIter {
+        ColumnCellsWithHeaderIter {
+            header_checked: false,
+            header: &self.header,
+            rows: &self.rows,
+            column_index,
+            row_index: 0,
+        }
+    }
+
     /// Reference to a specific row
     pub fn row(&self, index: usize) -> Option<&Row> {
         self.rows.get(index)
@@ -679,12 +710,47 @@ impl<'a> Iterator for ColumnCellIter<'a> {
         if let Some(row) = self.rows.get(self.row_index) {
             self.row_index += 1;
 
-            // Check if the row has the requested column.
-            if let Some(cell) = row.cells.get(self.column_index) {
-                return Some(Some(cell));
-            }
+            // Return the cell (if it exists).
+            return Some(row.cells.get(self.column_index));
+        }
 
-            return Some(None);
+        None
+    }
+}
+
+/// An iterator over cells of a specific column.
+/// A dedicated struct is necessary, as data is usually handled by rows and thereby stored in
+/// `Table::rows`. This type is returned by [Table::column_cells_iter].
+pub struct ColumnCellsWithHeaderIter<'a> {
+    header_checked: bool,
+    header: &'a Option<Row>,
+    rows: &'a [Row],
+    column_index: usize,
+    row_index: usize,
+}
+
+impl<'a> Iterator for ColumnCellsWithHeaderIter<'a> {
+    type Item = Option<&'a Cell>;
+    fn next(&mut self) -> Option<Option<&'a Cell>> {
+        // Get the header as the first cell
+        if !self.header_checked {
+            self.header_checked = true;
+
+            return match self.header {
+                Some(header) => {
+                    // Return the cell (if it exists).
+                    Some(header.cells.get(self.column_index))
+                }
+                None => Some(None),
+            };
+        }
+
+        // Check if there's a next row
+        if let Some(row) = self.rows.get(self.row_index) {
+            self.row_index += 1;
+
+            // Return the cell (if it exists).
+            return Some(row.cells.get(self.column_index));
         }
 
         None
