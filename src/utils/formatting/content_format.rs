@@ -87,7 +87,7 @@ pub fn format_row(
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if line.width() > info.content_width.into() {
+            if console::measure_text_width(line) > info.content_width.into() {
                 let mut splitted = split_line(line, info, delimiter);
                 cell_lines.append(&mut splitted);
             } else {
@@ -177,7 +177,7 @@ pub fn format_row(
 #[allow(unused_variables)]
 fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: String) -> String {
     let content_width = info.content_width;
-    let remaining: usize = usize::from(content_width).saturating_sub(line.width());
+    let remaining: usize = usize::from(content_width).saturating_sub(console::measure_text_width(&line));
 
     // Apply the styling before aligning the line, if the user requests it.
     // That way non-delimiter whitespaces won't have stuff like underlines.
