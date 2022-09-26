@@ -4,17 +4,17 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/test.yml'
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - ".github/workflows/test.yml"
+      - "**.rs"
+      - "Cargo.toml"
+      - "Cargo.lock"
   pull_request:
     branches: [main]
     paths:
-      - '.github/workflows/test.yml'
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - ".github/workflows/test.yml"
+      - "**.rs"
+      - "Cargo.toml"
+      - "Cargo.lock"
 
 jobs:
   test:
@@ -23,11 +23,11 @@ jobs:
     strategy:
       matrix:
         target:
-            - x86_64-unknown-linux-gnu
-            - x86_64-pc-windows-msvc
-            - x86_64-apple-darwin
-            - wasm32-wasi
-        toolchain: [stable, nightly, 1.59]
+          - x86_64-unknown-linux-gnu
+          - x86_64-pc-windows-msvc
+          - x86_64-apple-darwin
+          - wasm32-wasi
+        toolchain: [stable, nightly, 1.62]
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
@@ -42,10 +42,9 @@ jobs:
             os: macos-latest
             minimal_setup: false
 
-# minimal_setup: This is needed for targets that don't support our dev dependencies.
-#                It also excludes the default features, i.e. [tty].
-#                For instance, "wasm32-wasi" is such a target.
-
+    # minimal_setup: This is needed for targets that don't support our dev dependencies.
+    #                It also excludes the default features, i.e. [tty].
+    #                For instance, "wasm32-wasi" is such a target.
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

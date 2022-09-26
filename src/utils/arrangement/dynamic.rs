@@ -45,7 +45,7 @@ pub fn arrange(
     // Step 2-4.
     // Find all columns that require less space than the average.
     // Returns the remaining available width and the amount of remaining columns that need handling
-    let (mut remaining_width, mut remaining_columns) = find_columns_less_than_average(
+    let (mut remaining_width, mut remaining_columns) = find_columns_that_fit_into_average(
         table,
         infos,
         table_width,
@@ -189,7 +189,7 @@ fn available_content_width(
 ///
 /// Returns:
 /// `(remaining_width: usize, remaining_columns: u16)`
-fn find_columns_less_than_average(
+fn find_columns_that_fit_into_average(
     table: &Table,
     infos: &mut DisplayInfos,
     table_width: usize,
@@ -247,6 +247,12 @@ fn find_columns_less_than_average(
                     let info = ColumnDisplayInfo::new(column, width);
                     infos.insert(column.index, info);
 
+                    #[cfg(feature = "debug")]
+                    println!(
+                        "dynamic::find_columns_that_fit_into_average: Fixed column {} via MaxWidth constraint with size {}",
+                        column.index, width
+                    );
+
                     // Continue with new recalculated width
                     remaining_width = remaining_width.saturating_sub(width.into());
                     remaining_columns -= 1;
@@ -259,11 +265,17 @@ fn find_columns_less_than_average(
                 }
             }
 
-            // The column has a smaller max_content_width than the average space.
+            // The column has a smaller or equal max_content_width than the average space.
             // Fix the width to max_content_width and mark it as checked
-            if usize::from(max_column_width) < average_space {
+            if usize::from(max_column_width) <= average_space {
                 let info = ColumnDisplayInfo::new(column, max_column_width);
                 infos.insert(column.index, info);
+
+                #[cfg(feature = "debug")]
+                println!(
+                    "dynamic::find_columns_that_fit_into_average: Fixed column {} as it's smaller than average with size {}",
+                    column.index, max_column_width
+                );
 
                 // Continue with new recalculated width
                 remaining_width = remaining_width.saturating_sub(max_column_width.into());
