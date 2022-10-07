@@ -27,10 +27,7 @@ impl Cell {
     #[allow(clippy::needless_pass_by_value)]
     pub fn new<T: ToString>(content: T) -> Self {
         let content = content.to_string();
-        let mut split_content : Vec<String> = content
-            .split('\n')
-            .map(ToString::to_string)
-            .collect();
+        let mut split_content: Vec<String> = content.split('\n').map(ToString::to_string).collect();
 
         // corrects ansi codes so style is terminated and resumed around the split
         fix_style_in_split_str(&mut split_content);

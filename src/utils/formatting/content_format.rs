@@ -110,7 +110,7 @@ pub fn format_row(
                 // we are truncate the line, so we might cuttoff a ansi code
                 let stripped = strip_ansi_codes(last_line).to_string();
                 last_line.clear();
-                last_line.push_str( &stripped );
+                last_line.push_str(&stripped);
 
                 // Don't do anything if the collumn is smaller then 6 characters
                 let width: usize = info.content_width.into();
@@ -183,7 +183,8 @@ pub fn format_row(
 #[allow(unused_variables)]
 fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: String) -> String {
     let content_width = info.content_width;
-    let remaining: usize = usize::from(content_width).saturating_sub(console::measure_text_width(&line));
+    let remaining: usize =
+        usize::from(content_width).saturating_sub(console::measure_text_width(&line));
 
     // Apply the styling before aligning the line, if the user requests it.
     // That way non-delimiter whitespaces won't have stuff like underlines.

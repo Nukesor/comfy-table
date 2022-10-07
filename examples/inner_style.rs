@@ -1,4 +1,4 @@
-use comfy_table::{Table, Row, Cell, ContentArrangement};
+use comfy_table::{Cell, ContentArrangement, Row, Table};
 
 fn main() {
     let mut table = Table::new();
@@ -7,12 +7,11 @@ fn main() {
     table.set_width(85);
 
     let mut row = Row::new();
-    row.add_cell(Cell::new(
-        format!("hello{}cell1", console::style("123\n456").dim().blue())
-    ));
-    row.add_cell(Cell::new(
-        "cell2"
-    ));
+    row.add_cell(Cell::new(format!(
+        "hello{}cell1",
+        console::style("123\n456").dim().blue()
+    )));
+    row.add_cell(Cell::new("cell2"));
 
     table.add_row(row);
 
@@ -26,13 +25,9 @@ fn main() {
     table.add_row(row);
 
     let mut row = Row::new();
-    row.add_cell(Cell::new(
-        "cell5"
-    ));
-    row.add_cell(Cell::new(
-        "cell6"
-    ));
+    row.add_cell(Cell::new("cell5"));
+    row.add_cell(Cell::new("cell6"));
     table.add_row(row);
 
-    println!("{}", table);   
+    println!("{}", table);
 }
