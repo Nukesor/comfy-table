@@ -156,11 +156,12 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
     current_line
 }
 
-/// Splits a long word at a given character width.
+/// Splits a long word at a given character width. Inserting the needed ansi codes to preserve style.
 /// This needs some special logic, as we have to take multi-character UTF-8 symbols into account.
 /// When simply splitting at a certain char position, we might end up with a string that's has a
 /// wider display width than allowed.
 fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
+    let reset = crossterm::style::Attribute::Reset.to_string();
     let mut iter = console::AnsiCodeIterator::new(word);
     let mut current_len = 0;
 
@@ -173,8 +174,8 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     for (val, is_esc) in iter.by_ref(){
         if is_esc {
             escapes.push(val);
-            if val == crossterm::style::Attribute::Reset.to_string() {
-                tail.clear();
+            if val == reset {
+                escapes.clear();
             }
         }
 
@@ -196,12 +197,7 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
             assert!(! is_esc);
             let mut char_iter = val.chars().peekable();
             while let Some(c) = char_iter.peek() {
-                let character_width = c.width().unwrap_or({
-                    match c {
-                        '\u{b}' => 1, //vertical tab
-                        _ => 0
-                    }
-                });
+                let character_width = c.width().unwrap_or(0);
                 if allowed_width < current_len + character_width {
                     break;
                 }
@@ -217,7 +213,7 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
 
             head.truncate(last_txt);// cut off dangling escape codes since they should have no effect
             if escape_count != 0 {
-                head.push_str(crossterm::style::Attribute::Reset.to_string().as_str());
+                head.push_str(reset.as_str());
             }
 
             for esc in escapes{
@@ -231,4 +227,33 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
 
     iter.for_each(|s| tail.push_str(s.0));
     (head, tail)
+}
+
+/// Fixes ansi escape codes in a split string
+/// 1. Adds reset code to the end of each substring if needed.
+/// 2. Keeps track of previous substring's escape codes and inserts them in later substrings to continue style
+pub fn fix_style_in_split_str(words: &mut [String]){
+    let mut escapes : Vec<String> = Vec::new();
+    let reset = crossterm::style::Attribute::Reset.to_string();
+
+    for word in words {
+        if ! escapes.is_empty(){
+            word.insert_str(0, escapes.join("").as_str())
+        }
+
+        let iter = console::AnsiCodeIterator::new(word)
+            .filter(|(_,is_esc)| *is_esc)
+            .map(|v|v.0);
+        for esc in iter{
+            if esc == reset {
+                escapes.clear()
+            }else{
+                escapes.push(esc.to_string())
+            }
+        }
+
+        if ! escapes.is_empty(){
+            word.push_str(&reset);
+        }
+    };
 }
