@@ -1,4 +1,4 @@
-use unicode_width::{UnicodeWidthChar};
+use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 use crate::utils::ColumnDisplayInfo;
 
@@ -166,10 +166,11 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
 
     let mut escapes = Vec::new();
     let mut head = String::with_capacity(word.len());
+    let mut last_txt = 0;
+    let mut escape_count = 0;
     let mut tail = String::with_capacity(word.len());
 
-    #[allow(clippy::while_let_on_iterator)]
-    while let Some((val,is_esc)) = iter.next(){
+    for (val, is_esc) in iter.by_ref(){
         if is_esc {
             escapes.push(val);
             if val == crossterm::style::Attribute::Reset.to_string() {
@@ -179,23 +180,51 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
 
         let len = match is_esc {
             true => 0,
-            false => val.chars().count(),
+            false => val.width(),
         };
         
         if current_len + len <= allowed_width {
             head.push_str(val);
             current_len += len;
+
+            if ! is_esc {
+                //allows popping unneeded escape codes later
+                last_txt = head.len();
+                escape_count = escapes.len();
+            }
         }else{
             assert!(! is_esc);
-            let split = val.split_at(allowed_width - current_len);
+            let mut char_iter = val.chars().peekable();
+            while let Some(c) = char_iter.peek() {
+                let character_width = c.width().unwrap_or({
+                    match c {
+                        '\u{b}' => 1, //vertical tab
+                        _ => 0
+                    }
+                });
+                if allowed_width < current_len + character_width {
+                    break;
+                }
+        
+                current_len += character_width;
+                let c = char_iter.next().unwrap();
+                head.push(c);
 
-            head.push_str(split.0);
-            head.push_str(crossterm::style::Attribute::Reset.to_string().as_str());
+                // c is not escape code
+                last_txt = head.len();
+                escape_count = escapes.len();
+            }
+
+            head.truncate(last_txt);// cut off dangling escape codes since they should have no effect
+            if escape_count != 0 {
+                head.push_str(crossterm::style::Attribute::Reset.to_string().as_str());
+            }
 
             for esc in escapes{
                 tail.push_str(esc);
             }
-            tail.push_str(split.1);
+            let remaining : String = char_iter.collect();
+            tail.push_str(&remaining);
             break;
         }
     }

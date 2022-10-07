@@ -1,7 +1,5 @@
 use std::slice::Iter;
 
-use unicode_width::UnicodeWidthStr;
-
 use crate::cell::{Cell, Cells};
 
 /// Each row contains [Cells](crate::Cell) and can be added to a [Table](crate::Table).
