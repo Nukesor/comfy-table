@@ -156,12 +156,13 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
     current_line
 }
 
+const ANSI_RESET : &str = "\u{1b}[0m";
+
 /// Splits a long word at a given character width. Inserting the needed ansi codes to preserve style.
 /// This needs some special logic, as we have to take multi-character UTF-8 symbols into account.
 /// When simply splitting at a certain char position, we might end up with a string that's has a
 /// wider display width than allowed.
 fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
-    let reset = crossterm::style::Attribute::Reset.to_string();
     let mut iter = console::AnsiCodeIterator::new(word);
     let mut current_len = 0;
 
@@ -174,7 +175,7 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     for (val, is_esc) in iter.by_ref() {
         if is_esc {
             escapes.push(val);
-            if val == reset {
+            if val == ANSI_RESET {
                 escapes.clear();
             }
         }
@@ -213,7 +214,7 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
 
             head.truncate(last_txt); // cut off dangling escape codes since they should have no effect
             if escape_count != 0 {
-                head.push_str(reset.as_str());
+                head.push_str(ANSI_RESET);
             }
 
             for esc in escapes {
@@ -234,7 +235,6 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
 /// 2. Keeps track of previous substring's escape codes and inserts them in later substrings to continue style
 pub fn fix_style_in_split_str(words: &mut [String]) {
     let mut escapes: Vec<String> = Vec::new();
-    let reset = crossterm::style::Attribute::Reset.to_string();
 
     for word in words {
         if !escapes.is_empty() {
@@ -245,7 +245,7 @@ pub fn fix_style_in_split_str(words: &mut [String]) {
             .filter(|(_, is_esc)| *is_esc)
             .map(|v| v.0);
         for esc in iter {
-            if esc == reset {
+            if esc == ANSI_RESET {
                 escapes.clear()
             } else {
                 escapes.push(esc.to_string())
@@ -253,7 +253,7 @@ pub fn fix_style_in_split_str(words: &mut [String]) {
         }
 
         if !escapes.is_empty() {
-            word.push_str(&reset);
+            word.push_str(ANSI_RESET);
         }
     }
 }
