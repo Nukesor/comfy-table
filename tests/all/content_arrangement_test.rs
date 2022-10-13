@@ -1,3 +1,5 @@
+use comfy_table::ColumnConstraint;
+use comfy_table::Width;
 use pretty_assertions::assert_eq;
 
 use comfy_table::ColumnConstraint::*;
@@ -300,5 +302,51 @@ fn dynamic_slightly_smaller() {
 └─────┴─────┴──────────┘";
     println!("{expected}");
     assert_table_line_width(&table, 24);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+/// This failed on a python integration test case in the polars project.
+/// This a regression test.
+#[rstest::rstest]
+fn polar_python_test_tbl_width_chars() {
+    let header = vec![
+        "a really long col\n---\ni64",
+        "b\n---\nstr",
+        "this is 10\n---\ni64",
+    ];
+    let rows = vec![
+        vec!["1", "", "4"],
+        vec!["2", "this is a string value that will...", "5"],
+        vec!["3", "null", "6"],
+    ];
+
+    let mut table = Table::new();
+    let table = table
+        .load_preset(comfy_table::presets::UTF8_FULL)
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(100)
+        .set_header(header)
+        .add_rows(rows)
+        .set_constraints(vec![
+            ColumnConstraint::LowerBoundary(Width::Fixed(12)),
+            ColumnConstraint::LowerBoundary(Width::Fixed(5)),
+            ColumnConstraint::LowerBoundary(Width::Fixed(10)),
+        ]);
+
+    println!("{table}");
+    let expected = "
+┌───────────────────┬─────────────────────────────────────┬────────────┐
+│ a really long col ┆ b                                   ┆ this is 10 │
+│ ---               ┆ ---                                 ┆ ---        │
+│ i64               ┆ str                                 ┆ i64        │
+╞═══════════════════╪═════════════════════════════════════╪════════════╡
+│ 1                 ┆                                     ┆ 4          │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ 2                 ┆ this is a string value that will... ┆ 5          │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ 3                 ┆ null                                ┆ 6          │
+└───────────────────┴─────────────────────────────────────┴────────────┘";
+    println!("{expected}");
+    assert_table_line_width(&table, 72);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
