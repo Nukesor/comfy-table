@@ -45,7 +45,8 @@ pub fn evaluate(
     if let Some(min_width) = min(table, &column.constraint, table_width, visible_columns) {
         // In case a min_width is specified, we may already fix the size of the column.
         // We do this, if we know that the content is smaller than the min size.
-        if max_content_width <= min_width {
+        let max_width = max_content_width + column.padding_width();
+        if max_width <= min_width {
             let width = absolute_width_with_padding(column, min_width);
             let info = ColumnDisplayInfo::new(column, width);
             infos.insert(column.index, info);
