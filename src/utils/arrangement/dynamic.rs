@@ -196,11 +196,11 @@ fn find_columns_that_fit_into_average(
     infos: &mut DisplayInfos,
     table_width: usize,
     mut remaining_width: usize,
-    visible_coulumns: usize,
+    visible_columns: usize,
     max_content_widths: &[u16],
 ) -> (usize, usize) {
     let mut found_smaller = true;
-    let mut remaining_columns = count_remaining_columns(visible_coulumns, infos);
+    let mut remaining_columns = count_remaining_columns(visible_columns, infos);
     while found_smaller {
         found_smaller = false;
 
@@ -233,16 +233,16 @@ fn find_columns_that_fit_into_average(
                 table,
                 &column.constraint,
                 Some(table_width),
-                visible_coulumns,
+                visible_columns,
             ) {
                 // Max/Min constraints always include padding!
                 let average_space_with_padding =
                     average_space + usize::from(column.padding_width());
 
-                let column_width_with_padding = max_column_width + column.padding_width();
+                let width_with_padding = max_column_width + column.padding_width();
                 // Check that both conditions mentioned above are met.
                 if usize::from(max_width) <= average_space_with_padding
-                    && column_width_with_padding >= max_width
+                    && width_with_padding >= max_width
                 {
                     // Save the calculated info, this column has been handled.
                     let width = absolute_width_with_padding(column, max_width);
@@ -258,6 +258,7 @@ fn find_columns_that_fit_into_average(
                     // Continue with new recalculated width
                     remaining_width = remaining_width.saturating_sub(width.into());
                     remaining_columns -= 1;
+
                     if remaining_columns == 0 {
                         break;
                     }
