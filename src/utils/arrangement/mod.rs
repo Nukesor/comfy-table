@@ -4,16 +4,16 @@ use super::ColumnDisplayInfo;
 use crate::style::ContentArrangement;
 use crate::table::Table;
 
-mod constraint;
+pub mod constraint;
 mod disabled;
 mod dynamic;
-mod helper;
+pub mod helper;
 
 type DisplayInfos = BTreeMap<usize, ColumnDisplayInfo>;
 
 /// Determine the width of each column depending on the content of the given table.
 /// The results uses Option<usize>, since users can choose to hide columns.
-pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
+pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     let table_width = table.width().map(usize::from);
     let mut infos = BTreeMap::new();
 

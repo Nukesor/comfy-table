@@ -36,6 +36,8 @@ default = ["tty"]
 tty = ["crossterm"]
 # This flag is for library debugging only!
 debug = []
+# This feature is used to expose internal functionality for integration testing.
+integration_test= []
 
 [dependencies]
 crossterm = { version = "0.25", optional = true }
