@@ -502,7 +502,7 @@ impl Table {
     }
 
     /// Iterator over all columns
-    pub fn column_iter(&mut self) -> Iter<Column> {
+    pub fn column_iter(&self) -> Iter<Column> {
         self.columns.iter()
     }
 
