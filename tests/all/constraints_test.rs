@@ -335,3 +335,23 @@ fn min_max_boundary() {
     println!("{expected}");
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
+
+#[rstest::rstest]
+#[case(ContentArrangement::Dynamic)]
+#[case(ContentArrangement::Disabled)]
+/// Empty table with zero width constraint.
+fn empty_table(#[case] arrangement: ContentArrangement) {
+    let mut table = Table::new();
+    table
+        .add_row(vec![""])
+        .set_content_arrangement(arrangement)
+        .set_constraints(vec![Absolute(Fixed(0))]);
+
+    println!("{table}");
+    let expected = "
++---+
+|   |
++---+";
+    println!("{expected}");
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
