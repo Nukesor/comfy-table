@@ -50,7 +50,6 @@ pub fn arrange(
     let (mut remaining_width, mut remaining_columns) = find_columns_that_fit_into_average(
         table,
         infos,
-        table_width,
         remaining_width,
         visible_columns,
         max_content_widths,
@@ -64,7 +63,6 @@ pub fn arrange(
         (remaining_width, remaining_columns) = enforce_lower_boundary_constraints(
             table,
             infos,
-            table_width,
             remaining_width,
             remaining_columns,
             visible_columns,
@@ -194,7 +192,6 @@ fn available_content_width(
 fn find_columns_that_fit_into_average(
     table: &Table,
     infos: &mut DisplayInfos,
-    table_width: usize,
     mut remaining_width: usize,
     visible_columns: usize,
     max_content_widths: &[u16],
@@ -229,12 +226,7 @@ fn find_columns_that_fit_into_average(
             // two conditions are met:
             // - The average remaining space is bigger then the MaxWidth constraint.
             // - The actual max content of the column is bigger than the MaxWidth constraint.
-            if let Some(max_width) = constraint::max(
-                table,
-                &column.constraint,
-                Some(table_width),
-                visible_columns,
-            ) {
+            if let Some(max_width) = constraint::max(table, &column.constraint, visible_columns) {
                 // Max/Min constraints always include padding!
                 let average_space_with_padding =
                     average_space + usize::from(column.padding_width());
@@ -307,7 +299,6 @@ fn find_columns_that_fit_into_average(
 fn enforce_lower_boundary_constraints(
     table: &Table,
     infos: &mut DisplayInfos,
-    table_width: usize,
     mut remaining_width: usize,
     mut remaining_columns: usize,
     visible_columns: usize,
@@ -321,16 +312,12 @@ fn enforce_lower_boundary_constraints(
         }
 
         // Check whether the column has a LowerBoundary constraint.
-        let min_width = if let Some(min_width) = constraint::min(
-            table,
-            &column.constraint,
-            Some(table_width),
-            visible_columns,
-        ) {
-            min_width
-        } else {
-            continue;
-        };
+        let min_width =
+            if let Some(min_width) = constraint::min(table, &column.constraint, visible_columns) {
+                min_width
+            } else {
+                continue;
+            };
 
         // Only proceed if the average spaces is smaller than the specified lower boundary.
         if average_space >= min_width.into() {

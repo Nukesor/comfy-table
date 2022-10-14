@@ -26,7 +26,6 @@ pub(crate) fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
         if column.constraint.is_some() {
             constraint::evaluate(
                 table,
-                table_width,
                 visible_columns,
                 &mut infos,
                 column,

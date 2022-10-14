@@ -13,7 +13,6 @@ use crate::{Column, Table};
 /// - The Column is supposed to be hidden.
 pub fn evaluate(
     table: &Table,
-    table_width: Option<usize>,
     visible_columns: usize,
     infos: &mut DisplayInfos,
     column: &Column,
@@ -25,9 +24,7 @@ pub fn evaluate(
             infos.insert(column.index, info);
         }
         Some(Absolute(width)) => {
-            if let Some(width) =
-                absolute_value_from_width(table, width, visible_columns, table_width)
-            {
+            if let Some(width) = absolute_value_from_width(table, width, visible_columns) {
                 // The column should get always get a fixed width.
                 let width = absolute_width_with_padding(column, width);
                 let info = ColumnDisplayInfo::new(column, width);
@@ -42,7 +39,7 @@ pub fn evaluate(
         _ => {}
     }
 
-    if let Some(min_width) = min(table, &column.constraint, table_width, visible_columns) {
+    if let Some(min_width) = min(table, &column.constraint, visible_columns) {
         // In case a min_width is specified, we may already fix the size of the column.
         // We do this, if we know that the content is smaller than the min size.
         let max_width = max_content_width + column.padding_width();
@@ -64,7 +61,6 @@ pub fn evaluate(
 pub fn min(
     table: &Table,
     constraint: &Option<ColumnConstraint>,
-    table_width: Option<usize>,
     visible_columns: usize,
 ) -> Option<u16> {
     let constraint = if let Some(constraint) = constraint {
@@ -75,7 +71,7 @@ pub fn min(
 
     match constraint {
         LowerBoundary(width) | Boundaries { lower: width, .. } => {
-            absolute_value_from_width(table, width, visible_columns, table_width)
+            absolute_value_from_width(table, width, visible_columns)
         }
         _ => None,
     }
@@ -91,7 +87,6 @@ pub fn min(
 pub fn max(
     table: &Table,
     constraint: &Option<ColumnConstraint>,
-    table_width: Option<usize>,
     visible_columns: usize,
 ) -> Option<u16> {
     let constraint = if let Some(constraint) = constraint {
@@ -102,7 +97,7 @@ pub fn max(
 
     match constraint {
         UpperBoundary(width) | Boundaries { upper: width, .. } => {
-            absolute_value_from_width(table, width, visible_columns, table_width)
+            absolute_value_from_width(table, width, visible_columns)
         }
         _ => None,
     }
@@ -113,13 +108,12 @@ pub fn absolute_value_from_width(
     table: &Table,
     width: &Width,
     visible_columns: usize,
-    table_width: Option<usize>,
 ) -> Option<u16> {
     match width {
         Width::Fixed(width) => Some(*width),
         Width::Percentage(percent) => {
             // Don't return a value, if we cannot determine the current table width.
-            let table_width = table_width?;
+            let table_width = table.width().map(usize::from)?;
 
             // Enforce at most 100%
             let percent = std::cmp::min(*percent, 100u16);
