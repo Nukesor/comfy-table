@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fix wrong LowerBoundary calculation. This was introduced in commit bee764d, when this logic was refactored. [#90](https://github.com/Nukesor/comfy-table/issues/90).
 - `Table::column_iter` no longer requires a `&mut self`, but only `&self`.
 
+### Added
+
+- Expose current ContentArrangement for table via `table.content_arrangement`.
+
 ## [6.1.0] - 2022-08-28
 
 ### Added

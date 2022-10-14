@@ -212,6 +212,11 @@ impl Table {
         self
     }
 
+    /// Get the current content arrangement of the table.
+    pub fn content_arrangement(&self) -> ContentArrangement {
+        self.arrangement.clone()
+    }
+
     /// Set the delimiter used to split text in all cells.
     ///
     /// A custom delimiter on a cell in will overwrite the column's delimiter.\
