@@ -61,7 +61,7 @@ jobs:
         if: ${{ !matrix.minimal_setup }}
 
       - name: cargo test
-        run: cargo test --target=${{ matrix.target }}
+        run: cargo test --target=${{ matrix.target }} --features=integration_test
         if: ${{ !matrix.minimal_setup }}
 
       - name: cargo build without default features and without dev dependencies
