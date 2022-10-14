@@ -230,7 +230,7 @@ fn dynamic_full_width() {
 /// width the table has, if it's fully expanded.
 ///
 /// The same should be the case for values that're larget than this width.
-#[rstest::rstest]
+#[test]
 fn dynamic_exact_width() {
     let header = vec!["a\n---\ni64", "b\n---\ni64", "b_squared\n---\nf64"];
     let rows = vec![
@@ -269,7 +269,7 @@ fn dynamic_exact_width() {
 
 /// Test that the formatting works as expected, if the table is slightly smaller than the max width
 /// of the table.
-#[rstest::rstest]
+#[test]
 fn dynamic_slightly_smaller() {
     let header = vec!["a\n---\ni64", "b\n---\ni64", "b_squared\n---\nf64"];
     let rows = vec![
@@ -307,7 +307,7 @@ fn dynamic_slightly_smaller() {
 
 /// This failed on a python integration test case in the polars project.
 /// This a regression test.
-#[rstest::rstest]
+#[test]
 fn polar_python_test_tbl_width_chars() {
     let header = vec![
         "a really long col\n---\ni64",
