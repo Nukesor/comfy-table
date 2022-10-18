@@ -1,18 +1,15 @@
+use comfy_table::ColumnConstraint;
+use comfy_table::Width;
 use pretty_assertions::assert_eq;
 
 use comfy_table::ColumnConstraint::*;
 use comfy_table::Width::*;
 use comfy_table::{ContentArrangement, Row, Table};
-use unicode_width::UnicodeWidthStr;
 
-fn assert_table_lines(table: &Table, count: usize) {
-    for line in table.lines() {
-        assert_eq!(line.width(), count);
-    }
-}
+use super::assert_table_line_width;
 
-#[test]
 /// Test the robustnes of the dynamic table arangement.
+#[test]
 fn simple_dynamic_table() {
     let mut table = Table::new();
     table.set_header(&vec!["Header1", "Header2", "Head"])
@@ -67,13 +64,13 @@ fn simple_dynamic_table() {
 |        | stuff |      |
 +--------+-------+------+";
     println!("{expected}");
-    assert!(table.lines().all(|line| line.width() == 25));
+    assert_table_line_width(&table, 25);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
-#[test]
 /// Individual rows can be configured to have a max height.
 /// Everything beyond that line height should be truncated.
+#[test]
 fn table_with_truncate() {
     let mut table = Table::new();
     let mut first_row: Row = Row::from(vec![
@@ -123,15 +120,15 @@ fn table_with_truncate() {
 | the middle ... | text   |       |
 +----------------+--------+-------+";
     println!("{expected}");
-    assert_table_lines(&table, 35);
+    assert_table_line_width(&table, 35);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
-#[test]
 /// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
 /// space doesn't get used after splitting the lines. This happens mostly when there are
 /// many long words in a single column.
 /// The remaining space should rather be distributed to other cells.
+#[test]
 fn distribute_space_after_split() {
     let mut table = Table::new();
     table
@@ -154,13 +151,13 @@ fn distribute_space_after_split() {
 +-----------------------------------------+-----------------------------+------+";
     println!("{expected}");
 
-    assert_table_lines(&table, 80);
+    assert_table_line_width(&table, 80);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
-#[test]
 /// A single column get's split and a lot of the available isn't used afterward.
 /// The remaining space should be cut away, making the table more compact.
+#[test]
 fn unused_space_after_split() {
     let mut table = Table::new();
     table
@@ -178,12 +175,12 @@ fn unused_space_after_split() {
 | anotherverylongtext |
 +---------------------+";
     println!("{expected}");
-    assert_table_lines(&table, 23);
+    assert_table_line_width(&table, 23);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
-#[test]
 /// The full width of a table should be used, even if the space isn't used.
+#[test]
 fn dynamic_full_width_after_split() {
     let mut table = Table::new();
     table
@@ -201,14 +198,14 @@ fn dynamic_full_width_after_split() {
 | anotherverylongtexttesttestaa                  |
 +------------------------------------------------+";
     println!("{expected}");
-    assert_table_lines(&table, 50);
+    assert_table_line_width(&table, 50);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
-#[test]
 /// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
 /// space isn't used after splitting the lines.
 /// The remaining space should rather distributed between all cells.
+#[test]
 fn dynamic_full_width() {
     let mut table = Table::new();
     table
@@ -225,6 +222,131 @@ fn dynamic_full_width() {
 | This is a short line              | small                | smol              |
 +-----------------------------------+----------------------+-------------------+";
     println!("{expected}");
-    assert_table_lines(&table, 80);
+    assert_table_line_width(&table, 80);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+/// Test that a table is displayed in its full width, if the `table.width` is set to the exact
+/// width the table has, if it's fully expanded.
+///
+/// The same should be the case for values that're larget than this width.
+#[test]
+fn dynamic_exact_width() {
+    let header = vec!["a\n---\ni64", "b\n---\ni64", "b_squared\n---\nf64"];
+    let rows = vec![
+        vec!["1", "2", "4.0"],
+        vec!["3", "4", "16.0"],
+        vec!["5", "6", "36.0"],
+    ];
+
+    for width in 25..40 {
+        let mut table = Table::new();
+        let table = table
+            .load_preset(comfy_table::presets::UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_width(width);
+
+        table.set_header(header.clone()).add_rows(rows.clone());
+
+        println!("{table}");
+        let expected = "
+┌─────┬─────┬───────────┐
+│ a   ┆ b   ┆ b_squared │
+│ --- ┆ --- ┆ ---       │
+│ i64 ┆ i64 ┆ f64       │
+╞═════╪═════╪═══════════╡
+│ 1   ┆ 2   ┆ 4.0       │
+├╌╌╌╌╌┼╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
+│ 3   ┆ 4   ┆ 16.0      │
+├╌╌╌╌╌┼╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
+│ 5   ┆ 6   ┆ 36.0      │
+└─────┴─────┴───────────┘";
+        println!("{expected}");
+        assert_table_line_width(&table, 25);
+        assert_eq!("\n".to_string() + &table.to_string(), expected);
+    }
+}
+
+/// Test that the formatting works as expected, if the table is slightly smaller than the max width
+/// of the table.
+#[test]
+fn dynamic_slightly_smaller() {
+    let header = vec!["a\n---\ni64", "b\n---\ni64", "b_squared\n---\nf64"];
+    let rows = vec![
+        vec!["1", "2", "4.0"],
+        vec!["3", "4", "16.0"],
+        vec!["5", "6", "36.0"],
+    ];
+
+    let mut table = Table::new();
+    let table = table
+        .load_preset(comfy_table::presets::UTF8_FULL)
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(24);
+
+    table.set_header(header.clone()).add_rows(rows.clone());
+
+    println!("{table}");
+    let expected = "
+┌─────┬─────┬──────────┐
+│ a   ┆ b   ┆ b_square │
+│ --- ┆ --- ┆ d        │
+│ i64 ┆ i64 ┆ ---      │
+│     ┆     ┆ f64      │
+╞═════╪═════╪══════════╡
+│ 1   ┆ 2   ┆ 4.0      │
+├╌╌╌╌╌┼╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌┤
+│ 3   ┆ 4   ┆ 16.0     │
+├╌╌╌╌╌┼╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌┤
+│ 5   ┆ 6   ┆ 36.0     │
+└─────┴─────┴──────────┘";
+    println!("{expected}");
+    assert_table_line_width(&table, 24);
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+/// This failed on a python integration test case in the polars project.
+/// This a regression test.
+#[test]
+fn polar_python_test_tbl_width_chars() {
+    let header = vec![
+        "a really long col\n---\ni64",
+        "b\n---\nstr",
+        "this is 10\n---\ni64",
+    ];
+    let rows = vec![
+        vec!["1", "", "4"],
+        vec!["2", "this is a string value that will...", "5"],
+        vec!["3", "null", "6"],
+    ];
+
+    let mut table = Table::new();
+    let table = table
+        .load_preset(comfy_table::presets::UTF8_FULL)
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(100)
+        .set_header(header)
+        .add_rows(rows)
+        .set_constraints(vec![
+            ColumnConstraint::LowerBoundary(Width::Fixed(12)),
+            ColumnConstraint::LowerBoundary(Width::Fixed(5)),
+            ColumnConstraint::LowerBoundary(Width::Fixed(10)),
+        ]);
+
+    println!("{table}");
+    let expected = "
+┌───────────────────┬─────────────────────────────────────┬────────────┐
+│ a really long col ┆ b                                   ┆ this is 10 │
+│ ---               ┆ ---                                 ┆ ---        │
+│ i64               ┆ str                                 ┆ i64        │
+╞═══════════════════╪═════════════════════════════════════╪════════════╡
+│ 1                 ┆                                     ┆ 4          │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ 2                 ┆ this is a string value that will... ┆ 5          │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌┤
+│ 3                 ┆ null                                ┆ 6          │
+└───────────────────┴─────────────────────────────────────┴────────────┘";
+    println!("{expected}");
+    assert_table_line_width(&table, 72);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }

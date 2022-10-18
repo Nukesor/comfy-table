@@ -1,7 +1,25 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [6.1.1] - unreleased
+
+### Fixed
+
+- Fixed an issue where dynamic arrangement failed when setting the table to the exact width of the content [#90](https://github.com/Nukesor/comfy-table/issues/90).
+- The header size is now properly respected in the final optimization step [#90](https://github.com/Nukesor/comfy-table/issues/90).
+    Previously, this wasn't the case and lead to weird formatting behavior when both of the following were true
+  - Dynamic content adjustment was active.
+  - The table didn't fit into the the available space.
+  - The header of a row was longer than its content.
+- Fix wrong LowerBoundary calculation. This was introduced in commit bee764d, when this logic was refactored. [#90](https://github.com/Nukesor/comfy-table/issues/90).
+- `Table::column_iter` no longer requires a `&mut self`, but only `&self`.
+
+### Added
+
+- Expose current ContentArrangement for table via `table.content_arrangement`.
 
 ## [6.1.0] - 2022-08-28
 

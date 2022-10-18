@@ -9,7 +9,7 @@ documentation = "https://docs.rs/comfy-table/"
 license = "MIT"
 keywords = ["terminal", "table", "unicode"]
 readme = "README.md"
-rust-version = "1.59"
+rust-version = "1.62"
 edition = "2021"
 
 [badges]
@@ -36,6 +36,8 @@ default = ["tty"]
 tty = ["crossterm"]
 # This flag is for library debugging only!
 debug = []
+# This feature is used to expose internal functionality for integration testing.
+integration_test= []
 
 [dependencies]
 crossterm = { version = "0.25", optional = true }
@@ -49,3 +51,4 @@ doc-comment = "0.3"
 proptest = "1"
 criterion = "0.4"
 rand = "0.8"
+rstest = "0.15"

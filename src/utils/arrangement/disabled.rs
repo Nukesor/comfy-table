@@ -20,7 +20,7 @@ pub fn arrange(
         let mut width = max_content_widths[column.index];
 
         // Reduce the width, if a column has longer content than the specified MaxWidth constraint.
-        if let Some(max_width) = constraint::max(table, &column.constraint, None, visible_columns) {
+        if let Some(max_width) = constraint::max(table, &column.constraint, visible_columns) {
             if max_width < width {
                 width = absolute_width_with_padding(column, max_width);
             }
