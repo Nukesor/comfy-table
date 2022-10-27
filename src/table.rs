@@ -607,7 +607,7 @@ impl Table {
     }
 
     /// Iterator over all rows
-    pub fn row_iter(&mut self) -> Iter<Row> {
+    pub fn row_iter(&self) -> Iter<Row> {
         self.rows.iter()
     }
 
