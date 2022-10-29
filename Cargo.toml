@@ -37,7 +37,7 @@ tty = ["crossterm"]
 # This flag is for library debugging only!
 debug = []
 # This feature is used to expose internal functionality for integration testing.
-integration_test= []
+integration_test = []
 
 [dependencies]
 crossterm = { version = "0.25", optional = true }
@@ -46,9 +46,9 @@ strum_macros = "0.24"
 unicode-width = "0.1"
 
 [dev-dependencies]
-pretty_assertions = "1"
-doc-comment = "0.3"
-proptest = "1"
 criterion = "0.4"
+doc-comment = "0.3"
+pretty_assertions = "1"
+proptest = "1"
 rand = "0.8"
 rstest = "0.15"
