@@ -40,15 +40,16 @@ pub fn arrange(
         available_content_width(table, infos, visible_columns, table_width);
 
     #[cfg(feature = "debug")]
-    println!("Table width: {table_width}, Start remaining width {remaining_width}");
+    println!(
+        "dynamic::arrange: Table width: {table_width}, Start remaining width {remaining_width}"
+    );
 
     // Step 2-4.
     // Find all columns that require less space than the average.
     // Returns the remaining available width and the amount of remaining columns that need handling
-    let (mut remaining_width, mut remaining_columns) = find_columns_less_than_average(
+    let (mut remaining_width, mut remaining_columns) = find_columns_that_fit_into_average(
         table,
         infos,
-        table_width,
         remaining_width,
         visible_columns,
         max_content_widths,
@@ -62,7 +63,6 @@ pub fn arrange(
         (remaining_width, remaining_columns) = enforce_lower_boundary_constraints(
             table,
             infos,
-            table_width,
             remaining_width,
             remaining_columns,
             visible_columns,
@@ -93,8 +93,8 @@ pub fn arrange(
 
     #[cfg(feature = "debug")]
     {
-        println!("After optimize: {infos:#?}",);
-        println!("Remaining width {remaining_width}, column {remaining_columns}",);
+        println!("dynamic::arrange: After optimize: {infos:#?}",);
+        println!("dynamic::arrange: Remaining width {remaining_width}, column {remaining_columns}",);
     }
 
     // Early exit and one branch of Part 7.
@@ -107,7 +107,7 @@ pub fn arrange(
         {
             use_full_width(infos, remaining_width);
             #[cfg(feature = "debug")]
-            println!("After full width: {infos:#?}");
+            println!("dynamic::arrange: After full width: {infos:#?}");
         }
         return;
     }
@@ -121,7 +121,7 @@ pub fn arrange(
     distribute_remaining_space(&table.columns, infos, remaining_width, remaining_columns);
 
     #[cfg(feature = "debug")]
-    println!("After distribute: {infos:#?}");
+    println!("dynamic::arrange: After distribute: {infos:#?}");
 }
 
 /// Step 1
@@ -189,16 +189,15 @@ fn available_content_width(
 ///
 /// Returns:
 /// `(remaining_width: usize, remaining_columns: u16)`
-fn find_columns_less_than_average(
+fn find_columns_that_fit_into_average(
     table: &Table,
     infos: &mut DisplayInfos,
-    table_width: usize,
     mut remaining_width: usize,
-    visible_coulumns: usize,
+    visible_columns: usize,
     max_content_widths: &[u16],
 ) -> (usize, usize) {
     let mut found_smaller = true;
-    let mut remaining_columns = count_remaining_columns(visible_coulumns, infos);
+    let mut remaining_columns = count_remaining_columns(visible_columns, infos);
     while found_smaller {
         found_smaller = false;
 
@@ -227,29 +226,31 @@ fn find_columns_less_than_average(
             // two conditions are met:
             // - The average remaining space is bigger then the MaxWidth constraint.
             // - The actual max content of the column is bigger than the MaxWidth constraint.
-            if let Some(max_width) = constraint::max(
-                table,
-                &column.constraint,
-                Some(table_width),
-                visible_coulumns,
-            ) {
+            if let Some(max_width) = constraint::max(table, &column.constraint, visible_columns) {
                 // Max/Min constraints always include padding!
                 let average_space_with_padding =
                     average_space + usize::from(column.padding_width());
 
-                let column_width_with_padding = max_column_width + column.padding_width();
+                let width_with_padding = max_column_width + column.padding_width();
                 // Check that both conditions mentioned above are met.
                 if usize::from(max_width) <= average_space_with_padding
-                    && column_width_with_padding >= max_width
+                    && width_with_padding >= max_width
                 {
                     // Save the calculated info, this column has been handled.
                     let width = absolute_width_with_padding(column, max_width);
                     let info = ColumnDisplayInfo::new(column, width);
                     infos.insert(column.index, info);
 
+                    #[cfg(feature = "debug")]
+                    println!(
+                        "dynamic::find_columns_that_fit_into_average: Fixed column {} via MaxWidth constraint with size {}, as it's bigger than average {}",
+                        column.index, width, average_space
+                    );
+
                     // Continue with new recalculated width
                     remaining_width = remaining_width.saturating_sub(width.into());
                     remaining_columns -= 1;
+
                     if remaining_columns == 0 {
                         break;
                     }
@@ -259,11 +260,17 @@ fn find_columns_less_than_average(
                 }
             }
 
-            // The column has a smaller max_content_width than the average space.
+            // The column has a smaller or equal max_content_width than the average space.
             // Fix the width to max_content_width and mark it as checked
-            if usize::from(max_column_width) < average_space {
+            if usize::from(max_column_width) <= average_space {
                 let info = ColumnDisplayInfo::new(column, max_column_width);
                 infos.insert(column.index, info);
+
+                #[cfg(feature = "debug")]
+                println!(
+                    "dynamic::find_columns_that_fit_into_average: Fixed column {} with size {}, as it's smaller than average {}",
+                    column.index, max_column_width, average_space
+                );
 
                 // Continue with new recalculated width
                 remaining_width = remaining_width.saturating_sub(max_column_width.into());
@@ -282,14 +289,16 @@ fn find_columns_less_than_average(
 
 /// Step 5
 ///
-/// Determine, whether there are any columns that have a higher LowerBoundary than the currently
-/// available average width.
+/// Determine, whether there are any columns that are allowed to occupy more width than the current
+/// `average_space` via a [LowerBoundary] constraint.
 ///
-/// These columns will then get fixed to the specified amount.
+/// These columns will then get fixed to the width specified in the [LowerBoundary] constraint.
+///
+/// I.e. if a column has to have at least 10 characters, but the average width left for a column is
+/// only 6, we fix the column to this 10 character minimum!
 fn enforce_lower_boundary_constraints(
     table: &Table,
     infos: &mut DisplayInfos,
-    table_width: usize,
     mut remaining_width: usize,
     mut remaining_columns: usize,
     visible_columns: usize,
@@ -303,16 +312,12 @@ fn enforce_lower_boundary_constraints(
         }
 
         // Check whether the column has a LowerBoundary constraint.
-        let min_width = if let Some(min_width) = constraint::min(
-            table,
-            &column.constraint,
-            Some(table_width),
-            visible_columns,
-        ) {
-            min_width
-        } else {
-            continue;
-        };
+        let min_width =
+            if let Some(min_width) = constraint::min(table, &column.constraint, visible_columns) {
+                min_width
+            } else {
+                continue;
+            };
 
         // Only proceed if the average spaces is smaller than the specified lower boundary.
         if average_space >= min_width.into() {
@@ -324,6 +329,12 @@ fn enforce_lower_boundary_constraints(
         let width = absolute_width_with_padding(column, min_width);
         let info = ColumnDisplayInfo::new(column, width);
         infos.insert(column.index, info);
+
+        #[cfg(feature = "debug")]
+        println!(
+            "dynamic::enforce_lower_boundary_constraints: Fixed column {} to min constraint width {}",
+            column.index, width
+        );
 
         // Continue with new recalculated width
         remaining_width = remaining_width.saturating_sub(width.into());
@@ -367,6 +378,12 @@ fn optimize_space_after_split(
     // Calculate the average space that remains for each column.
     let mut average_space = remaining_width / remaining_columns;
 
+    #[cfg(feature = "debug")]
+    println!(
+        "dynamic::optimize_space_after_split: Start with average_space {}",
+        average_space
+    );
+
     // Do this as long as we find a smaller column
     while found_smaller {
         found_smaller = false;
@@ -377,6 +394,12 @@ fn optimize_space_after_split(
             }
 
             let longest_line = longest_line_after_split(average_space, column, table);
+
+            #[cfg(feature = "debug")]
+            println!(
+                "dynamic::optimize_space_after_split: Longest line after split for column {} is {}",
+                column.index, longest_line
+            );
 
             // If there's a considerable amount space left after splitting, we freeze the column and
             // set its content width to the calculated post-split width.
@@ -392,6 +415,12 @@ fn optimize_space_after_split(
                     break;
                 }
                 average_space = remaining_width / remaining_columns;
+
+                #[cfg(feature = "debug")]
+                println!(
+                    "dynamic::optimize_space_after_split: average_space is now {}",
+                    average_space
+                );
                 found_smaller = true;
             }
         }
@@ -412,12 +441,11 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
     let mut column_lines = Vec::new();
 
     // Iterate
-    for cell in table.column_cells_iter(column.index) {
+    for cell in table.column_cells_with_header_iter(column.index) {
         // Only look at rows that actually contain this cell.
-        let cell = if let Some(cell) = cell {
-            cell
-        } else {
-            continue;
+        let cell = match cell {
+            Some(cell) => cell,
+            None => continue,
         };
 
         let delimiter = delimiter(table, column, cell);
@@ -431,6 +459,13 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
         for line in cell.content.iter() {
             if line.width() > average_space {
                 let mut splitted = split_line(line, &info, delimiter);
+
+                #[cfg(feature = "debug")]
+                println!(
+                    "dynamic::longest_line_after_split: Splitting line with width {}. Original:\n    {}\nSplitted:\n    {:?}",
+                    line.width(), line, splitted
+                );
+
                 column_lines.append(&mut splitted);
             } else {
                 column_lines.push(line.into());

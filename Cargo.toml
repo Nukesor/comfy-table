@@ -1,7 +1,7 @@
 [package]
 name = "comfy-table"
 description = "An easy to use library for building beautiful tables with automatic content wrapping"
-version = "6.1.0"
+version = "6.1.2"
 authors = ["Arne Beer <contact@arne.beer>"]
 homepage = "https://github.com/nukesor/comfy-table"
 repository = "https://github.com/nukesor/comfy-table"
@@ -9,7 +9,7 @@ documentation = "https://docs.rs/comfy-table/"
 license = "MIT"
 keywords = ["terminal", "table", "unicode"]
 readme = "README.md"
-rust-version = "1.59"
+rust-version = "1.62"
 edition = "2021"
 
 [badges]
@@ -36,6 +36,8 @@ default = ["tty"]
 tty = ["crossterm"]
 # This flag is for library debugging only!
 debug = []
+# This feature is used to expose internal functionality for integration testing.
+integration_test = []
 
 [dependencies]
 crossterm = { version = "0.25", optional = true }
@@ -45,8 +47,9 @@ unicode-width = "0.1"
 console = "0.15.1"
 
 [dev-dependencies]
-pretty_assertions = "1"
-doc-comment = "0.3"
-proptest = "1"
 criterion = "0.4"
+doc-comment = "0.3"
+pretty_assertions = "1"
+proptest = "1"
 rand = "0.8"
+rstest = "0.15"
