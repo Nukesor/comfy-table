@@ -1,6 +1,9 @@
 use std::slice::Iter;
 
-use crate::cell::{Cell, Cells};
+use crate::{
+    cell::{Cell, Cells},
+    utils::formatting::content_split::measure_text_width,
+};
 
 /// Each row contains [Cells](crate::Cell) and can be added to a [Table](crate::Table).
 #[derive(Clone, Debug, Default)]
@@ -64,7 +67,7 @@ impl Row {
                     .map(|string| {
                         //let width = console::measure_text_width(string);
                         //println!("{} {} {}", width, &string, string.escape_debug());
-                        console::measure_text_width(string)
+                        measure_text_width(string)
                     })
                     .max()
                     .unwrap_or(0)

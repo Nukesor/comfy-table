@@ -1,14 +1,18 @@
-use console::strip_ansi_codes;
 #[cfg(feature = "tty")]
 use crossterm::style::{style, Stylize};
 use unicode_width::UnicodeWidthStr;
 
+use super::content_split::measure_text_width;
 use super::content_split::split_line;
+
 use crate::cell::Cell;
 use crate::row::Row;
 use crate::style::CellAlignment;
 use crate::table::Table;
 use crate::utils::ColumnDisplayInfo;
+
+#[cfg(feature = "ansi")]
+use console::strip_ansi_codes;
 
 pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
     // Determine, which delimiter should be used
@@ -88,7 +92,7 @@ pub fn format_row(
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if console::measure_text_width(line) > info.content_width.into() {
+            if measure_text_width(line) > info.content_width.into() {
                 let mut splitted = split_line(line, info, delimiter);
                 cell_lines.append(&mut splitted);
             } else {
@@ -108,9 +112,11 @@ pub fn format_row(
                     .expect("We know it's this long.");
 
                 // we are truncate the line, so we might cuttoff a ansi code
-                let stripped = strip_ansi_codes(last_line).to_string();
-                last_line.clear();
-                last_line.push_str(&stripped);
+                #[cfg(feature = "ansi")]
+                {
+                    let stripped = strip_ansi_codes(last_line).to_string();
+                    *last_line = stripped;
+                }
 
                 // Don't do anything if the collumn is smaller then 6 characters
                 let width: usize = info.content_width.into();
@@ -183,8 +189,7 @@ pub fn format_row(
 #[allow(unused_variables)]
 fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: String) -> String {
     let content_width = info.content_width;
-    let remaining: usize =
-        usize::from(content_width).saturating_sub(console::measure_text_width(&line));
+    let remaining: usize = usize::from(content_width).saturating_sub(measure_text_width(&line));
 
     // Apply the styling before aligning the line, if the user requests it.
     // That way non-delimiter whitespaces won't have stuff like underlines.

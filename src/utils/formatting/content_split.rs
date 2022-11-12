@@ -2,7 +2,19 @@ use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 use crate::utils::ColumnDisplayInfo;
 
+/// returns printed length of string
+/// if ansi feature enabled, takes into account escape codes
+pub fn measure_text_width(s: &str) -> usize {
+    #[cfg(feature = "ansi")]
+    let width = console::measure_text_width(s);
+
+    #[cfg(not(feature = "ansi"))]
+    let width = s.width();
+    width
+}
+
 /// Split the line by the given deliminator without breaking ansi codes that contain the delimiter
+#[cfg(feature = "ansi")]
 pub fn ansi_aware_split(line: &str, delimiter: char) -> Vec<String> {
     let mut lines: Vec<String> = Vec::new();
     let mut current_line = String::default();
@@ -49,6 +61,13 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
     // Split the line by the given deliminator and turn the content into a stack.
     // Also clone it and convert it into a Vec<String>. Otherwise we get some burrowing problems
     // due to early drops of borrowed values that need to be inserted into `Vec<&str>`
+    #[cfg(not(feature = "ansi"))]
+    let mut elements = line
+        .split(delimiter)
+        .map(ToString::to_string)
+        .collect::<Vec<String>>();
+
+    #[cfg(feature = "ansi")]
     let mut elements = ansi_aware_split(line, delimiter);
 
     // Reverse it, since we want to push/pop without reversing the text.
@@ -56,8 +75,8 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
 
     let mut current_line = String::new();
     while let Some(next) = elements.pop() {
-        let current_length = console::measure_text_width(&current_line);
-        let next_length = console::measure_text_width(&next);
+        let current_length = measure_text_width(&current_line);
+        let next_length = measure_text_width(&next);
 
         // Some helper variables
         // The length of the current line when combining it with the next element
@@ -176,7 +195,7 @@ const MIN_FREE_CHARS: usize = 2;
 /// Otherwise, we simply return the current line and basically don't do anything.
 fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: String) -> String {
     // Already complete the current line, if there isn't space for more than two chars
-    if console::measure_text_width(&current_line) > content_width.saturating_sub(MIN_FREE_CHARS) {
+    if measure_text_width(&current_line) > content_width.saturating_sub(MIN_FREE_CHARS) {
         lines.push(current_line);
         return String::new();
     }
@@ -184,12 +203,47 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
     current_line
 }
 
+#[cfg(feature = "ansi")]
 const ANSI_RESET: &str = "\u{1b}[0m";
 
-/// Splits a long word at a given character width. Inserting the needed ansi codes to preserve style.
+/// Splits a long word at a given character width.
 /// This needs some special logic, as we have to take multi-character UTF-8 symbols into account.
 /// When simply splitting at a certain char position, we might end up with a string that's has a
 /// wider display width than allowed.
+#[cfg(not(feature = "ansi"))]
+fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
+    let mut current_width = 0;
+    let mut splitted = String::new();
+
+    let mut char_iter = word.chars().peekable();
+    // Check if the string might be too long, one character at a time.
+    // Peek into the next char and check the exit condition.
+    // That is, pushing the next character would result in the string being too long.
+    while let Some(c) = char_iter.peek() {
+        if (current_width + c.width().unwrap_or(1)) > allowed_width {
+            break;
+        }
+
+        // We can unwrap, as we just checked that a suitable character is next in line.
+        let c = char_iter.next().unwrap();
+
+        // We default to 1 char, if the character length cannot be determined.
+        // The user has to live with this, if they decide to add control characters or some fancy
+        // stuff into their tables. This is considered undefined behavior and we try to handle this
+        // to the best of our capabilities.
+        let character_width = c.width().unwrap_or(1);
+
+        current_width += character_width;
+        splitted.push(c);
+    }
+
+    // Collect the remaining characters.
+    let remaining = char_iter.collect();
+    (splitted, remaining)
+}
+
+/// Splits a long word at a given character width. Inserting the needed ansi codes to preserve style.
+#[cfg(feature = "ansi")]
 fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     // A buffer for the first half of the split str, which will take up at most `allowed_len` characters when printed to the terminal.
     let mut head = String::with_capacity(word.len());
@@ -271,6 +325,7 @@ fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
 /// Fixes ansi escape codes in a split string
 /// 1. Adds reset code to the end of each substring if needed.
 /// 2. Keeps track of previous substring's escape codes and inserts them in later substrings to continue style
+#[cfg(feature = "ansi")]
 pub fn fix_style_in_split_str(words: &mut [String]) {
     let mut escapes: Vec<String> = Vec::new();
 

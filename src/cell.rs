@@ -1,7 +1,10 @@
 #[cfg(feature = "tty")]
 use crossterm::style::{Attribute, Color};
 
-use crate::{style::CellAlignment, utils::fix_style_in_split_str};
+use crate::style::CellAlignment;
+
+#[cfg(feature = "ansi")]
+use crate::utils::fix_style_in_split_str;
 
 /// A stylable table cell with content.
 #[derive(Clone, Debug)]
@@ -27,9 +30,11 @@ impl Cell {
     #[allow(clippy::needless_pass_by_value)]
     pub fn new<T: ToString>(content: T) -> Self {
         let content = content.to_string();
+        #[cfg_attr(not(feature = "ansi"), allow(unused_mut))]
         let mut split_content: Vec<String> = content.split('\n').map(ToString::to_string).collect();
 
         // corrects ansi codes so style is terminated and resumed around the split
+        #[cfg(feature = "ansi")]
         fix_style_in_split_str(&mut split_content);
 
         Self {
