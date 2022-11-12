@@ -41,6 +41,7 @@ pub fn ansi_aware_split(line: &str, delimiter: char) -> Vec<String> {
         }
     }
     lines.push(current_line);
+    fix_style_in_split_str(lines.as_mut());
     lines
 }
 
@@ -330,10 +331,14 @@ pub fn fix_style_in_split_str(words: &mut [String]) {
     let mut escapes: Vec<String> = Vec::new();
 
     for word in words {
-        if !escapes.is_empty() {
-            word.insert_str(0, escapes.join("").as_str())
-        }
+        // before we modify the escape list, make a copy
+        let prepend = if !escapes.is_empty() {
+            Some(escapes.join(""))
+        } else {
+            None
+        };
 
+        // add escapes in word to escape list
         let iter = console::AnsiCodeIterator::new(word)
             .filter(|(_, is_esc)| *is_esc)
             .map(|v| v.0);
@@ -345,8 +350,37 @@ pub fn fix_style_in_split_str(words: &mut [String]) {
             }
         }
 
+        // insert previous esc sequences at the beginning of the segment
+        if let Some(prepend) = prepend {
+            word.insert_str(0, &prepend);
+        }
+
+        // if there are active escape sequences, we need to append reset
         if !escapes.is_empty() {
             word.push_str(ANSI_RESET);
         }
+    }
+}
+
+#[cfg(test)]
+
+mod test {
+    #[cfg(feature = "ansi")]
+    #[test]
+    fn ansi_aware_split_test() {
+        use super::ansi_aware_split;
+
+        let text = "\u{1b}[1m head [ middle [ tail \u{1b}[0m[ after";
+        let split = ansi_aware_split(text, '[');
+
+        assert_eq!(
+            split,
+            [
+                "\u{1b}[1m head \u{1b}[0m",
+                "\u{1b}[1m middle \u{1b}[0m",
+                "\u{1b}[1m tail \u{1b}[0m",
+                " after"
+            ]
+        )
     }
 }
