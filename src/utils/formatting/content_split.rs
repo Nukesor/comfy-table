@@ -2,6 +2,36 @@ use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 use crate::utils::ColumnDisplayInfo;
 
+/// Split the line by the given deliminator without breaking ansi codes that contain the delimiter
+pub fn ansi_aware_split(line: &str, delimiter: char) -> Vec<String> {
+    let mut lines: Vec<String> = Vec::new();
+    let mut current_line = String::default();
+
+    // Iterate over line, spliting text with delimiter
+    let iter = console::AnsiCodeIterator::new(line);
+    for (str_slice, is_esc) in iter {
+        if is_esc {
+            current_line.push_str(str_slice);
+        } else {
+            let mut split = str_slice.split(delimiter);
+
+            // Text before first delimiter (if any) belongs to previous line
+            let first = split
+                .next()
+                .expect("split always produces at least one value");
+            current_line.push_str(first);
+
+            // Text after each delimiter goes to new line.
+            for text in split {
+                lines.push(current_line);
+                current_line = text.to_string();
+            }
+        }
+    }
+    lines.push(current_line);
+    lines
+}
+
 /// Split a line if it's longer than the allowed columns (width - padding).
 ///
 /// This function tries to do this in a smart way, by splitting the content
@@ -17,13 +47,11 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
     let content_width = usize::from(info.content_width);
 
     // Split the line by the given deliminator and turn the content into a stack.
-    // Reverse it, since we want to push/pop without reversing the text.
     // Also clone it and convert it into a Vec<String>. Otherwise we get some burrowing problems
     // due to early drops of borrowed values that need to be inserted into `Vec<&str>`
-    let mut elements = line
-        .split(delimiter)
-        .map(ToString::to_string)
-        .collect::<Vec<String>>();
+    let mut elements = ansi_aware_split(line, delimiter);
+
+    // Reverse it, since we want to push/pop without reversing the text.
     elements.reverse();
 
     let mut current_line = String::new();
