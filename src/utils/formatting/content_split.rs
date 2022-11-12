@@ -156,64 +156,74 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
     current_line
 }
 
-const ANSI_RESET : &str = "\u{1b}[0m";
+const ANSI_RESET: &str = "\u{1b}[0m";
 
 /// Splits a long word at a given character width. Inserting the needed ansi codes to preserve style.
 /// This needs some special logic, as we have to take multi-character UTF-8 symbols into account.
 /// When simply splitting at a certain char position, we might end up with a string that's has a
 /// wider display width than allowed.
 fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
-    let mut iter = console::AnsiCodeIterator::new(word);
-    let mut current_len = 0;
-
-    let mut escapes = Vec::new();
+    // A buffer for the first half of the split str, which will take up at most `allowed_len` characters when printed to the terminal.
     let mut head = String::with_capacity(word.len());
-    let mut last_txt = 0;
-    let mut escape_count = 0;
+    // A buffer for the second half of the split str
     let mut tail = String::with_capacity(word.len());
+    // Tracks the len() of head
+    let mut head_len = 0;
+    // Tracks the len() of head, sans trailing ansi escape codes
+    let mut head_len_last = 0;
+    // Count of *non-trailing* escape codes in the buffer.
+    let mut escape_count_last = 0;
+    // A buffer for the escape codes that exist in the str before the split.
+    let mut escapes = Vec::new();
 
-    for (val, is_esc) in iter.by_ref() {
+    // Iterate over segments of the input string, each segment is either a singe escape code or block of text containing no escape codes.
+    // Add text and escape codes to the head buffer, keeping track of printable length and what ansi codes are active, untill there is no more room in allowed_width.
+    // If the str was split at a point with active escape-codes, add the ansi reset code to the end of head, and the list of active escape codes to the beginning of tail.
+    let mut iter = console::AnsiCodeIterator::new(word);
+    for (str_slice, is_esc) in iter.by_ref() {
         if is_esc {
-            escapes.push(val);
-            if val == ANSI_RESET {
+            escapes.push(str_slice);
+            // If the code is reset, that means all current codes in the buffer can be ignored.
+            if str_slice == ANSI_RESET {
                 escapes.clear();
             }
         }
 
-        let len = match is_esc {
+        let slice_len = match is_esc {
             true => 0,
-            false => val.width(),
+            false => str_slice.width(),
         };
 
-        if current_len + len <= allowed_width {
-            head.push_str(val);
-            current_len += len;
+        if head_len + slice_len <= allowed_width {
+            head.push_str(str_slice);
+            head_len += slice_len;
 
             if !is_esc {
-                //allows popping unneeded escape codes later
-                last_txt = head.len();
-                escape_count = escapes.len();
+                // allows popping unneeded escape codes later
+                head_len_last = head.len();
+                escape_count_last = escapes.len();
             }
         } else {
             assert!(!is_esc);
-            let mut char_iter = val.chars().peekable();
+            let mut char_iter = str_slice.chars().peekable();
             while let Some(c) = char_iter.peek() {
                 let character_width = c.width().unwrap_or(0);
-                if allowed_width < current_len + character_width {
+                if allowed_width < head_len + character_width {
                     break;
                 }
 
-                current_len += character_width;
+                head_len += character_width;
                 let c = char_iter.next().unwrap();
                 head.push(c);
 
                 // c is not escape code
-                last_txt = head.len();
-                escape_count = escapes.len();
+                head_len_last = head.len();
+                escape_count_last = escapes.len();
             }
 
-            head.truncate(last_txt); // cut off dangling escape codes since they should have no effect
-            if escape_count != 0 {
+            // cut off dangling escape codes since they should have no effect
+            head.truncate(head_len_last);
+            if escape_count_last != 0 {
                 head.push_str(ANSI_RESET);
             }
 
