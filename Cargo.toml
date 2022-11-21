@@ -40,7 +40,7 @@ debug = []
 integration_test = []
 
 [dependencies]
-crossterm = { version = "0.25", optional = true }
+crossterm = { version = "0.25", optional = true, default-features = false }
 strum = "0.24"
 strum_macros = "0.24"
 unicode-width = "0.1"
