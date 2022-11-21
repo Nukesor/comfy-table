@@ -1,7 +1,7 @@
 [package]
 name = "comfy-table"
 description = "An easy to use library for building beautiful tables with automatic content wrapping"
-version = "6.1.2"
+version = "6.1.3"
 authors = ["Arne Beer <contact@arne.beer>"]
 homepage = "https://github.com/nukesor/comfy-table"
 repository = "https://github.com/nukesor/comfy-table"
