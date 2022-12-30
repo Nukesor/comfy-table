@@ -42,7 +42,7 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
         table_width
     } else {
         disabled::arrange(table, &mut infos, visible_columns, &max_content_widths);
-        return infos.into_iter().map(|(_, info)| info).collect();
+        return infos.into_values().collect();
     };
 
     match &table.arrangement {
@@ -54,7 +54,7 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
         }
     }
 
-    infos.into_iter().map(|(_, info)| info).collect()
+    infos.into_values().collect()
 }
 
 #[cfg(test)]
