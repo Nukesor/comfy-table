@@ -11,7 +11,18 @@
 /// ```
 pub const ASCII_FULL: &str = "||--+==+|-+||++++++";
 
-/// Default style without any borders.
+/// Just like ASCII_FULL, but without dividers between rows.
+///
+/// ```text
+/// +-------+-------+
+/// | Hello | there |
+/// +===============+
+/// | a     | b     |
+/// | c     | d     |
+/// +-------+-------+
+pub const ASCII_FULL_CONDENSED: &str = "||--+==+|    ++++++";
+
+/// Just like ASCII_FULL, but without any borders.
 ///
 /// ```text
 ///  Hello | there
@@ -84,7 +95,7 @@ pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
 /// ```
 pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐└┘";
 
-/// Default UTF8 style, but without spacing between rows.
+/// Default UTF8 style, but without dividers between rows.
 ///
 /// ```text
 /// ┌───────┬───────┐

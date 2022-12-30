@@ -31,6 +31,22 @@ fn test_ascii_full() {
 }
 
 #[test]
+fn test_ascii_full_condensed() {
+    let mut table = get_preset_table();
+    table.load_preset(ASCII_FULL_CONDENSED);
+    println!("{table}");
+    let expected = "
++-------+-------+
+| Hello | there |
++===============+
+| a     | b     |
+| c     | d     |
++-------+-------+";
+    println!("{expected}");
+    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+}
+
+#[test]
 fn test_ascii_no_borders() {
     let mut table = get_preset_table();
     table.load_preset(ASCII_NO_BORDERS);
@@ -127,7 +143,7 @@ fn test_utf8_full() {
 }
 
 #[test]
-fn test_utf8_condensed() {
+fn test_utf8_full_condensed() {
     let mut table = get_preset_table();
     table.load_preset(UTF8_FULL_CONDENSED);
     println!("{table}");
