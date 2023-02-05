@@ -246,9 +246,9 @@ Without this flag no `unsafe` code is used as far as I know.
 The following are official statements of the other crate authors.
 [This ticket](https://github.com/Nukesor/comfy-table/issues/76) can be used as an entry to find all other sibling tickets in the other projects.
 
-### Cli-Table
+### Cli-table
 
-The main focus of `cli-table` is to support all platforms and at the same time limit the dependencies to keep the compile times and crate size low.
+The main focus of [`cli-table`](https://crates.io/crates/cli-table) is to support all platforms and at the same time limit the dependencies to keep the compile times and crate size low.
 
 Currently, this create only pulls two external dependencies (other than cli-table-derive):
 
@@ -257,20 +257,20 @@ Currently, this create only pulls two external dependencies (other than cli-tabl
 
 With csv feature enabled, it also pulls csv crate as dependency.
 
-### Term-table-cli
+### Term-table
 
-`term-table-rs` is pretty basic in terms of features.
+[`term-table`](https://crates.io/crates/term-table) is pretty basic in terms of features.
 My goal with the project is to provide a good set of tools for rendering CLI tables, while also allowing users to bring their own tools for things like colours.
-One thing that is unique to term-table-rs(as far as I'm aware) is the ability to have different number of columns in each row of the table.
+One thing that is unique to `term-table` (as far as I'm aware) is the ability to have different number of columns in each row of the table.
 
 ### Prettytables-rs
 
-`prettytables-rs` provides functionality for formatting and aligning tables.
+[`prettytables-rs`](https://crates.io/crates/prettytable-rs) provides functionality for formatting and aligning tables.
 It his however abandoned since over three years and a [rustsec/advisory-db](https://github.com/rustsec/advisory-db/issues/1173) entry has been requested.
 
 ### Comfy-table
 
-One of `comfy-table`'s big foci is on providing a minimalistic, but rock-solid library for building text-based tables.
+One of [`comfy-table`](https://crates.io/crates/comfy-table)'s big foci is on providing a minimalistic, but rock-solid library for building text-based tables.
 This means that the code is very well tested, no usage of `unsafe` and `unwrap` is only used if we can be absolutely sure that it's safe.
 There're only two occurrences of `unsafe` in all of comfy-table's dependencies, to be exact inside the `tty` communication code, which can be explicitly disabled.
 
