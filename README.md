@@ -250,7 +250,7 @@ The following are official statements of the other crate authors.
 
 The main focus of [`cli-table`](https://crates.io/crates/cli-table) is to support all platforms and at the same time limit the dependencies to keep the compile times and crate size low.
 
-Currently, this create only pulls two external dependencies (other than cli-table-derive):
+Currently, this crate only pulls two external dependencies (other than cli-table-derive):
 
 - termcolor
 - unicode-width
