@@ -4,17 +4,17 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/lint.yml'
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - ".github/workflows/lint.yml"
+      - "**.rs"
+      - "Cargo.toml"
+      - "Cargo.lock"
   pull_request:
     branches: [main]
     paths:
-      - '.github/workflows/lint.yml'
-      - '**.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - ".github/workflows/lint.yml"
+      - "**.rs"
+      - "Cargo.toml"
+      - "Cargo.lock"
 
 jobs:
   test:
@@ -40,7 +40,7 @@ jobs:
         run: cargo fmt
 
       - name: cargo clippy
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --tests -- -D warnings
 
       - name: cargo clippy without default features
-        run: cargo clippy --no-default-features -- -D warnings
+        run: cargo clippy --no-default-features --tests -- -D warnings
