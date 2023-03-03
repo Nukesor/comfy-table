@@ -47,7 +47,6 @@ unicode-width = "0.1"
 
 [dev-dependencies]
 criterion = "0.4"
-doc-comment = "0.3"
 pretty_assertions = "1"
 proptest = "1"
 rand = "0.8"
