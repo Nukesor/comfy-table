@@ -1,0 +1,77 @@
+name: Bug Report 🐛
+description: Create a report to help improve the project
+labels: ["t: bug"]
+title: "[Bug]"
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please take the time to fill out all relevant the fields below.
+
+  - type: textarea
+    id: description-of-bug
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of the bug.
+      placeholder: |
+        Description goes here :)
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: |
+        Please add a code example on how to trigger the bug.
+        Or even better, a link to a repository with a minimal reproducible setup to reproduce the bug.
+      placeholder: |
+        ```
+          use comfiest_table::*;
+        ```
+        The import doesn't work!
+    validations:
+      required: true
+
+  - type: textarea
+    id: debug-output
+    attributes:
+      label: Logs (if applicable)
+      description: |
+        This is mostly important for crashes or panics.
+        Logs helps me to debug a problem if the bug is something that's not clearly visible.
+      placeholder: |
+        ```
+        Some log output here
+        ```
+    validations:
+      required: false
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      description: The operating system you're using.
+      placeholder: iOS 8 / Windows 10 / Ubuntu 22.04
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Comfy-table version
+      description: The current version you're using.
+      placeholder: v6.1.4
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+      placeholder: |
+        Anything else you want to add.
+    validations:
+      required: false
