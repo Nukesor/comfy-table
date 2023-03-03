@@ -540,7 +540,7 @@ impl Table {
     }
 
     /// Get a mutable iterator over cells of a column.
-    /// The iterator returns a nested Option<Option<Cell>>, since there might be
+    /// The iterator returns a nested `Option<Option<Cell>>`, since there might be
     /// rows that are missing this specific Cell.
     ///
     /// ```
@@ -567,7 +567,7 @@ impl Table {
 
     /// Get a mutable iterator over cells of a column, including the header cell.
     /// The header cell will be the very first cell returned.
-    /// The iterator returns a nested Option<Option<Cell>>, since there might be
+    /// The iterator returns a nested `Option<Option<Cell>>`, since there might be
     /// rows that are missing this specific Cell.
     ///
     /// ```
