@@ -179,7 +179,7 @@ To test an example, run `cargo run --example $name`. E.g.:
 cargo run --example readme_table
 ```
 
-If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/main/tests).  
+If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/main/tests).
 There are tests for almost every feature including a visual view for each resulting table.
 
 ## Contributing
@@ -207,7 +207,7 @@ Comfy-table doesn't allow `unsafe` code in its code-base.
 As it's a "simple" formatting library it also shouldn't be needed in the future.
 
 However, Comfy-table uses two unsafe functions calls in its dependencies. \
-Both calls can be disabled by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/4.0.1/comfy_table/struct.Table.html#method.force_no_tty).
+Both calls can be disabled by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/latest/comfy_table/struct.Table.html#method.force_no_tty).
 
 Furthermore, all terminal related functionality, including styling, can be disabled by excluding the `tty` feature flag.
 Without this flag no `unsafe` code is used as far as I know.
