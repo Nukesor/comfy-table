@@ -10,7 +10,7 @@
 
 <!--- [![dependency status](https://deps.rs/repo/github/nukesor/comfy-table/status.svg)](https://deps.rs/repo/github/nukesor/comfy-table) -->
 
-Comfy-table is designed as a library for building beautiful tables, while being easy to use.
+Comfy-table is designed as a library for building beautiful terminal tables, while being easy to use.
 
 ## Table of Contents
 
