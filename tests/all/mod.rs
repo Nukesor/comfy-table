@@ -17,6 +17,8 @@ mod simple_test;
 mod styling_test;
 mod utf_8_characters;
 
+mod add_predicate;
+
 pub fn assert_table_line_width(table: &Table, count: usize) {
     for line in table.lines() {
         assert_eq!(line.width(), count);
