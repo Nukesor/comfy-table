@@ -1,6 +1,7 @@
 use comfy_table::Table;
 use unicode_width::UnicodeWidthStr;
 
+mod add_predicate;
 mod alignment_test;
 #[cfg(feature = "tty")]
 mod combined_test;
@@ -16,8 +17,6 @@ mod simple_test;
 #[cfg(feature = "tty")]
 mod styling_test;
 mod utf_8_characters;
-
-mod add_predicate;
 
 pub fn assert_table_line_width(table: &Table, count: usize) {
     for line in table.lines() {
