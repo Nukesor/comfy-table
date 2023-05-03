@@ -143,14 +143,14 @@ impl Table {
     ///
     /// let mut table = Table::new();
     /// let row = Row::from(vec!["One", "Two"]);
-    /// table.add_row_if(|| true, row);
+    /// table.add_row_if(|index, rows| true, row);
     /// ```
     pub fn add_row_if<P, T>(&mut self, predicate: P, row: T) -> &mut Self
     where
-        P: Fn() -> bool,
+        P: Fn(usize, &Vec<Row>) -> bool,
         T: Into<Row>,
     {
-        if predicate() {
+        if predicate(self.rows.len(), &self.rows) {
             return self.add_row(row);
         }
 
@@ -194,15 +194,15 @@ impl Table {
     ///     Row::from(vec!["One", "Two"]),
     ///     Row::from(vec!["Three", "Four"])
     /// ];
-    /// table.add_rows_if(|| true, rows);
+    /// table.add_rows_if(|index, rows| true, rows);
     /// ```
     pub fn add_rows_if<P, I>(&mut self, predicate: P, rows: I) -> &mut Self
     where
-        P: Fn() -> bool,
+        P: Fn(usize, &Vec<Row>) -> bool,
         I: IntoIterator,
         I::Item: Into<Row>,
     {
-        if predicate() {
+        if predicate(self.rows.len(), &self.rows) {
             return self.add_rows(rows);
         }
 

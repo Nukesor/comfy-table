@@ -13,7 +13,7 @@ fn add_predicate_single_true() {
             "This is the third text",
         ])
         .add_row_if(
-            || true,
+            |_, _| true,
             &vec![
                 "This is another text",
                 "Now\nadd some\nmulti line stuff",
@@ -46,7 +46,7 @@ fn add_predicate_single_false() {
             "This is the third text",
         ])
         .add_row_if(
-            || false,
+            |_, _| false,
             &vec![
                 "This is another text",
                 "Now\nadd some\nmulti line stuff",
@@ -75,11 +75,11 @@ fn add_predicate_single_mixed() {
             "This is the third text",
         ])
         .add_row_if(
-            || false,
+            |_, _| false,
             &vec!["I won't get displayed", "Me neither", "Same here!"],
         )
         .add_row_if(
-            || true,
+            |_, _| true,
             &vec![
                 "This is another text",
                 "Now\nadd some\nmulti line stuff",
@@ -119,7 +119,7 @@ fn add_predicate_multi_true() {
 
     table
         .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_rows_if(|| true, rows);
+        .add_rows_if(|_, _| true, rows);
 
     println!("{table}");
     let expected = "
@@ -146,7 +146,7 @@ fn add_predicate_multi_false() {
             "This is the third text",
         ])
         .add_rows_if(
-            || false,
+            |_, _| false,
             vec![Row::from(&vec![
                 "This is another text",
                 "Now\nadd some\nmulti line stuff",
@@ -182,9 +182,9 @@ fn add_predicate_multi_mixed() {
 
     table
         .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_rows_if(|| true, rows)
+        .add_rows_if(|_, _| true, rows)
         .add_rows_if(
-            || false,
+            |_, _| false,
             vec![Row::from(&vec![
                 "I won't get displayed",
                 "Me neither",
