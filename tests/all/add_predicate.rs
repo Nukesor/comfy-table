@@ -102,6 +102,35 @@ fn add_predicate_single_mixed() {
 }
 
 #[test]
+fn add_predicate_single_wrong_row_count() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .add_row(&vec![
+            "This is a text",
+            "This is another text",
+            "This is the third text",
+        ])
+        .add_row_if(
+            |_, row| row.len() == 2,
+            &vec![
+                "This is another text",
+                "Now\nadd some\nmulti line stuff",
+                "This is awesome",
+            ],
+        );
+
+    println!("{table}");
+    let expected = "
++----------------+----------------------+------------------------+
+| Header1        | Header2              | Header3                |
++================================================================+
+| This is a text | This is another text | This is the third text |
++----------------+----------------------+------------------------+";
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
 fn add_predicate_multi_true() {
     let mut table = Table::new();
     let rows = vec![
@@ -203,5 +232,34 @@ fn add_predicate_multi_mixed() {
 |                      | add some             |                        |
 |                      | multi line stuff     |                        |
 +----------------------+----------------------+------------------------+";
+    assert_eq!("\n".to_string() + &table.to_string(), expected);
+}
+
+#[test]
+fn add_predicate_multi_wrong_rows_count() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .add_row(&vec![
+            "This is a text",
+            "This is another text",
+            "This is the third text",
+        ])
+        .add_rows_if(
+            |_, rows| rows.len() == 2,
+            vec![Row::from(&vec![
+                "This is another text",
+                "Now\nadd some\nmulti line stuff",
+                "This is awesome",
+            ])],
+        );
+
+    println!("{table}");
+    let expected = "
++----------------+----------------------+------------------------+
+| Header1        | Header2              | Header3                |
++================================================================+
+| This is a text | This is another text | This is the third text |
++----------------+----------------------+------------------------+";
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
