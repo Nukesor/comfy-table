@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.2.0] - unreleased
+
+### Added
+
+- Add support for custom ansi styling inside of cells. This feature is hidden behind the feature flag `custom_styling`. Implemented by [blueforesticarus](https://github.com/blueforesticarus) in [#93](https://github.com/Nukesor/comfy-table/pull/93).
+- Add helper functions `add_row[s]_if`, which filtering of rows by a predicate. Implemented by [Techassi](https://github.com/Techassi) in [#106](https://github.com/Nukesor/comfy-table/pull/106).
+
+### Maintenance
+
+- Bump dependencies
+
 ## [6.1.4] - 2022-12-31
 
 ### Added

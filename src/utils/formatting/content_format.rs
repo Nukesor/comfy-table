@@ -2,7 +2,9 @@
 use crossterm::style::{style, Stylize};
 use unicode_width::UnicodeWidthStr;
 
+use super::content_split::measure_text_width;
 use super::content_split::split_line;
+
 use crate::cell::Cell;
 use crate::row::Row;
 use crate::style::CellAlignment;
@@ -87,7 +89,7 @@ pub fn format_row(
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if line.width() > info.content_width.into() {
+            if measure_text_width(line) > info.content_width.into() {
                 let mut splitted = split_line(line, info, delimiter);
                 cell_lines.append(&mut splitted);
             } else {
@@ -105,6 +107,13 @@ pub fn format_row(
                 let last_line = cell_lines
                     .get_mut(lines - 1)
                     .expect("We know it's this long.");
+
+                // we are truncate the line, so we might cuttoff a ansi code
+                #[cfg(feature = "custom_styling")]
+                {
+                    let stripped = console::strip_ansi_codes(last_line).to_string();
+                    *last_line = stripped;
+                }
 
                 // Don't do anything if the collumn is smaller then 6 characters
                 let width: usize = info.content_width.into();
@@ -177,7 +186,7 @@ pub fn format_row(
 #[allow(unused_variables)]
 fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: String) -> String {
     let content_width = info.content_width;
-    let remaining: usize = usize::from(content_width).saturating_sub(line.width());
+    let remaining: usize = usize::from(content_width).saturating_sub(measure_text_width(&line));
 
     // Apply the styling before aligning the line, if the user requests it.
     // That way non-delimiter whitespaces won't have stuff like underlines.

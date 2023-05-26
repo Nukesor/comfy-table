@@ -9,6 +9,8 @@ mod constraints_test;
 mod content_arrangement_test;
 mod custom_delimiter_test;
 mod hidden_test;
+#[cfg(feature = "custom_styling")]
+mod inner_style_test;
 mod modifiers_test;
 mod padding_test;
 mod presets_test;

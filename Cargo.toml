@@ -31,9 +31,15 @@ path = "examples/readme_table_no_tty.rs"
 name = "readme_table"
 path = "examples/readme_table.rs"
 
+[[example]]
+name = "inner_style"
+path = "examples/inner_style.rs"
+required-features = ["custom_styling"]
+
 [features]
 default = ["tty"]
 tty = ["crossterm"]
+custom_styling = ["console"]
 # This flag is for library debugging only!
 debug = []
 # This feature is used to expose internal functionality for integration testing.
@@ -44,6 +50,7 @@ crossterm = { version = "0.26", optional = true, default-features = false }
 strum = "0.24"
 strum_macros = "0.24"
 unicode-width = "0.1"
+console = { version = "0.15.1", optional = true }
 
 [dev-dependencies]
 criterion = "0.4"
