@@ -10,7 +10,7 @@
 
 <!--- [![dependency status](https://deps.rs/repo/github/nukesor/comfy-table/status.svg)](https://deps.rs/repo/github/nukesor/comfy-table) -->
 
-Comfy-table is designed as a library for building beautiful tables, while being easy to use.
+Comfy-table is designed as a library for building beautiful terminal tables, while being easy to use.
 
 ## Table of Contents
 
@@ -47,14 +47,14 @@ fn main() {
     table
         .set_header(vec!["Header1", "Header2", "Header3"])
         .add_row(vec![
-                 "This is a text",
-                 "This is another text",
-                 "This is the third text",
+            "This is a text",
+            "This is another text",
+            "This is the third text",
         ])
         .add_row(vec![
-                 "This is another text",
-                 "Now\nadd some\nmulti line stuff",
-                 "This is awesome",
+            "This is another text",
+            "Now\nadd some\nmulti line stuff",
+            "This is awesome",
         ]);
 
     println!("{table}");
@@ -79,9 +79,9 @@ This table will become as wide as your content. Nothing fancy happening here.
 ### More Features
 
 ```rust
-use comfy_table::*;
-use comfy_table::presets::UTF8_FULL;
 use comfy_table::modifiers::UTF8_ROUND_CORNERS;
+use comfy_table::presets::UTF8_FULL;
+use comfy_table::*;
 
 fn main() {
     let mut table = Table::new();
@@ -92,14 +92,14 @@ fn main() {
         .set_width(40)
         .set_header(vec!["Header1", "Header2", "Header3"])
         .add_row(vec![
-                 Cell::new("Center aligned").set_alignment(CellAlignment::Center),
-                 Cell::new("This is another text"),
-                 Cell::new("This is the third text"),
+            Cell::new("Center aligned").set_alignment(CellAlignment::Center),
+            Cell::new("This is another text"),
+            Cell::new("This is the third text"),
         ])
         .add_row(vec![
-                 "This is another text",
-                 "Now\nadd some\nmulti line stuff",
-                 "This is awesome",
+            "This is another text",
+            "Now\nadd some\nmulti line stuff",
+            "This is awesome",
         ]);
 
     // Set the default alignment for the third column to right
@@ -134,8 +134,8 @@ On top of this, we set the default alignment for the right column to `Right` and
 ### Styling
 
 ```rust
-use comfy_table::*;
 use comfy_table::presets::UTF8_FULL;
+use comfy_table::*;
 
 fn main() {
     let mut table = Table::new();
@@ -143,25 +143,25 @@ fn main() {
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(80)
         .set_header(vec![
-                    Cell::new("Header1").add_attribute(Attribute::Bold),
-                    Cell::new("Header2").fg(Color::Green),
-                    Cell::new("Header3"),
+            Cell::new("Header1").add_attribute(Attribute::Bold),
+            Cell::new("Header2").fg(Color::Green),
+            Cell::new("Header3"),
         ])
         .add_row(vec![
-                 Cell::new("This is a bold text").add_attribute(Attribute::Bold),
-                 Cell::new("This is a green text").fg(Color::Green),
-                 Cell::new("This one has black background").bg(Color::Black),
+             Cell::new("This is a bold text").add_attribute(Attribute::Bold),
+             Cell::new("This is a green text").fg(Color::Green),
+             Cell::new("This one has black background").bg(Color::Black),
         ])
         .add_row(vec![
-                 Cell::new("Blinky boi").add_attribute(Attribute::SlowBlink),
-                 Cell::new("This table's content is dynamically arranged. The table is exactly 80 characters wide.\nHere comes a reallylongwordthatshoulddynamicallywrap"),
-                 Cell::new("COMBINE ALL THE THINGS")
-                 .fg(Color::Green)
-                 .bg(Color::Black)
-                 .add_attributes(vec![
-                                 Attribute::Bold,
-                                 Attribute::SlowBlink,
-                 ])
+            Cell::new("Blinky boi").add_attribute(Attribute::SlowBlink),
+            Cell::new("This table's content is dynamically arranged. The table is exactly 80 characters wide.\nHere comes a reallylongwordthatshoulddynamicallywrap"),
+            Cell::new("COMBINE ALL THE THINGS")
+                .fg(Color::Green)
+                .bg(Color::Black)
+                .add_attributes(vec![
+                    Attribute::Bold,
+                    Attribute::SlowBlink,
+                ])
         ]);
 
     println!("{table}");
@@ -179,7 +179,7 @@ To test an example, run `cargo run --example $name`. E.g.:
 cargo run --example readme_table
 ```
 
-If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/main/tests).  
+If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/main/tests).
 There are tests for almost every feature including a visual view for each resulting table.
 
 ## Contributing
@@ -207,7 +207,7 @@ Comfy-table doesn't allow `unsafe` code in its code-base.
 As it's a "simple" formatting library it also shouldn't be needed in the future.
 
 However, Comfy-table uses two unsafe functions calls in its dependencies. \
-Both calls can be disabled by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/4.0.1/comfy_table/struct.Table.html#method.force_no_tty).
+Both calls can be disabled by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/latest/comfy_table/struct.Table.html#method.force_no_tty).
 
 Furthermore, all terminal related functionality, including styling, can be disabled by excluding the `tty` feature flag.
 Without this flag no `unsafe` code is used as far as I know.
@@ -246,31 +246,31 @@ Without this flag no `unsafe` code is used as far as I know.
 The following are official statements of the other crate authors.
 [This ticket](https://github.com/Nukesor/comfy-table/issues/76) can be used as an entry to find all other sibling tickets in the other projects.
 
-### Cli-Table
+### Cli-table
 
-The main focus of `cli-table` is to support all platforms and at the same time limit the dependencies to keep the compile times and crate size low.
+The main focus of [`cli-table`](https://crates.io/crates/cli-table) is to support all platforms and at the same time limit the dependencies to keep the compile times and crate size low.
 
-Currently, this create only pulls two external dependencies (other than cli-table-derive):
+Currently, this crate only pulls two external dependencies (other than cli-table-derive):
 
 - termcolor
 - unicode-width
 
 With csv feature enabled, it also pulls csv crate as dependency.
 
-### Term-table-cli
+### Term-table
 
-`term-table-rs` is pretty basic in terms of features.
+[`term-table`](https://crates.io/crates/term-table) is pretty basic in terms of features.
 My goal with the project is to provide a good set of tools for rendering CLI tables, while also allowing users to bring their own tools for things like colours.
-One thing that is unique to term-table-rs(as far as I'm aware) is the ability to have different number of columns in each row of the table.
+One thing that is unique to `term-table` (as far as I'm aware) is the ability to have different number of columns in each row of the table.
 
 ### Prettytables-rs
 
-`prettytables-rs` provides functionality for formatting and aligning tables.
+[`prettytables-rs`](https://crates.io/crates/prettytable-rs) provides functionality for formatting and aligning tables.
 It his however abandoned since over three years and a [rustsec/advisory-db](https://github.com/rustsec/advisory-db/issues/1173) entry has been requested.
 
 ### Comfy-table
 
-One of `comfy-table`'s big foci is on providing a minimalistic, but rock-solid library for building text-based tables.
+One of [`comfy-table`](https://crates.io/crates/comfy-table)'s big foci is on providing a minimalistic, but rock-solid library for building text-based tables.
 This means that the code is very well tested, no usage of `unsafe` and `unwrap` is only used if we can be absolutely sure that it's safe.
 There're only two occurrences of `unsafe` in all of comfy-table's dependencies, to be exact inside the `tty` communication code, which can be explicitly disabled.
 

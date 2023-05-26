@@ -1,4 +1,6 @@
 #![forbid(unsafe_code)]
+#![cfg_attr(doctest, doc = include_str!("../README.md"))]
+
 mod cell;
 mod column;
 mod row;
@@ -17,6 +19,3 @@ pub use crate::column::Column;
 pub use crate::row::Row;
 pub use crate::table::{ColumnCellIter, Table};
 pub use style::*;
-
-#[cfg(doctest)]
-doc_comment::doctest!("../README.md");

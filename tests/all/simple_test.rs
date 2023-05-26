@@ -81,10 +81,10 @@ fn single_column_table() {
 #[test]
 fn lines() {
     let mut t = Table::new();
-    t.set_header(&["heading 1", "heading 2", "heading 3"]);
-    t.add_row(&["test 1,1", "test 1,2", "test 1,3"]);
-    t.add_row(&["test 2,1", "test 2,2", "test 2,3"]);
-    t.add_row(&["test 3,1", "test 3,2", "test 3,3"]);
+    t.set_header(["heading 1", "heading 2", "heading 3"]);
+    t.add_row(["test 1,1", "test 1,2", "test 1,3"]);
+    t.add_row(["test 2,1", "test 2,2", "test 2,3"]);
+    t.add_row(["test 3,1", "test 3,2", "test 3,3"]);
 
     let actual = t.lines();
     let expected = &[

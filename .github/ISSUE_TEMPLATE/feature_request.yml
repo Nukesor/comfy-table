@@ -1,0 +1,65 @@
+name: Feature request
+description: Suggest an idea for this project
+labels: ["t: feature"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please take the time to fill out all relevant the fields below.
+
+  - type: textarea
+    id: feature
+    attributes:
+      label: A detailed description of the feature you would like to see added.
+      description: |
+        Explain how that feature would look like and how it should behave.
+
+        Also take a look at the [Contributing guide](https://github.com/Nukesor/comfy-table#contributing) to see if your ticket fits into the scope of this project :).
+      placeholder: |
+        It would be awesome, if all text would blink by default!
+
+        Since not everybody might want this feature, it could also be hidden behind a feature flag.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: Explain your usecase of the requested feature
+      description: |
+        I need to know what a feature is going to be used for, before I can decide if and how it's going to be implemented.
+
+        The more information you provide, the better I understand your problem ;).
+      placeholder: |
+        I have a chronic condition that requires me to have text blinking all the time.
+
+        Without this feature, I tend to get really unproductive.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: |
+        If your problem can be solved in multiple ways, I would like to hear the possible alternatives you've considered.
+
+        Some problems really don't have any feasible alternatives, in that case don't bother answering this question :)
+      placeholder: |
+        I could add a wrapper around the project which takes any output and wraps it in ANSI escape codes.
+        However, this is very cumbersome and not user-friendly.
+
+        This is why I think this should be added to the project.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+      placeholder: |
+        Anything else you want to add, such as sketches, example code, etc.
+    validations:
+      required: false

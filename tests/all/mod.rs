@@ -1,6 +1,7 @@
 use comfy_table::Table;
 use unicode_width::UnicodeWidthStr;
 
+mod add_predicate;
 mod alignment_test;
 #[cfg(feature = "tty")]
 mod combined_test;

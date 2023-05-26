@@ -262,7 +262,7 @@ fn dynamic_exact_width() {
 │ 5   ┆ 6   ┆ 36.0      │
 └─────┴─────┴───────────┘";
         println!("{expected}");
-        assert_table_line_width(&table, 25);
+        assert_table_line_width(table, 25);
         assert_eq!("\n".to_string() + &table.to_string(), expected);
     }
 }
@@ -301,7 +301,7 @@ fn dynamic_slightly_smaller() {
 │ 5   ┆ 6   ┆ 36.0     │
 └─────┴─────┴──────────┘";
     println!("{expected}");
-    assert_table_line_width(&table, 24);
+    assert_table_line_width(table, 24);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
 
@@ -347,6 +347,6 @@ fn polar_python_test_tbl_width_chars() {
 │ 3                 ┆ null                                ┆ 6          │
 └───────────────────┴─────────────────────────────────────┴────────────┘";
     println!("{expected}");
-    assert_table_line_width(&table, 72);
+    assert_table_line_width(table, 72);
     assert_eq!("\n".to_string() + &table.to_string(), expected);
 }
