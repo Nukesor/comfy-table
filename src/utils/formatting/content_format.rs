@@ -11,9 +11,6 @@ use crate::style::CellAlignment;
 use crate::table::Table;
 use crate::utils::ColumnDisplayInfo;
 
-#[cfg(feature = "ansi")]
-use console::strip_ansi_codes;
-
 pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
     // Determine, which delimiter should be used
     if let Some(delimiter) = cell.delimiter {
@@ -114,7 +111,7 @@ pub fn format_row(
                 // we are truncate the line, so we might cuttoff a ansi code
                 #[cfg(feature = "ansi")]
                 {
-                    let stripped = strip_ansi_codes(last_line).to_string();
+                    let stripped = console::strip_ansi_codes(last_line).to_string();
                     *last_line = stripped;
                 }
 

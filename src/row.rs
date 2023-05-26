@@ -64,11 +64,7 @@ impl Row {
                 // Each entry represents the longest string width for a cell.
                 cell.content
                     .iter()
-                    .map(|string| {
-                        //let width = console::measure_text_width(string);
-                        //println!("{} {} {}", width, &string, string.escape_debug());
-                        measure_text_width(string)
-                    })
+                    .map(|string| measure_text_width(string))
                     .max()
                     .unwrap_or(0)
             })

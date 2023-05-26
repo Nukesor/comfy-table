@@ -8,9 +8,6 @@ use arrangement::arrange_content;
 use formatting::borders::draw_borders;
 use formatting::content_format::format_content;
 
-#[cfg(feature = "ansi")]
-pub use formatting::content_split::fix_style_in_split_str;
-
 /// This struct is ONLY used when table.to_string() is called.
 /// It's purpose is to store intermediate results, information on how to
 /// arrange the table and other convenience variables.

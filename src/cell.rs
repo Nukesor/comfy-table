@@ -3,9 +3,6 @@ use crossterm::style::{Attribute, Color};
 
 use crate::style::CellAlignment;
 
-#[cfg(feature = "ansi")]
-use crate::utils::fix_style_in_split_str;
-
 /// A stylable table cell with content.
 #[derive(Clone, Debug)]
 pub struct Cell {
@@ -33,9 +30,9 @@ impl Cell {
         #[cfg_attr(not(feature = "ansi"), allow(unused_mut))]
         let mut split_content: Vec<String> = content.split('\n').map(ToString::to_string).collect();
 
-        // corrects ansi codes so style is terminated and resumed around the split
+        // Correct ansi codes so style is terminated and resumed around the split
         #[cfg(feature = "ansi")]
-        fix_style_in_split_str(&mut split_content);
+        crate::utils::formatting::content_split::fix_style_in_split_str(&mut split_content);
 
         Self {
             content: split_content,
