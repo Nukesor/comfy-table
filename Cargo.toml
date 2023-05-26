@@ -34,12 +34,12 @@ path = "examples/readme_table.rs"
 [[example]]
 name = "inner_style"
 path = "examples/inner_style.rs"
-required-features = ["ansi"]
+required-features = ["custom_styling"]
 
 [features]
 default = ["tty"]
 tty = ["crossterm"]
-ansi = ["console"]
+custom_styling = ["console"]
 # This flag is for library debugging only!
 debug = []
 # This feature is used to expose internal functionality for integration testing.

@@ -109,7 +109,7 @@ pub fn format_row(
                     .expect("We know it's this long.");
 
                 // we are truncate the line, so we might cuttoff a ansi code
-                #[cfg(feature = "ansi")]
+                #[cfg(feature = "custom_styling")]
                 {
                     let stripped = console::strip_ansi_codes(last_line).to_string();
                     *last_line = stripped;

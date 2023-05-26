@@ -1,13 +1,13 @@
 use crate::utils::ColumnDisplayInfo;
 
-#[cfg(feature = "ansi")]
+#[cfg(feature = "custom_styling")]
 mod custom_styling;
-#[cfg(not(feature = "ansi"))]
+#[cfg(not(feature = "custom_styling"))]
 mod normal;
 
-#[cfg(feature = "ansi")]
+#[cfg(feature = "custom_styling")]
 pub use custom_styling::*;
-#[cfg(not(feature = "ansi"))]
+#[cfg(not(feature = "custom_styling"))]
 pub use normal::*;
 
 /// Split a line if it's longer than the allowed columns (width - padding).

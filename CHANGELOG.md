@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- Add support for custom styling inside of cells. This feature is hidden behind the feature flag ``. Implemented by [blueforesticarus](https://github.com/blueforesticarus) in [#93](https://github.com/Nukesor/comfy-table/pull/93).
+- Add support for custom ansi styling inside of cells. This feature is hidden behind the feature flag `custom_styling`. Implemented by [blueforesticarus](https://github.com/blueforesticarus) in [#93](https://github.com/Nukesor/comfy-table/pull/93).
 - Add helper functions `add_row[s]_if`, which filtering of rows by a predicate. Implemented by [Techassi](https://github.com/Techassi) in [#106](https://github.com/Nukesor/comfy-table/pull/106).
 
 ### Maintenance

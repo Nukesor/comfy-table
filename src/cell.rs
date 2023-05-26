@@ -27,11 +27,11 @@ impl Cell {
     #[allow(clippy::needless_pass_by_value)]
     pub fn new<T: ToString>(content: T) -> Self {
         let content = content.to_string();
-        #[cfg_attr(not(feature = "ansi"), allow(unused_mut))]
+        #[cfg_attr(not(feature = "custom_styling"), allow(unused_mut))]
         let mut split_content: Vec<String> = content.split('\n').map(ToString::to_string).collect();
 
         // Correct ansi codes so style is terminated and resumed around the split
-        #[cfg(feature = "ansi")]
+        #[cfg(feature = "custom_styling")]
         crate::utils::formatting::content_split::fix_style_in_split_str(&mut split_content);
 
         Self {
