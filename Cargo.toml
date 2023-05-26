@@ -53,7 +53,7 @@ unicode-width = "0.1"
 console = { version = "0.15", optional = true }
 
 [dev-dependencies]
-criterion = "0.4"
+criterion = "0.5"
 pretty_assertions = "1"
 proptest = "1"
 rand = "0.8"
