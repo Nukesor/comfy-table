@@ -8,25 +8,28 @@ fn main() {
 
     let mut row = Row::new();
     row.add_cell(Cell::new(format!(
-        "hello{}cell1",
-        console::style("123\n456").dim().blue()
+        "List of devices:\n{}",
+        console::style("Blockdevices\nCryptdevices").dim().blue()
     )));
-    row.add_cell(Cell::new("cell2"));
+    row.add_cell(Cell::new(""));
 
     table.add_row(row);
 
     let mut row = Row::new();
-    row.add_cell(Cell::new(
-        format!(r"cell sys-devices-pci00:00-0000:000:07:00.1-usb2-2\x2d1-2\x2d1.3-2\x2d1.3:1.0-host2-target2:0:0-2:0:0:1-block-sdb{}", console::style(".device").bold().red())
-    ));
-    row.add_cell(Cell::new(
-        "cell4 asdfasfsad asdfasdf sad fas df asdf as df asdf    asdfasdfasdfasdfasdfasdfa dsfa sdf asdf asd f asdf as df sadf asd fas df "
-    ));
+    row.add_cell(Cell::new(format!(
+        "Block devices: \n/dev/{}\n/dev/{}",
+        console::style("sda1").bold().red(),
+        console::style("sda2").bold().red()
+    )));
+    row.add_cell(Cell::new("These are some block devices that were found."));
     table.add_row(row);
 
     let mut row = Row::new();
-    row.add_cell(Cell::new("cell5"));
-    row.add_cell(Cell::new("cell6"));
+    row.add_cell(Cell::new(format!(
+        "Crypt devices: \n/dev/mapper/{}",
+        console::style("cryptroot").bold().yellow()
+    )));
+    row.add_cell(Cell::new("This one seems to be encrypted."));
     table.add_row(row);
 
     println!("{}", table);
