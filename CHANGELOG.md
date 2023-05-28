@@ -14,7 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   To fix this, these enums are now mirrored and internally mapped to their crossterm equivalents, which allows us to safely bump crossterm whenever a new version is released.
   This change will only affect you if your projects explicitly use crossterm and comfy-table at the same time **and** feed crossterm's native types into comfy-table.
 
-  This change allows us to bump the crossterm dependency in the future, without having to release a major version.
+  If one wants the old behavior for convenience reasons, this can be enabled via a feature flag.
+  However, **this is also a opt-in to potential breaking changes on minor/patch versions**.
+- Bump minimum version to v1.64
 
 ### Added
 
