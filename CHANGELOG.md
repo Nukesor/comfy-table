@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.0] - 2023-06-06
+
+### Breaking
+
+- The `Color` and `Attribute` enum are no longer re-exported from crossterm by default.
+  Previously, when updating comfy-table, crossterm needed to be upgraded as well, since the compile would otherwise fail due to type incompatibilies.
+
+  To fix this, these enums are now mirrored and internally mapped to their crossterm equivalents, which allows us to safely bump crossterm whenever a new version is released.
+  This change will only affect you if your projects explicitly use crossterm and comfy-table at the same time **and** feed crossterm's native types into comfy-table.
+
+  This change allows us to bump the crossterm dependency in the future, without having to release a major version.
+
+### Added
+
+- `reexport_crossterm` feature flag to enable old crossterm re-export.
+
 ## [6.2.0] - 2023-05-26
 
 ### Added

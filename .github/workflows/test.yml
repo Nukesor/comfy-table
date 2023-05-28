@@ -61,11 +61,15 @@ jobs:
         if: ${{ !matrix.minimal_setup }}
 
       - name: cargo test
+        run: cargo test --target=${{ matrix.target }} --features=integration_test
+        if: ${{ !matrix.minimal_setup }}
+
+      - name: cargo test without default features
         run: cargo test --target=${{ matrix.target }} --tests --no-default-features
         if: ${{ !matrix.minimal_setup }}
 
-      - name: cargo test
-        run: cargo test --target=${{ matrix.target }} --features=integration_test
+      - name: cargo test with crossterm re-export
+        run: cargo test --target=${{ matrix.target }} --features=integration_test,reexport_crossterm
         if: ${{ !matrix.minimal_setup }}
 
       - name: cargo test with custom_styling
