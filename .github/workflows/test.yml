@@ -21,6 +21,7 @@ jobs:
     name: Test target ${{ matrix.target }} on ${{ matrix.os }} for ${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         target:
           - x86_64-unknown-linux-gnu
