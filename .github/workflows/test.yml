@@ -21,13 +21,14 @@ jobs:
     name: Test target ${{ matrix.target }} on ${{ matrix.os }} for ${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         target:
           - x86_64-unknown-linux-gnu
           - x86_64-pc-windows-msvc
           - x86_64-apple-darwin
           - wasm32-wasi
-        toolchain: [stable, nightly, 1.62]
+        toolchain: [stable, nightly, 1.64]
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
@@ -61,11 +62,15 @@ jobs:
         if: ${{ !matrix.minimal_setup }}
 
       - name: cargo test
+        run: cargo test --target=${{ matrix.target }} --features=integration_test
+        if: ${{ !matrix.minimal_setup }}
+
+      - name: cargo test without default features
         run: cargo test --target=${{ matrix.target }} --tests --no-default-features
         if: ${{ !matrix.minimal_setup }}
 
-      - name: cargo test
-        run: cargo test --target=${{ matrix.target }} --features=integration_test
+      - name: cargo test with crossterm re-export
+        run: cargo test --target=${{ matrix.target }} --features=integration_test,reexport_crossterm
         if: ${{ !matrix.minimal_setup }}
 
       - name: cargo test with custom_styling

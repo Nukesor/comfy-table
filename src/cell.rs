@@ -1,5 +1,5 @@
 #[cfg(feature = "tty")]
-use crossterm::style::{Attribute, Color};
+use crate::{Attribute, Color};
 
 use crate::style::CellAlignment;
 
@@ -82,8 +82,7 @@ impl Cell {
 
     /// Set the foreground text color for this cell.
     ///
-    /// comfy-table uses [Crossterm Colors](crossterm::style::Color).
-    /// Look at their documentation for all possible Colors.
+    /// Look at [Color](crate::Color) for a list of all possible Colors.
     /// ```
     /// use comfy_table::Color;
     /// use comfy_table::Cell;
@@ -101,8 +100,7 @@ impl Cell {
 
     /// Set the background color for this cell.
     ///
-    /// comfy-table uses [Crossterm Colors](crossterm::style::Color).
-    /// Look at their documentation for all possible Colors.
+    /// Look at [Color](crate::Color) for a list of all possible Colors.
     /// ```
     /// use comfy_table::Color;
     /// use comfy_table::Cell;
@@ -121,8 +119,7 @@ impl Cell {
     /// Add a styling attribute to the content cell.\
     /// Those can be **bold**, _italic_, blinking and many more.
     ///
-    /// comfy-table uses [Crossterm Attributes](crossterm::style::Attribute).
-    /// Look at their documentation for all possible [Attributes](Attribute).
+    /// Look at [Attribute](crate::Attribute) for a list of all possible Colors.
     /// ```
     /// use comfy_table::Attribute;
     /// use comfy_table::Cell;

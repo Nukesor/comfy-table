@@ -9,7 +9,7 @@ documentation = "https://docs.rs/comfy-table/"
 license = "MIT"
 keywords = ["terminal", "table", "unicode"]
 readme = "README.md"
-rust-version = "1.62"
+rust-version = "1.64"
 edition = "2021"
 
 [badges]
@@ -38,11 +38,31 @@ required-features = ["custom_styling"]
 
 [features]
 default = ["tty"]
+# This flag enables support for terminals:
+# - Automatic detection whether we're in a terminal environment
+#   Only used when no explicit `Table::set_width` is provided.
+# - Support for ANSI Escape Code styling for terminals.
 tty = ["crossterm"]
+# This flag enables support for custom styling of text inside of cells:
+# - Text formatting still works, even if you roll your own ANSI escape sequences.
+# - Rainbow text
+# - Makes comfy-table 30-50% slower
 custom_styling = ["console"]
-# This flag is for library debugging only!
+# With this flag, comfy_table re-exposes crossterm's "Attribute" and "Color" enum.
+# By default, a mirrored type is exposed, which internally maps to the crossterm type.
+#
+# This feature is very convenient if you use both comfy_table and crossterm in your code
+# and want to use crossterm's types for everything interchangeably.
+#
+# **BUT** if you enable this feature, you opt-in for breaking changes on minor/patch versions.
+# Meaning, you have to update crossterm whenever you update comfy_table and vice versa, since
+# they now use the same types.
+reexport_crossterm = ["tty"]
+# This flag is for comfy-table development debugging!
+# You usually don't need this as a user of the library.
 debug = []
-# This feature is used to expose internal functionality for integration testing.
+# This feature is used to for integration testing of comfy_table.
+# It exposes normally unexposed internal functionality for easier testing.
 integration_test = []
 
 [dependencies]

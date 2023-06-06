@@ -212,7 +212,7 @@ proptest! {
         #[cfg(feature = "integration_test")]
         // Only run this test, if the `integration_test` is enabled.
         // Without this flag, we don't have access to some util functions in comfy_table, that
-        // aren't by default.
+        // aren't exposed by default.
         enforce_constraints(&table, formatted, lines)?
     }
 }

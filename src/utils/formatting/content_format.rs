@@ -8,6 +8,8 @@ use super::content_split::split_line;
 use crate::cell::Cell;
 use crate::row::Row;
 use crate::style::CellAlignment;
+#[cfg(feature = "tty")]
+use crate::style::{map_attribute, map_color};
 use crate::table::Table;
 use crate::utils::ColumnDisplayInfo;
 
@@ -253,16 +255,16 @@ fn style_line(line: String, cell: &Cell) -> String {
 
     // Apply text color
     if let Some(color) = cell.fg {
-        content = content.with(color);
+        content = content.with(map_color(color));
     }
 
     // Apply background color
     if let Some(color) = cell.bg {
-        content = content.on(color);
+        content = content.on(map_color(color));
     }
 
     for attribute in cell.attributes.iter() {
-        content = content.attribute(*attribute);
+        content = content.attribute(map_attribute(*attribute));
     }
 
     content.to_string()

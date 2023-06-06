@@ -21,6 +21,7 @@ jobs:
     name: Tests on ${{ matrix.os }} for ${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
