@@ -70,7 +70,10 @@ mod tests {
         let display_infos = arrange_content(&table);
 
         // The width should be the width of the rows + padding
-        let widths: Vec<u16> = display_infos.iter().map(ColumnDisplayInfo::width).collect();
+        let mut widths = Vec::with_capacity(display_infos.len());
+        for i in display_infos.iter() {
+            widths.push(i.width().unwrap())
+        }
         assert_eq!(widths, vec![6, 7, 8]);
     }
 

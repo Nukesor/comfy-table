@@ -42,26 +42,33 @@ pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
 /// ```
 ///
 /// The strings for each row will be padded and aligned according to their respective column.
-pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<Vec<Vec<String>>> {
+pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> ComfyTableResult<Vec<Vec<Vec<String>>>> {
     // The content of the whole table
     let mut table_content = Vec::with_capacity(table.rows.len() + 1);
 
     // Format table header if it exists
     if let Some(header) = table.header() {
-        table_content.push(format_row(header, display_info, table));
+        table_content.push(format_row(header, display_info, table)?);
     }
 
     for row in table.rows.iter() {
-        table_content.push(format_row(row, display_info, table));
+        table_content.push(format_row(row, display_info, table)?);
     }
-    table_content
+    Ok(table_content)
+}
+
+pub type ComfyTableResult<T> = Result<T, ComfyTableError>;
+
+#[derive(Debug)]
+pub enum ComfyTableError {
+    WidthOverflow
 }
 
 pub fn format_row(
     row: &Row,
     display_infos: &[ColumnDisplayInfo],
     table: &Table,
-) -> Vec<Vec<String>> {
+) -> ComfyTableResult<Vec<Vec<String>>> {
     // The content of this specific row
     let mut temp_row_content = Vec::with_capacity(display_infos.len());
 
@@ -81,7 +88,7 @@ pub fn format_row(
         let cell = if let Some(cell) = cell_iter.next() {
             cell
         } else {
-            cell_lines.push(" ".repeat(info.width().into()));
+            cell_lines.push(" ".repeat(info.width()?.into()));
             temp_row_content.push(cell_lines);
             continue;
         };
@@ -172,13 +179,13 @@ pub fn format_row(
                 Some(content) => line.push(content.clone()),
                 // The current cell doesn't have content for this line.
                 // Fill with a placeholder (empty spaces)
-                None => line.push(" ".repeat(info.width().into())),
+                None => line.push(" ".repeat(info.width()?.into())),
             }
         }
         row_content.push(line);
     }
 
-    row_content
+    Ok(row_content)
 }
 
 /// Apply the alignment for a column. Alignment can be either Left/Right/Center.

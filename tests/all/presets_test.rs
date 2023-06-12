@@ -43,7 +43,7 @@ fn test_ascii_full_condensed() {
 | c     | d     |
 +-------+-------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }
 
 #[test]
@@ -58,7 +58,7 @@ fn test_ascii_no_borders() {
 -------+-------
  c     | d";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }
 
 #[test]
@@ -108,7 +108,7 @@ fn test_ascii_horizontal_only() {
  c       d
 ---------------";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }
 
 #[test]
@@ -122,7 +122,7 @@ fn test_ascii_markdown() {
 | a     | b     |
 | c     | d     |";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }
 
 #[test]
@@ -139,7 +139,7 @@ fn test_utf8_full() {
 │ c     ┆ d     │
 └───────┴───────┘";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }
 
 #[test]
@@ -155,7 +155,7 @@ fn test_utf8_full_condensed() {
 │ c     ┆ d     │
 └───────┴───────┘";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }
 
 #[test]
@@ -170,7 +170,7 @@ fn test_utf8_no_borders() {
 ╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌
  c     ┆ d";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }
 
 #[test]
@@ -187,7 +187,7 @@ fn test_utf8_horizontal_only() {
  c       d
 ───────────────";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }
 
 #[test]
@@ -200,5 +200,5 @@ fn test_nothing() {
  a      b
  c      d";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!("\n".to_string() + &table.trim_fmt().unwrap(), expected);
 }

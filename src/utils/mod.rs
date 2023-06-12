@@ -8,6 +8,8 @@ use arrangement::arrange_content;
 use formatting::borders::draw_borders;
 use formatting::content_format::format_content;
 
+use self::formatting::content_format::{ComfyTableError, ComfyTableResult};
+
 /// This struct is ONLY used when table.to_string() is called.
 /// It's purpose is to store intermediate results, information on how to
 /// arrange the table and other convenience variables.
@@ -40,13 +42,14 @@ impl ColumnDisplayInfo {
         }
     }
 
-    pub fn width(&self) -> u16 {
-        self.content_width + self.padding.0 + self.padding.1
+    pub fn width(&self) -> Result<u16, ComfyTableError> {
+        let n1 = self.content_width.checked_add(self.padding.0).ok_or(ComfyTableError::WidthOverflow)?;
+        n1.checked_add(self.padding.1).ok_or(ComfyTableError::WidthOverflow)
     }
 }
 
-pub fn build_table(table: &Table) -> impl Iterator<Item = String> {
+pub fn build_table(table: &Table) -> ComfyTableResult<impl Iterator<Item = String>> {
     let display_info = arrange_content(table);
-    let content = format_content(table, &display_info);
-    draw_borders(table, &content, &display_info).into_iter()
+    let content = format_content(table, &display_info)?;
+    Ok(draw_borders(table, &content, &display_info)?.into_iter())
 }

@@ -2,11 +2,13 @@ use crate::style::TableComponent;
 use crate::table::Table;
 use crate::utils::ColumnDisplayInfo;
 
+use super::content_format::ComfyTableResult;
+
 pub(crate) fn draw_borders(
     table: &Table,
     rows: &[Vec<Vec<String>>],
     display_info: &[ColumnDisplayInfo],
-) -> Vec<String> {
+) -> ComfyTableResult<Vec<String>> {
     // We know how many lines there should be. Initialize the vector with the rough correct amount.
     // We might over allocate a bit, but that's better than under allocating.
     let mut lines = if let Some(capacity) = rows.get(0).map(|lines| lines.len()) {
@@ -18,19 +20,19 @@ pub(crate) fn draw_borders(
     };
 
     if should_draw_top_border(table) {
-        lines.push(draw_top_border(table, display_info));
+        lines.push(draw_top_border(table, display_info)?);
     }
 
     draw_rows(&mut lines, rows, table, display_info);
 
     if should_draw_bottom_border(table) {
-        lines.push(draw_bottom_border(table, display_info));
+        lines.push(draw_bottom_border(table, display_info)?);
     }
 
-    lines
+    Ok(lines)
 }
 
-fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String {
+fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> ComfyTableResult<String> {
     let left_corner = table.style_or_default(TableComponent::TopLeftCorner);
     let top_border = table.style_or_default(TableComponent::TopBorder);
     let intersection = table.style_or_default(TableComponent::TopBorderIntersections);
@@ -51,7 +53,7 @@ fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String 
             if !first {
                 line += &intersection;
             }
-            line += &top_border.repeat(info.width().into());
+            line += &top_border.repeat(info.width()?.into());
             first = false;
         }
     }
@@ -61,7 +63,7 @@ fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String 
         line += &right_corner;
     }
 
-    line
+    Ok(line)
 }
 
 fn draw_rows(
@@ -69,7 +71,7 @@ fn draw_rows(
     rows: &[Vec<Vec<String>>],
     table: &Table,
     display_info: &[ColumnDisplayInfo],
-) {
+) -> ComfyTableResult<()> {
     // Iterate over all rows
     let mut row_iter = rows.iter().enumerate().peekable();
     while let Some((row_index, row)) = row_iter.next() {
@@ -81,16 +83,18 @@ fn draw_rows(
         // Draw the horizontal header line if desired, otherwise continue to the next iteration
         if row_index == 0 && table.header.is_some() {
             if should_draw_header(table) {
-                lines.push(draw_horizontal_lines(table, display_info, true));
+                lines.push(draw_horizontal_lines(table, display_info, true)?);
             }
             continue;
         }
 
         // Draw a horizontal line, if we desired and if we aren't in the last row of the table.
         if row_iter.peek().is_some() && should_draw_horizontal_lines(table) {
-            lines.push(draw_horizontal_lines(table, display_info, false));
+            lines.push(draw_horizontal_lines(table, display_info, false)?);
         }
     }
+
+    Ok(())
 }
 
 // Takes the parts of a single line, surrounds them with borders and adds vertical lines.
@@ -122,7 +126,7 @@ fn draw_horizontal_lines(
     table: &Table,
     display_info: &[ColumnDisplayInfo],
     header: bool,
-) -> String {
+) -> ComfyTableResult<String> {
     // Styling depends on whether we're currently on the header line or not.
     let (left_intersection, horizontal_lines, middle_intersection, right_intersection) = if header {
         (
@@ -155,7 +159,7 @@ fn draw_horizontal_lines(
             if !first {
                 line += &middle_intersection;
             }
-            line += &horizontal_lines.repeat(info.width().into());
+            line += &horizontal_lines.repeat(info.width()?.into());
             first = false;
         }
     }
@@ -165,10 +169,13 @@ fn draw_horizontal_lines(
         line += &right_intersection;
     }
 
-    line
+    Ok(line)
 }
 
-fn draw_bottom_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String {
+fn draw_bottom_border(
+    table: &Table,
+    display_info: &[ColumnDisplayInfo],
+) -> ComfyTableResult<String> {
     let left_corner = table.style_or_default(TableComponent::BottomLeftCorner);
     let bottom_border = table.style_or_default(TableComponent::BottomBorder);
     let middle_intersection = table.style_or_default(TableComponent::BottomBorderIntersections);
@@ -189,7 +196,7 @@ fn draw_bottom_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> Stri
             if !first {
                 line += &middle_intersection;
             }
-            line += &bottom_border.repeat(info.width().into());
+            line += &bottom_border.repeat(info.width()?.into());
             first = false;
         }
     }
@@ -199,7 +206,7 @@ fn draw_bottom_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> Stri
         line += &right_corner;
     }
 
-    line
+    Ok(line)
 }
 
 fn should_draw_top_border(table: &Table) -> bool {

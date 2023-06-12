@@ -4,6 +4,7 @@ use super::constraint;
 use super::helper::*;
 use super::{ColumnDisplayInfo, DisplayInfos};
 use crate::style::*;
+use crate::utils::formatting::content_format::ComfyTableResult;
 use crate::utils::formatting::content_split::split_line;
 use crate::{Column, Table};
 
@@ -31,13 +32,13 @@ pub fn arrange(
     infos: &mut DisplayInfos,
     table_width: usize,
     max_content_widths: &[u16],
-) {
+) -> ComfyTableResult<()> {
     let visible_columns = count_visible_columns(&table.columns);
 
     // Step 1
     // Find out how much space there is left.
     let remaining_width: usize =
-        available_content_width(table, infos, visible_columns, table_width);
+        available_content_width(table, infos, visible_columns, table_width)?;
 
     #[cfg(feature = "debug")]
     println!(
@@ -109,7 +110,7 @@ pub fn arrange(
             #[cfg(feature = "debug")]
             println!("dynamic::arrange: After full width: {infos:#?}");
         }
-        return;
+        return Ok(());
     }
 
     // Step 7. Equally distribute the remaining_width to all remaining columns
@@ -122,6 +123,8 @@ pub fn arrange(
 
     #[cfg(feature = "debug")]
     println!("dynamic::arrange: After distribute: {infos:#?}");
+
+    Ok(())
 }
 
 /// Step 1
@@ -141,7 +144,7 @@ fn available_content_width(
     infos: &DisplayInfos,
     visible_columns: usize,
     mut width: usize,
-) -> usize {
+) -> ComfyTableResult<usize> {
     let border_count = count_border_columns(table, visible_columns);
     width = width.saturating_sub(border_count);
 
@@ -160,10 +163,10 @@ fn available_content_width(
         if info.is_hidden {
             continue;
         }
-        width = width.saturating_sub(info.width().into());
+        width = width.saturating_sub(info.width()?.into());
     }
 
-    width
+    Ok(width)
 }
 
 /// Step 2-4

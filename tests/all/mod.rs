@@ -21,7 +21,8 @@ mod styling_test;
 mod utf_8_characters;
 
 pub fn assert_table_line_width(table: &Table, count: usize) {
-    for line in table.lines() {
+    // this function is only used in tests
+    for line in table.lines().unwrap() {
         assert_eq!(line.width(), count);
     }
 }

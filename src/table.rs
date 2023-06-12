@@ -15,6 +15,7 @@ use crate::row::Row;
 use crate::style::presets::ASCII_FULL;
 use crate::style::{ColumnConstraint, ContentArrangement, TableComponent};
 use crate::utils::build_table;
+use crate::utils::formatting::content_format::ComfyTableResult;
 
 /// This is the main interface for building a table.
 /// Each table consists of [Rows](Row), which in turn contain [Cells](crate::cell::Cell).
@@ -44,7 +45,16 @@ pub struct Table {
 
 impl fmt::Display for Table {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.lines().collect::<Vec<_>>().join("\n"))
+        match self.lines() {
+            Err(e) => {
+                write!(f, "{:?}", e)
+            }
+            Ok(tbl) => {
+                write!(f, "{}", tbl.fold("".to_string(), |a, b| format!("{a}\n{b}")))
+            }
+        }
+
+        
     }
 }
 
@@ -82,16 +92,17 @@ impl Table {
 
     /// This is an alternative `fmt` function, which simply removes any trailing whitespaces.
     /// Trailing whitespaces often occur, when using tables without a right border.
-    pub fn trim_fmt(&self) -> String {
-        self.lines()
+    pub fn trim_fmt(&self) -> ComfyTableResult<String> {
+        let s = self.lines()?
             .map(|line| line.trim_end().to_string())
             .collect::<Vec<_>>()
-            .join("\n")
+            .join("\n");
+        Ok(s)
     }
 
     /// This is an alternative to `fmt`, but rather returns an iterator to each line, rather than
     /// one String separated by newlines.
-    pub fn lines(&self) -> impl Iterator<Item = String> {
+    pub fn lines(&self) -> ComfyTableResult<impl Iterator<Item = String>> {
         build_table(self)
     }
 

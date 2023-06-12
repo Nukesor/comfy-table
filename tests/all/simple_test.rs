@@ -99,5 +99,5 @@ fn lines() {
         "+-----------+-----------+-----------+",
     ];
 
-    assert_eq!(actual.collect::<Vec<String>>(), expected);
+    assert_eq!(actual.unwrap().collect::<Vec<String>>(), expected);
 }
