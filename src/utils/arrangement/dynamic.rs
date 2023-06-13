@@ -10,13 +10,13 @@ use crate::{Column, Table};
 /// Try to find the best fit for a given content and table_width
 ///
 /// 1. Determine the amount of available space after applying fixed columns, padding, and borders.
-/// 2. Check if there are any columns that require less space than the average
-///    remaining space for the remaining columns. (This includes the MaxWidth constraint).
-/// 3. Take those columns, fix their size and add the surplus in space to the remaining space.
-/// 4. Repeat step 2-3 until no columns with smaller size than average remaining space are left.
-/// 5. Now that we know how much space we have to work with, we have to check again for
+/// 2. Now that we know how much space we have to work with, we have to check again for
 ///    LowerBoundary constraints. If there are any columns that have a higher LowerBoundary,
 ///    we have to fix that column to this size.
+/// 3. Check if there are any columns that require less space than the average
+///    remaining space for the remaining columns. (This includes the MaxWidth constraint).
+/// 4. Take those columns, fix their size and add the surplus in space to the remaining space.
+/// 5. Repeat step 2-3 until no columns with smaller size than average remaining space are left.
 /// 6. At this point, the remaining spaces is equally distributed between all columns.
 ///    It get's a little tricky now. Check the documentation of [optimize_space_after_split]
 ///    for more information.
@@ -36,26 +36,18 @@ pub fn arrange(
 
     // Step 1
     // Find out how much space there is left.
-    let remaining_width: usize =
+    let mut remaining_width: usize =
         available_content_width(table, infos, visible_columns, table_width);
+    let mut remaining_columns = count_remaining_columns(visible_columns, infos);
 
     #[cfg(feature = "debug")]
     println!(
         "dynamic::arrange: Table width: {table_width}, Start remaining width {remaining_width}"
     );
+    #[cfg(feature = "debug")]
+    println!("dynamic::arrange: Max content widths: {max_content_widths:#?}");
 
-    // Step 2-4.
-    // Find all columns that require less space than the average.
-    // Returns the remaining available width and the amount of remaining columns that need handling
-    let (mut remaining_width, mut remaining_columns) = find_columns_that_fit_into_average(
-        table,
-        infos,
-        remaining_width,
-        visible_columns,
-        max_content_widths,
-    );
-
-    // Step 5.
+    // Step 2.
     //
     // Iterate through all undecided columns and enforce LowerBoundary constraints, if they're
     // bigger than the current average space.
@@ -68,6 +60,18 @@ pub fn arrange(
             visible_columns,
         );
     }
+
+    // Step 3-5.
+    // Find all columns that require less space than the average.
+    // Returns the remaining available width and the amount of remaining columns that need handling
+    let (mut remaining_width, mut remaining_columns) = find_columns_that_fit_into_average(
+        table,
+        infos,
+        remaining_width,
+        remaining_columns,
+        visible_columns,
+        max_content_widths,
+    );
 
     #[cfg(feature = "debug")]
     {
@@ -193,11 +197,11 @@ fn find_columns_that_fit_into_average(
     table: &Table,
     infos: &mut DisplayInfos,
     mut remaining_width: usize,
+    mut remaining_columns: usize,
     visible_columns: usize,
     max_content_widths: &[u16],
 ) -> (usize, usize) {
     let mut found_smaller = true;
-    let mut remaining_columns = count_remaining_columns(visible_columns, infos);
     while found_smaller {
         found_smaller = false;
 
