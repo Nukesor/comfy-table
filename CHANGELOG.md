@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Fix a panic when working with extreme paddings, where `(padding.left + padding.right) > u16::MAX`.
 - Fix a panic when working with extremely long content, where `(content_width + padding) > u16::MAX`.
+- Properly enforce lower boundery constraints.
+  Previously, "normal" columns were allocated before lower boundaries were respected.
+  This could lead to scenarios, where the table would grow beyond the specified size, when there was a lower boundary.
+- Fix calculation of column widths for empty columns.
+  The minimum content width for a column is `1` char, but the `column_max_content_widths` function on the table returned a `0` width for fully empty columns.
+  This resulted in tables becoming larger than specified if there were any empty columns.
+
+## Misc
+
+- Extend property tests, which lead to the discovery some bugs.
 
 ## [7.0.0] - 2023-06-06
 
