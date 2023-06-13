@@ -41,7 +41,9 @@ impl ColumnDisplayInfo {
     }
 
     pub fn width(&self) -> u16 {
-        self.content_width + self.padding.0 + self.padding.1
+        self.content_width
+            .saturating_add(self.padding.0)
+            .saturating_add(self.padding.1)
     }
 }
 
