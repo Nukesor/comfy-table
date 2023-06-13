@@ -32,7 +32,7 @@ fn multi_character_utf8_symbols() {
 |                      | add some             |                        |
 |                      | multi line stuff     |                        |
 +----------------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -55,5 +55,5 @@ fn multi_character_utf8_word_splitting() {
 | f    |
 +------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

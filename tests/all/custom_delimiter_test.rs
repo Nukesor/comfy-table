@@ -57,5 +57,5 @@ fn full_custom_delimiters() {
 |                   | g else.          |
 +-------------------+------------------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

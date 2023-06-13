@@ -32,7 +32,7 @@ fn add_predicate_single_true() {
 |                      | add some             |                        |
 |                      | multi line stuff     |                        |
 +----------------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -61,7 +61,7 @@ fn add_predicate_single_false() {
 +================================================================+
 | This is a text | This is another text | This is the third text |
 +----------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -98,7 +98,7 @@ fn add_predicate_single_mixed() {
 |                      | add some             |                        |
 |                      | multi line stuff     |                        |
 +----------------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -127,7 +127,7 @@ fn add_predicate_single_wrong_row_count() {
 +================================================================+
 | This is a text | This is another text | This is the third text |
 +----------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -161,7 +161,7 @@ fn add_predicate_multi_true() {
 |                      | add some             |                        |
 |                      | multi line stuff     |                        |
 +----------------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -190,7 +190,7 @@ fn add_predicate_multi_false() {
 +================================================================+
 | This is a text | This is another text | This is the third text |
 +----------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -232,7 +232,7 @@ fn add_predicate_multi_mixed() {
 |                      | add some             |                        |
 |                      | multi line stuff     |                        |
 +----------------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -261,5 +261,5 @@ fn add_predicate_multi_wrong_rows_count() {
 +================================================================+
 | This is a text | This is another text | This is the third text |
 +----------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

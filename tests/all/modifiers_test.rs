@@ -30,5 +30,5 @@ fn utf8_round_corners() {
 ╰─────────┴─────────┴───────────╯";
 
     println!("{table}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

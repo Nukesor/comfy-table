@@ -53,7 +53,7 @@ fn fixed_max_min_constraints() {
 |          | stuff  |          |
 +----------+--------+----------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 
     // Now try this again when using dynamic content arrangement
     // The table tries to arrange to 28 characters,
@@ -98,7 +98,7 @@ fn fixed_max_min_constraints() {
 |          | f  |          |
 +----------+----+----------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -121,7 +121,7 @@ fn unnecessary_max_min_constraints() {
 |      | multi line stuff     |                        |
 +------+----------------------+------------------------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 
     // Now test for dynamic content arrangement
     table.set_content_arrangement(ContentArrangement::Dynamic);
@@ -137,7 +137,7 @@ fn unnecessary_max_min_constraints() {
 |      | multi line stuff     |                        |
 +------+----------------------+------------------------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -175,7 +175,7 @@ fn constraints_bigger_than_table_width() {
 | l |                              |                        |
 +---+------------------------------+------------------------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -205,7 +205,7 @@ fn percentage() {
 |       | stuff         |              |
 +-------+---------------+--------------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -228,7 +228,7 @@ fn max_100_percentage() {
 +--------------------------------------+";
     println!("{expected}");
     assert_table_line_width(&table, 40);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -261,7 +261,7 @@ fn percentage_second() {
 |              | stuff    |          |
 +--------------+----------+----------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -294,7 +294,7 @@ fn max_percentage() {
 |      | stuff    |          |
 +------+----------+----------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -333,7 +333,7 @@ fn min_max_boundary() {
 |                  | stuff         |          |
 +------------------+---------------+----------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[rstest::rstest]
@@ -353,5 +353,5 @@ fn empty_table(#[case] arrangement: ContentArrangement) {
 |   |
 +---+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

@@ -70,7 +70,7 @@ fn hidden_columns() {
 │      ┆ add some             ┆                        │
 │      ┆ multi line stuff     ┆                        │
 └──────┴──────────────────────┴────────────────────────┘";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// Make sure dynamic adjustment still works with hidden columns
@@ -99,7 +99,7 @@ fn hidden_columns_with_dynamic_adjustment() {
 │      ┆ line   ┆       │
 │      ┆ stuff  ┆       │
 └──────┴────────┴───────┘";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// Nothing breaks, if all columns are hidden
@@ -121,5 +121,5 @@ fn only_hidden_columns() {
 ╞╡
 ├┤
 └┘";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

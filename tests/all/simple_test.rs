@@ -29,7 +29,7 @@ fn simple_table() {
 |                      | add some             |                        |
 |                      | multi line stuff     |                        |
 +----------------------+----------------------+------------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -52,7 +52,7 @@ fn missing_column_table() {
 |-----------+---------+-----------|
 | Three One |         |           |
 +-----------+---------+-----------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -75,7 +75,7 @@ fn single_column_table() {
 |-----------|
 | Three One |
 +-----------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]

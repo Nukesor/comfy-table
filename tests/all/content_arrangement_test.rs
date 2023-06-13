@@ -65,7 +65,7 @@ fn simple_dynamic_table() {
 +--------+-------+------+";
     println!("{expected}");
     assert_table_line_width(&table, 25);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// Individual rows can be configured to have a max height.
@@ -121,7 +121,7 @@ fn table_with_truncate() {
 +----------------+--------+-------+";
     println!("{expected}");
     assert_table_line_width(&table, 35);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
@@ -152,7 +152,7 @@ fn distribute_space_after_split() {
     println!("{expected}");
 
     assert_table_line_width(&table, 80);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// A single column get's split and a lot of the available isn't used afterward.
@@ -176,7 +176,7 @@ fn unused_space_after_split() {
 +---------------------+";
     println!("{expected}");
     assert_table_line_width(&table, 23);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// The full width of a table should be used, even if the space isn't used.
@@ -199,7 +199,7 @@ fn dynamic_full_width_after_split() {
 +------------------------------------------------+";
     println!("{expected}");
     assert_table_line_width(&table, 50);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
@@ -223,7 +223,7 @@ fn dynamic_full_width() {
 +-----------------------------------+----------------------+-------------------+";
     println!("{expected}");
     assert_table_line_width(&table, 80);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// Test that a table is displayed in its full width, if the `table.width` is set to the exact
@@ -263,7 +263,7 @@ fn dynamic_exact_width() {
 └─────┴─────┴───────────┘";
         println!("{expected}");
         assert_table_line_width(table, 25);
-        assert_eq!("\n".to_string() + &table.to_string(), expected);
+        assert_eq!(expected, "\n".to_string() + &table.to_string());
     }
 }
 
@@ -302,7 +302,7 @@ fn dynamic_slightly_smaller() {
 └─────┴─────┴──────────┘";
     println!("{expected}");
     assert_table_line_width(table, 24);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 /// This failed on a python integration test case in the polars project.
@@ -348,5 +348,5 @@ fn polar_python_test_tbl_width_chars() {
 └───────────────────┴─────────────────────────────────────┴────────────┘";
     println!("{expected}");
     assert_table_line_width(table, 72);
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
