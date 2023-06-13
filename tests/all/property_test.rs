@@ -78,7 +78,7 @@ fn columns_and_rows() -> impl Strategy<
                 cell_alignments.push(cell_alignment());
             }
             // Add a strategy that creates random cell content with a length of 0 to column_count
-            // TODO: Move this back to ".*" once we properly handle multi-space UTF-8 chars.
+            //
             // UTF-8 characters completely break table alignment in edge-case situations (e.g. 1 space columns).
             // UTF-8 characters can be multiple characters wide, which conflicts with the 1 space
             // column fallback, as well as fixed-width-, percental- and max-column-constraints.

@@ -95,8 +95,6 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             // Only add delimiter, if we're not on a fresh line
             if !new_line {
                 current_line.push(delimiter);
-                // TODO: This has been commented by accident.
-                //remaining_width = remaining_width.saturating_sub(1);
             }
 
             let (mut next, mut remaining) = split_long_word(remaining_width, &next);
