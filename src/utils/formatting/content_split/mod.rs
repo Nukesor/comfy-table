@@ -95,22 +95,21 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             // Only add delimiter, if we're not on a fresh line
             if !new_line {
                 current_line.push(delimiter);
+                // TODO: This has been commented by accident.
                 //remaining_width = remaining_width.saturating_sub(1);
             }
 
             let (mut next, mut remaining) = split_long_word(remaining_width, &next);
 
-            // TODO: This is a pretty hefty hack, but it's needed for now.
+            // This is a ugly hack, but it's needed for now.
             //
-            // Scenario: We try to split a word that doesn't fit into the current line.
-            // It's supposed to be a new line, with a width of 1. However, the next char in line
-            // is a multi-character UTF-8 symbol.
+            // Scenario: The current column has to have a width of 1 and we work with a new line.
+            // However, the next char is a multi-character UTF-8 symbol.
             //
-            // Since a, for instance, two-character wide symbol doesn't fit into a 1-character
-            // column, this code would loop endlessly. (There's no legitimate way to split that
-            // word.)
+            // Since a multi-character wide symbol doesn't fit into a 1-character column,
+            // this code would loop endlessly. (There's no legitimate way to split that character.)
             // Hence, we have to live with the fact, that this line will look broken, as we put a
-            // two-character wide symbol into it.
+            // two-character wide symbol into it, despite the line being formatted for 1 character.
             if new_line && next.is_empty() {
                 let mut chars = remaining.chars();
                 next.push(chars.next().unwrap());
