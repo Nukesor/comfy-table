@@ -8,6 +8,7 @@ mod combined_test;
 mod constraints_test;
 mod content_arrangement_test;
 mod custom_delimiter_test;
+mod edge_cases;
 mod hidden_test;
 #[cfg(feature = "custom_styling")]
 mod inner_style_test;
