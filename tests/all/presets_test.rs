@@ -27,7 +27,7 @@ fn test_ascii_full() {
 | c     | d     |
 +-------+-------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -43,7 +43,7 @@ fn test_ascii_full_condensed() {
 | c     | d     |
 +-------+-------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
 
 #[test]
@@ -58,7 +58,7 @@ fn test_ascii_no_borders() {
 -------+-------
  c     | d";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
 
 #[test]
@@ -75,7 +75,7 @@ fn test_ascii_borders_only() {
 | c       d     |
 +---------------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -91,7 +91,7 @@ fn test_ascii_borders_only_condensed() {
 | c       d     |
 +---------------+";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -108,7 +108,7 @@ fn test_ascii_horizontal_only() {
  c       d
 ---------------";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
 
 #[test]
@@ -122,7 +122,7 @@ fn test_ascii_markdown() {
 | a     | b     |
 | c     | d     |";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
 
 #[test]
@@ -139,7 +139,7 @@ fn test_utf8_full() {
 │ c     ┆ d     │
 └───────┴───────┘";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
 
 #[test]
@@ -155,7 +155,7 @@ fn test_utf8_full_condensed() {
 │ c     ┆ d     │
 └───────┴───────┘";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
 
 #[test]
@@ -170,7 +170,7 @@ fn test_utf8_no_borders() {
 ╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌
  c     ┆ d";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
 
 #[test]
@@ -187,7 +187,7 @@ fn test_utf8_horizontal_only() {
  c       d
 ───────────────";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
 
 #[test]
@@ -200,5 +200,5 @@ fn test_nothing() {
  a      b
  c      d";
     println!("{expected}");
-    assert_eq!("\n".to_string() + &table.trim_fmt(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }

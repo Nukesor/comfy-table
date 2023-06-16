@@ -44,5 +44,5 @@ fn cell_alignment() {
 |---------------------+---------------------+---------------------|
 | Left                |        Center       |               Right |
 +---------------------+---------------------+---------------------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

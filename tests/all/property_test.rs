@@ -78,7 +78,7 @@ fn columns_and_rows() -> impl Strategy<
                 cell_alignments.push(cell_alignment());
             }
             // Add a strategy that creates random cell content with a length of 0 to column_count
-            // TODO: Move this back to ".*" once we properly handle multi-space UTF-8 chars.
+            //
             // UTF-8 characters completely break table alignment in edge-case situations (e.g. 1 space columns).
             // UTF-8 characters can be multiple characters wide, which conflicts with the 1 space
             // column fallback, as well as fixed-width-, percental- and max-column-constraints.
@@ -158,11 +158,12 @@ prop_compose! {
 proptest! {
     #![proptest_config({
         let mut config = ProptestConfig::with_cases(512);
-        config.max_shrink_iters = 2000;
+        config.max_shrink_iters = 5000;
         config
     })]
     #[test]
     fn random_tables(mut table in table(), table_width in table_width()) {
+        println!("\n\n\n------ START TEST ------\n\n\n");
         table.set_width(table_width);
 
         // Make sure the table builds without any panics
@@ -177,37 +178,42 @@ proptest! {
         // Get the length of the very first line.
         // We're lateron going to ensure, that all lines have the same length.
         let line_length = if let Some(line) = line_iter.next() {
-            line.len()
+            line.trim().len()
         } else {
             0
         };
 
+        // Make sure all lines have the same length
         for line in line_iter {
-            // Make sure all lines have the same length
             if line.len() != line_length {
                 return build_error(&formatted, "Each line of a printed table has to have the same length!");
             }
         }
 
-        // TODO: This is a bit tricky.
-        //       A table can be larger than the specified width, if the user forces it to be
-        //       larger.
         // Make sure that the table is within its width, if arrangement isn't enabled.
-        //match content_arrangement{
-        //    ContentArrangement::Disabled => (),
-        //    _ => {
-        //        let expected_max = table.width().unwrap();
-        //        let actual = line_length;
-        //        if actual > expected_max.into() {
-        //            return build_error(
-        //                &formatted,
-        //                &format!("Expected table to be smaller than line length!\n\
-        //                Actual: {actual}, Expected max: {expected_max}\n\
-        //                Arrangement: {content_arrangement:?}"
-        //            ));
-        //        }
-        //    }
-        //}
+        // This is a bit tricky.
+        // A table can be larger than the specified width, if the user forces it to be larger.
+        #[cfg(feature = "integration_test")]
+        {
+            let current_arrangement = table.content_arrangement();
+            match current_arrangement {
+                ContentArrangement::Disabled => (),
+                _ => {
+                    let expected_max = determine_max_table_width(&table);
+
+                    // A line can be a bit longer than u16::MAX due to formatting and borders.
+                    let actual: u16 = line_length.try_into().unwrap_or(u16::MAX);
+                    if actual > expected_max.into() {
+                        return build_error(
+                            &formatted,
+                            &format!("Expected table to be smaller than line length!\n\
+                            Actual: {actual}, Expected max: {expected_max}\n\
+                            Arrangement: {current_arrangement:?}"
+                        ));
+                    }
+                }
+            }
+        }
 
         #[cfg(feature = "integration_test")]
         // Only run this test, if the `integration_test` is enabled.
@@ -221,6 +227,70 @@ fn build_error(table: &str, context: &str) -> Result<(), TestCaseError> {
     Err(TestCaseError::Fail(
         format!("\n{context}:\n{table}\n").into(),
     ))
+}
+
+/// The user can actually force a table to be longer than the specified `table.width()`
+/// by specifying [ColumnConstraint]s.
+#[cfg(feature = "integration_test")]
+fn determine_max_table_width(table: &Table) -> u16 {
+    use comfy_table::utils::arrangement::helper::count_border_columns;
+    let table_width = table.width().unwrap();
+
+    // The max value that will be enforced by constraints.
+    // We start with `2` for the side borders.
+    let visible_columns = table
+        .column_iter()
+        .filter(|column| !column.is_hidden())
+        .count();
+
+    // Initialize the value for the min width enforced by constraints.
+    // Borders may exist, but they are not included in constraints, which is why we have to
+    // explicitly add them.
+    let mut constraint_min_width: u16 = count_border_columns(table, visible_columns)
+        .try_into()
+        .unwrap_or(u16::MAX);
+
+    // Get the max content widths for each column.
+    // This is necessary for the `ContentWidth` constraint.
+    let max_content_widths = table.column_max_content_widths();
+
+    // Calculate the enforced widths by any constraints.
+    for (index, column) in table.column_iter().enumerate() {
+        if let Some(constraint) = column.constraint() {
+            match constraint {
+                ColumnConstraint::ContentWidth => {
+                    constraint_min_width = constraint_min_width
+                        .saturating_add(max_content_widths[index])
+                        .saturating_add(column.padding_width());
+                }
+                ColumnConstraint::Absolute(width) => {
+                    constraint_min_width = constraint_min_width
+                        .saturating_add(absolute_width(table, width))
+                        .saturating_add(column.padding_width());
+                }
+                ColumnConstraint::LowerBoundary(width)
+                | ColumnConstraint::Boundaries { lower: width, .. } => {
+                    constraint_min_width = constraint_min_width
+                        .saturating_add(absolute_width(table, width))
+                        .saturating_add(column.padding_width());
+                }
+                ColumnConstraint::Hidden => {}
+                _ => {
+                    // Add the padding and the min-width of `1` for this column
+                    constraint_min_width = constraint_min_width
+                        .saturating_add(column.padding_width())
+                        .saturating_add(1);
+                }
+            }
+        } else {
+            // Add the padding + 1 space for all columns without constraints.
+            constraint_min_width = constraint_min_width
+                .saturating_add(column.padding_width())
+                .saturating_add(1);
+        }
+    }
+
+    std::cmp::max(table_width, constraint_min_width)
 }
 
 /// Enforce that Column constraints are enforced as expected in `Dynamic` mode.
@@ -377,15 +447,15 @@ fn enforce_constraints(
 /// Resolve an absolute value from a given boundary
 #[cfg(feature = "integration_test")]
 pub fn absolute_width(table: &Table, width: &Width) -> u16 {
+    use comfy_table::utils::arrangement::constraint::absolute_value_from_width;
+
     let visible_columns = table
         .column_iter()
         .filter(|column| !column.is_hidden())
         .count();
 
-    comfy_table::utils::arrangement::constraint::absolute_value_from_width(
-        table,
-        width,
-        visible_columns,
-    )
-    .expect("Expected table to have a width")
+    let computed_width = absolute_value_from_width(table, width, visible_columns)
+        .expect("Expected table to have a width");
+
+    std::cmp::max(1, computed_width)
 }

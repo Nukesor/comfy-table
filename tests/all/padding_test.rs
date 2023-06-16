@@ -33,5 +33,5 @@ fn custom_padding() {
 |-------------------+-----------+-----------|
 |     Three One     | Three Two |Three Three|
 +-------------------+-----------+-----------+";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

@@ -47,7 +47,7 @@ fn styled_table() {
 │                     ┆\u{1b}[38;5;14m\u{1b}[4m add some             \u{1b}[0m┆                               │
 │                     ┆\u{1b}[38;5;14m\u{1b}[4m multi line stuff     \u{1b}[0m┆                               │
 └─────────────────────┴──────────────────────┴───────────────────────────────┘";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -66,7 +66,7 @@ fn no_style_styled_table() {
 │                     ┆ add some             ┆                               │
 │                     ┆ multi line stuff     ┆                               │
 └─────────────────────┴──────────────────────┴───────────────────────────────┘";
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
 #[test]
@@ -85,5 +85,5 @@ fn styled_text_only_table() {
 │                     ┆ \u{1b}[38;5;14m\u{1b}[4mmulti line stuff\u{1b}[0m     ┆                               │
 └─────────────────────┴──────────────────────┴───────────────────────────────┘";
 
-    assert_eq!("\n".to_string() + &table.to_string(), expected);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

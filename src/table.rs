@@ -682,7 +682,9 @@ impl Table {
             // Get the max width for each cell of the row
             let row_max_widths = row.max_content_widths();
             for (index, width) in row_max_widths.iter().enumerate() {
-                let width = (*width).try_into().unwrap_or(u16::MAX);
+                let mut width = (*width).try_into().unwrap_or(u16::MAX);
+                // A column's content is at least 1 char wide.
+                width = std::cmp::max(1, width);
 
                 // Set a new max, if the current cell is the longest for that column.
                 let current_max = max_widths[index];
