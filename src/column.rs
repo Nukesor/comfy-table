@@ -62,9 +62,9 @@ impl Column {
         self
     }
 
-    /// Internal convenience helper that returns the total width of the combined padding.
-    pub(crate) fn padding_width(&self) -> u16 {
-        self.padding.0 + self.padding.1
+    /// Convenience helper that returns the total width of the combined padding.
+    pub fn padding_width(&self) -> u16 {
+        self.padding.0.saturating_add(self.padding.1)
     }
 
     /// Set the delimiter used to split text for this column's cells.
