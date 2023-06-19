@@ -67,8 +67,8 @@ integration_test = []
 
 [dependencies]
 crossterm = { version = "0.26", optional = true, default-features = false }
-strum = "0.24"
-strum_macros = "0.24"
+strum = "0.25"
+strum_macros = "0.25"
 unicode-width = "0.1"
 console = { version = "0.15", optional = true }
 
