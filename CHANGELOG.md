@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Add helper methods `(col,row)_count` and `is_empty`. The first set of methods return the number of columns and rows
-  respectively. The method `is_empty` returns if the table is empty (contains no data rows).
+  respectively. The method `is_empty` returns if the table is empty (contains no data rows). Implemented by
+  [Techassi](https://github.com/Techassi) in [#106](https://github.com/Nukesor/comfy-table/pull/119).
 
 ## [7.0.1] - 2023-06-16
 
