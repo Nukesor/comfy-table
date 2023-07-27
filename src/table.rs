@@ -128,7 +128,8 @@ impl Table {
     ///
     /// assert_eq!(table.col_count(), 3);
     /// ```
-    pub fn col_count(&self) -> usize {
+    pub fn column_count(&mut self) -> usize {
+        self.discover_columns();
         self.columns.len()
     }
 
