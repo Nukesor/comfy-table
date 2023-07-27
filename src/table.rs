@@ -118,6 +118,13 @@ impl Table {
         self.header.as_ref()
     }
 
+    /// Remove the header.
+    pub fn remove_header(&mut self) -> &mut Self {
+        self.header = None;
+
+        self
+    }
+
     /// Add a new row to the table.
     ///
     /// ```
