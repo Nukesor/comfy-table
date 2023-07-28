@@ -126,7 +126,7 @@ impl Table {
     /// let mut table = Table::new();
     /// table.set_header(vec!["Col 1", "Col 2", "Col 3"]);
     ///
-    /// assert_eq!(table.col_count(), 3);
+    /// assert_eq!(table.column_count(), 3);
     /// ```
     pub fn column_count(&mut self) -> usize {
         self.discover_columns();
