@@ -4,7 +4,7 @@ use crate::{Attribute, Color};
 use crate::style::CellAlignment;
 
 /// A stylable table cell with content.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Cell {
     /// The content is a list of strings.\
     /// This is done to make working with newlines more easily.\
