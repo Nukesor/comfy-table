@@ -13,7 +13,7 @@
 /// |                right |
 /// +----------------------+
 /// ```
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum CellAlignment {
     Left,
     Right,
