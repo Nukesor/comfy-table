@@ -118,6 +118,21 @@ impl Table {
         self.header.as_ref()
     }
 
+    /// Returns the number of currently present columns.
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    ///
+    /// let mut table = Table::new();
+    /// table.set_header(vec!["Col 1", "Col 2", "Col 3"]);
+    ///
+    /// assert_eq!(table.column_count(), 3);
+    /// ```
+    pub fn column_count(&mut self) -> usize {
+        self.discover_columns();
+        self.columns.len()
+    }
+
     /// Add a new row to the table.
     ///
     /// ```
@@ -207,6 +222,35 @@ impl Table {
         }
 
         self
+    }
+
+    /// Returns the number of currently present rows.
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    ///
+    /// let mut table = Table::new();
+    /// table.add_row(vec!["One", "Two"]);
+    ///
+    /// assert_eq!(table.row_count(), 1);
+    /// ```
+    pub fn row_count(&self) -> usize {
+        self.rows.len()
+    }
+
+    /// Returns if the table is empty (contains no data rows).
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    ///
+    /// let mut table = Table::new();
+    /// assert!(table.is_empty());
+    ///
+    /// table.add_row(vec!["One", "Two"]);
+    /// assert!(!table.is_empty());
+    /// ```
+    pub fn is_empty(&self) -> bool {
+        self.rows.is_empty()
     }
 
     /// Enforce a max width that should be used in combination with [dynamic content arrangement](ContentArrangement::Dynamic).\
