@@ -129,7 +129,7 @@ mod tests {
 
     #[test]
     fn test_some_functions() {
-        let cells = vec!["one", "two", "three"];
+        let cells = ["one", "two", "three"];
         let mut row = Row::new();
         for cell in cells.iter() {
             row.add_cell(Cell::new(cell));

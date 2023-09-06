@@ -21,7 +21,7 @@ fn cell_alignment() {
         ])
         .add_row(vec!["Left", "Center", "Right"]);
 
-    let alignment = vec![
+    let alignment = [
         CellAlignment::Left,
         CellAlignment::Center,
         CellAlignment::Right,
