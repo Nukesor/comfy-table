@@ -101,3 +101,24 @@ fn lines() {
 
     assert_eq!(actual.collect::<Vec<String>>(), expected);
 }
+
+#[test]
+fn add_column() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .add_row(&vec!["One One", "One Two", "One Three"])
+        .add_column("Header4")
+        .add_row(&vec!["Two One", "Two Two", "Two Three", "Two Four"]);
+
+    println!("{table}");
+    let expected = "
++---------+---------+-----------+----------+
+| Header1 | Header2 | Header3   | Header4  |
++==========================================+
+| One One | One Two | One Three |          |
+|---------+---------+-----------+----------|
+| Two One | Two Two | Two Three | Two Four |
++---------+---------+-----------+----------+";
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}

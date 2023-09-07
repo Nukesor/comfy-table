@@ -133,6 +133,109 @@ impl Table {
         self.columns.len()
     }
 
+    /// Adds a column with `column_name` to the header. If the header is already
+    /// present, the new column gets appended to the end. Otherwise, a header
+    /// with one column will be created.
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    ///
+    /// let mut table = Table::new();
+    /// table.set_header(vec!["Col 1", "Col 2", "Col 3"]);
+    /// table.add_column("Col 4");
+    ///
+    /// assert_eq!(table.column_count(), 4);
+    /// ```
+    pub fn add_column<T>(&mut self, column_name: T) -> &mut Self
+    where
+        T: ToString,
+    {
+        match &mut self.header {
+            Some(header) => {
+                header.add_cell(column_name.into());
+                self.discover_header_columns()
+            }
+            None => {
+                self.set_header(vec![column_name]);
+            }
+        };
+
+        self
+    }
+
+    /// Adds a new column with `column_name` to the header if the `predicate`
+    /// evaluates to `true`. If the header is already present, the new column
+    /// gets appended to the end. Otherwise, a header with one column will be
+    /// created.
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    ///
+    /// let mut table = Table::new();
+    /// table.set_header(vec!["Col 1", "Col 2", "Col 3"]);
+    /// table.add_column_if(|index, column| true, "Col 4");
+    ///
+    /// assert_eq!(table.column_count(), 4);
+    /// ```
+    pub fn add_column_if<P, T>(&mut self, predicate: P, column_name: T) -> &mut Self
+    where
+        P: Fn(usize, &T) -> bool,
+        T: ToString,
+    {
+        if predicate(self.column_count(), &column_name) {
+            return self.add_column(column_name);
+        }
+
+        self
+    }
+
+    /// Adds new columns to the header.
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    ///
+    /// let mut table = Table::new();
+    /// table.set_header(vec!["Col 1", "Col 2", "Col 3"]);
+    /// table.add_columns(vec!["Col 4", "Col 5"]);
+    ///
+    /// assert_eq!(table.column_count(), 5);
+    /// ```
+    pub fn add_columns<I>(&mut self, column_names: I) -> &mut Self
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        for column_name in column_names.into_iter() {
+            self.add_column(column_name);
+        }
+
+        self
+    }
+
+    /// Adds new columns to the header if `predicate` evaluates to `true`.
+    ///
+    /// ```
+    /// use comfy_table::Table;
+    ///
+    /// let mut table = Table::new();
+    /// table.set_header(vec!["Col 1", "Col 2", "Col 3"]);
+    /// table.add_columns_if(|index, columns| true, vec!["Col 4", "Col 5"]);
+    ///
+    /// assert_eq!(table.column_count(), 5);
+    /// ```
+    pub fn add_columns_if<P, I>(&mut self, predicate: P, column_names: I) -> &mut Self
+    where
+        P: Fn(usize, &I) -> bool,
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        if predicate(self.column_count(), &column_names) {
+            return self.add_columns(column_names);
+        }
+
+        self
+    }
+
     /// Add a new row to the table.
     ///
     /// ```
@@ -165,7 +268,7 @@ impl Table {
         P: Fn(usize, &T) -> bool,
         T: Into<Row>,
     {
-        if predicate(self.rows.len(), &row) {
+        if predicate(self.row_count(), &row) {
             return self.add_row(row);
         }
 
@@ -217,7 +320,7 @@ impl Table {
         I: IntoIterator,
         I::Item: Into<Row>,
     {
-        if predicate(self.rows.len(), &rows) {
+        if predicate(self.row_count(), &rows) {
             return self.add_rows(rows);
         }
 
@@ -787,6 +890,21 @@ impl Table {
                     self.columns.push(Column::new(index));
                 }
             }
+        }
+    }
+
+    /// Calling this might be necessary if you add new cells to the table
+    /// header.
+    fn discover_header_columns(&mut self) {
+        match &self.header {
+            Some(header) => {
+                if header.cell_count() > self.columns.len() {
+                    for index in self.columns.len()..header.cell_count() {
+                        self.columns.push(Column::new(index));
+                    }
+                }
+            }
+            None => (),
         }
     }
 }
