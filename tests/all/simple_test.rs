@@ -122,3 +122,63 @@ fn add_column() {
 +---------+---------+-----------+----------+";
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
+
+#[test]
+fn add_column_if() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .add_row(&vec!["One One", "One Two", "One Three"])
+        .add_column_if(|_, _| false, "Header4");
+
+    println!("{table}");
+    let expected = "
++---------+---------+-----------+
+| Header1 | Header2 | Header3   |
++===============================+
+| One One | One Two | One Three |
++---------+---------+-----------+";
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+#[test]
+fn add_columns() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .add_row(&vec!["One One", "One Two", "One Three"])
+        .add_columns(vec!["Header4", "Header5"])
+        .add_row(&vec!["Two One", "Two Two", "Two Three", "Two Four"]);
+
+    println!("{table}");
+    let expected = "
++---------+---------+-----------+----------+---------+
+| Header1 | Header2 | Header3   | Header4  | Header5 |
++====================================================+
+| One One | One Two | One Three |          |         |
+|---------+---------+-----------+----------+---------|
+| Two One | Two Two | Two Three | Two Four |         |
++---------+---------+-----------+----------+---------+";
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+#[test]
+fn add_columns_if() {
+    let mut table = Table::new();
+    table
+        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .add_row(&vec!["One One", "One Two", "One Three"])
+        .add_columns_if(|index, _| index == 3, vec!["Header4", "Header5"])
+        .add_row(&vec!["Two One", "Two Two", "Two Three", "Two Four"]);
+
+    println!("{table}");
+    let expected = "
++---------+---------+-----------+----------+---------+
+| Header1 | Header2 | Header3   | Header4  | Header5 |
++====================================================+
+| One One | One Two | One Three |          |         |
+|---------+---------+-----------+----------+---------|
+| Two One | Two Two | Two Three | Two Four |         |
++---------+---------+-----------+----------+---------+";
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
