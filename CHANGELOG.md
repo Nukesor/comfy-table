@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Add helper methods `(col,row)_count` and `is_empty`. The first set of methods return the number of columns and rows
   respectively. The method `is_empty` returns if the table is empty (contains no data rows). Implemented by
   [Techassi](https://github.com/Techassi) in [#119](https://github.com/Nukesor/comfy-table/pull/119).
+- Add four new methods for dynamically adding new columns to the header: `add_column`, `add_column_if`, `add_columns`,
+  and `add_columns_if`. Implemented by [Techassi](https://github.com/Techassi) in [#CHANGEME]().
 
 ## [7.0.1] - 2023-06-16
 
@@ -18,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Fix a panic when working with extreme paddings, where `(padding.left + padding.right) > u16::MAX`.
 - Fix a panic when working with extremely long content, where `(content_width + padding) > u16::MAX`.
-- Properly enforce lower boundery constraints.
+- Properly enforce lower boundary constraints.
   Previously, "normal" columns were allocated before lower boundaries were respected.
   This could lead to scenarios, where the table would grow beyond the specified size, when there was a lower boundary.
 - Fix calculation of column widths for empty columns.
