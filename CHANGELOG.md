@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   respectively. The method `is_empty` returns if the table is empty (contains no data rows). Implemented by
   [Techassi](https://github.com/Techassi) in [#119](https://github.com/Nukesor/comfy-table/pull/119).
 
+### Chore
+
+- Bump crossterm dependency
+
 ## [7.0.1] - 2023-06-16
 
 ## Fix
