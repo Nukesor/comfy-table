@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Changed
+
+-
+
+## [7.1.0] - 2023-10-21
+
 ### Added
 
 - Add helper methods `(col,row)_count` and `is_empty`. The first set of methods return the number of columns and rows
