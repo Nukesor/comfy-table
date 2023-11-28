@@ -1,6 +1,6 @@
 # Comfy-table
 
-[![GitHub Actions Workflow](https://github.com/Nukesor/comfy-table/workflows/Tests/badge.svg)](https://github.com/Nukesor/comfy-table/actions)
+[![GitHub Actions Workflow](https://github.com/Nukesor/comfy-table/actions/workflows/test.yml/badge.svg)](https://github.com/Nukesor/comfy-table/actions/workflows/test.yml)
 [![docs](https://docs.rs/comfy-table/badge.svg)](https://docs.rs/comfy-table/)
 [![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nukesor/comfy-table/blob/main/LICENSE)
 [![Crates.io](https://img.shields.io/crates/v/comfy-table.svg)](https://crates.io/crates/comfy-table)
