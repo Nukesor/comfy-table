@@ -9,7 +9,7 @@ pub(crate) fn draw_borders(
 ) -> Vec<String> {
     // We know how many lines there should be. Initialize the vector with the rough correct amount.
     // We might over allocate a bit, but that's better than under allocating.
-    let mut lines = if let Some(capacity) = rows.get(0).map(|lines| lines.len()) {
+    let mut lines = if let Some(capacity) = rows.first().map(|lines| lines.len()) {
         // Lines * 2 -> Lines + delimiters
         // + 5 -> header delimiters + header + bottom/top borders
         Vec::with_capacity(capacity * 2 + 5)
