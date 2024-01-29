@@ -67,7 +67,7 @@ integration_test = []
 
 [dependencies]
 strum = "0.25"
-strum_macros = "0.25"
+strum_macros = "0.26"
 unicode-width = "0.1"
 console = { version = "0.15", optional = true }
 
