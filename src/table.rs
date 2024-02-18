@@ -139,8 +139,7 @@ impl Table {
     /// use comfy_table::{Table, Row};
     ///
     /// let mut table = Table::new();
-    /// let row = Row::from(vec!["One", "Two"]);
-    /// table.add_row(row);
+    /// table.add_row(vec!["One", "Two"]);
     /// ```
     pub fn add_row<T: Into<Row>>(&mut self, row: T) -> &mut Self {
         let mut row = row.into();
@@ -157,8 +156,7 @@ impl Table {
     /// use comfy_table::{Table, Row};
     ///
     /// let mut table = Table::new();
-    /// let row = Row::from(vec!["One", "Two"]);
-    /// table.add_row_if(|index, row| true, row);
+    /// table.add_row_if(|index, row| true, vec!["One", "Two"]);
     /// ```
     pub fn add_row_if<P, T>(&mut self, predicate: P, row: T) -> &mut Self
     where
@@ -179,8 +177,8 @@ impl Table {
     ///
     /// let mut table = Table::new();
     /// let rows = vec![
-    ///     Row::from(vec!["One", "Two"]),
-    ///     Row::from(vec!["Three", "Four"])
+    ///     vec!["One", "Two"],
+    ///     vec!["Three", "Four"]
     /// ];
     /// table.add_rows(rows);
     /// ```
@@ -206,8 +204,8 @@ impl Table {
     ///
     /// let mut table = Table::new();
     /// let rows = vec![
-    ///     Row::from(vec!["One", "Two"]),
-    ///     Row::from(vec!["Three", "Four"])
+    ///     vec!["One", "Two"],
+    ///     vec!["Three", "Four"]
     /// ];
     /// table.add_rows_if(|index, rows| true, rows);
     /// ```
