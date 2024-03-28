@@ -16,9 +16,10 @@ Comfy-table is designed as a library for building beautiful terminal tables, whi
 
 - [Features](#features)
 - [Examples](#examples)
+- [Feature Flags](#feature-flags)
+- [Contributing](#contributing)
 - [Usage of unsafe](#unsafe)
 - [Comparison with other libraries](#comparison-with-other-libraries)
-- [Contributing](#contributing)
 
 ## Features
 
@@ -29,10 +30,10 @@ Comfy-table is designed as a library for building beautiful terminal tables, whi
 - Constraints on columns that allow some additional control over how to arrange content.
 - Cross plattform (Linux, macOS, Windows).
 - It's fast enough.
-    * Benchmarks show that a pretty big table with complex constraints is build in `470μs` or `~0.5ms`.
-    * The table seen at the top of the readme takes `~30μs`.
-    * These numbers are from a overclocked `i7-8700K` with a max single-core performance of 4.9GHz.
-    * To run the benchmarks yourselves, install criterion via `cargo install cargo-criterion` and run `cargo criterion` afterwards.
+  - Benchmarks show that a pretty big table with complex constraints is build in `470μs` or `~0.5ms`.
+  - The table seen at the top of the readme takes `~30μs`.
+  - These numbers are from a overclocked `i7-8700K` with a max single-core performance of 4.9GHz.
+  - To run the benchmarks yourselves, install criterion via `cargo install cargo-criterion` and run `cargo criterion` afterwards.
 
 Comfy-table is written for the current `stable` Rust version.
 Older Rust versions may work but aren't officially supported.
@@ -170,7 +171,7 @@ fn main() {
 
 This code generates the table that can be seen at the top of this document.
 
-## Code Examples
+### Code Examples
 
 A few examples can be found in the `example` folder.
 To test an example, run `cargo run --example $name`. E.g.:
@@ -181,6 +182,34 @@ cargo run --example readme_table
 
 If you're looking for more information, take a look at the [tests folder](https://github.com/Nukesor/comfy-table/tree/main/tests).
 There are tests for almost every feature including a visual view for each resulting table.
+
+## Feature Flags
+
+### `tty` (enabled)
+
+This flag enables support for terminals. In detail this means:
+
+- Automatic detection whether we're in a terminal environment.
+  Only used when no explicit `Table::set_width` is provided.
+- Support for ANSI Escape Code styling for terminals.
+
+### `custom_styling` (disabled)
+
+This flag enables support for custom styling of text inside of cells.
+
+- Text formatting still works, even if you roll your own ANSI escape sequences.
+- Rainbow text
+- Makes comfy-table 30-50% slower
+
+### `reexport_crossterm` (disabled)
+
+With this flag, comfy-table re-exposes crossterm's [`Attribute`](https://docs.rs/crossterm/latest/crossterm/style/enum.Attribute.html) and [`Color`](https://docs.rs/crossterm/latest/crossterm/style/enum.Color.html) enum.
+By default, a mirrored type is exposed, which internally maps to the crossterm type.
+
+This feature is very convenient if you use both comfy-table and crossterm in your code and want to use crossterm's types for everything interchangeably.
+
+**BUT** if you enable this feature, you opt-in for breaking changes on minor/patch versions.
+Meaning, you have to update crossterm whenever you update comfy-table and you **cannot** update crossterm until comfy-table released a new version with that crossterm version.
 
 ## Contributing
 
@@ -206,40 +235,39 @@ Such features are:
 Comfy-table doesn't allow `unsafe` code in its code-base.
 As it's a "simple" formatting library it also shouldn't be needed in the future.
 
-However, Comfy-table uses two unsafe functions calls in its dependencies. \
-Both calls can be disabled by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/latest/comfy_table/struct.Table.html#method.force_no_tty).
+If one disables the `tty` feature flag, this is also true for all of its dependencies.
 
-Furthermore, all terminal related functionality, including styling, can be disabled by excluding the `tty` feature flag.
-Without this flag no `unsafe` code is used as far as I know.
+However, when enabling `tty`, Comfy-table uses two unsafe functions calls in its dependencies. \
+Both calls can additionally be disabled by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/latest/comfy_table/struct.Table.html#method.force_no_tty).
 
 1. `crossterm::tty::IsTty`. This function is necessary to detect whether we're currently on a tty or not.
-    This is only called if no explicit width is provided via `Table::set_width`.
-    ```rust,ignore
-    /// On unix the `isatty()` function returns true if a file
-    /// descriptor is a terminal.
-    #[cfg(unix)]
-    impl<S: AsRawFd> IsTty for S {
-        fn is_tty(&self) -> bool {
-            let fd = self.as_raw_fd();
-            unsafe { libc::isatty(fd) == 1 }
-        }
-    }
-    ```
+   This is only called if no explicit width is provided via `Table::set_width`.
+   ```rust,ignore
+   /// On unix the `isatty()` function returns true if a file
+   /// descriptor is a terminal.
+   #[cfg(unix)]
+   impl<S: AsRawFd> IsTty for S {
+       fn is_tty(&self) -> bool {
+           let fd = self.as_raw_fd();
+           unsafe { libc::isatty(fd) == 1 }
+       }
+   }
+   ```
 2. `crossterm::terminal::size`. This function is necessary to detect the current terminal width if we're on a tty.
-    This is only called if no explicit width is provided via `Table::set_width`.
+   This is only called if no explicit width is provided via `Table::set_width`.
 
-    http://rosettacode.org/wiki/Terminal_control/Dimensions#Library:_BSD_libc
-    This is another libc call which is used to communicate with `/dev/tty` via a file descriptor.
-    ```rust,ignore
-    ...
-    if wrap_with_result(unsafe { ioctl(fd, TIOCGWINSZ.into(), &mut size) }).is_ok() {
-        Ok((size.ws_col, size.ws_row))
-    } else {
-        tput_size().ok_or_else(|| std::io::Error::last_os_error().into())
-    }
-    ...
-    ```
+   <http://rosettacode.org/wiki/Terminal_control/Dimensions#Library:_BSD_libc>
+   This is another libc call which is used to communicate with `/dev/tty` via a file descriptor.
 
+   ```rust,ignore
+   ...
+   if wrap_with_result(unsafe { ioctl(fd, TIOCGWINSZ.into(), &mut size) }).is_ok() {
+       Ok((size.ws_col, size.ws_row))
+   } else {
+       tput_size().ok_or_else(|| std::io::Error::last_os_error().into())
+   }
+   ...
+   ```
 
 ## Comparison with other libraries
 
