@@ -1,3 +1,4 @@
+use ansi_str::AnsiStr;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 const ANSI_RESET: &str = "\u{1b}[0m";
@@ -5,7 +6,7 @@ const ANSI_RESET: &str = "\u{1b}[0m";
 /// Returns printed length of string, takes into account escape codes
 #[inline(always)]
 pub fn measure_text_width(s: &str) -> usize {
-    console::measure_text_width(s)
+    s.ansi_strip().width()
 }
 
 /// Split the line by the given deliminator without breaking ansi codes that contain the delimiter
@@ -13,7 +14,7 @@ pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<String> {
     let mut lines: Vec<String> = Vec::new();
     let mut current_line = String::default();
 
-    // Iterate over line, spliting text with delimiter
+    // Iterate over line, splitting text with delimiter
     let iter = console::AnsiCodeIterator::new(line);
     for (str_slice, is_esc) in iter {
         if is_esc {
@@ -55,7 +56,7 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     let mut escapes = Vec::new();
 
     // Iterate over segments of the input string, each segment is either a singe escape code or block of text containing no escape codes.
-    // Add text and escape codes to the head buffer, keeping track of printable length and what ansi codes are active, untill there is no more room in allowed_width.
+    // Add text and escape codes to the head buffer, keeping track of printable length and what ansi codes are active, until there is no more room in allowed_width.
     // If the str was split at a point with active escape-codes, add the ansi reset code to the end of head, and the list of active escape codes to the beginning of tail.
     let mut iter = console::AnsiCodeIterator::new(word);
     for (str_slice, is_esc) in iter.by_ref() {
@@ -158,6 +159,8 @@ pub fn fix_style_in_split_str(words: &mut [String]) {
 
 #[cfg(test)]
 mod test {
+    use unicode_width::UnicodeWidthStr;
+
     #[test]
     fn ansi_aware_split_test() {
         use super::split_line_by_delimiter;
@@ -174,5 +177,16 @@ mod test {
                 " after"
             ]
         )
+    }
+
+    #[test]
+    fn measure_text_width_osc8_test() {
+        use super::measure_text_width;
+
+        let text = "\x1b]8;;https://github.com\x1b\\This is a link\x1b]8;;\x1b";
+        let width = measure_text_width(text);
+
+        assert_eq!(text.width(), 41);
+        assert_eq!(width, 14);
     }
 }

@@ -47,7 +47,7 @@ tty = ["crossterm"]
 # - Text formatting still works, even if you roll your own ANSI escape sequences.
 # - Rainbow text
 # - Makes comfy-table 30-50% slower
-custom_styling = ["console"]
+custom_styling = ["ansi-str", "console"]
 # With this flag, comfy_table re-exposes crossterm's "Attribute" and "Color" enum.
 # By default, a mirrored type is exposed, which internally maps to the crossterm type.
 #
@@ -69,6 +69,7 @@ integration_test = []
 strum = "0.26"
 strum_macros = "0.26"
 unicode-width = "0.1"
+ansi-str = { version = "0.8", optional = true }
 console = { version = "0.15", optional = true }
 
 [dev-dependencies]

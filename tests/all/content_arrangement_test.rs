@@ -8,7 +8,7 @@ use comfy_table::{ContentArrangement, Row, Table};
 
 use super::assert_table_line_width;
 
-/// Test the robustnes of the dynamic table arangement.
+/// Test the robustness of the dynamic table arrangement.
 #[test]
 fn simple_dynamic_table() {
     let mut table = Table::new();
@@ -229,7 +229,7 @@ fn dynamic_full_width() {
 /// Test that a table is displayed in its full width, if the `table.width` is set to the exact
 /// width the table has, if it's fully expanded.
 ///
-/// The same should be the case for values that're larget than this width.
+/// The same should be the case for values that are larger than this width.
 #[test]
 fn dynamic_exact_width() {
     let header = vec!["a\n---\ni64", "b\n---\ni64", "b_squared\n---\nf64"];

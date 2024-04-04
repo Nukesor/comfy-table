@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+## Fix
+
+- Fix string width calculation with ANSI escape sequences by using ansi-str instead of console::measure_text_width().
+- Fix typos.
+- Fix compiler warnings in tests/all/property_test.rs
+
 -
 
 ## [7.1.0] - 2023-10-21
@@ -28,7 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Fix a panic when working with extreme paddings, where `(padding.left + padding.right) > u16::MAX`.
 - Fix a panic when working with extremely long content, where `(content_width + padding) > u16::MAX`.
-- Properly enforce lower boundery constraints.
+- Properly enforce lower boundary constraints.
   Previously, "normal" columns were allocated before lower boundaries were respected.
   This could lead to scenarios, where the table would grow beyond the specified size, when there was a lower boundary.
 - Fix calculation of column widths for empty columns.
@@ -44,7 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Breaking
 
 - The `Color` and `Attribute` enum are no longer re-exported from crossterm by default.
-  Previously, when updating comfy-table, crossterm needed to be upgraded as well, since the compile would otherwise fail due to type incompatibilies.
+  Previously, when updating comfy-table, crossterm needed to be upgraded as well, since the compile would otherwise fail due to type incompatibilities.
 
   To fix this, these enums are now mirrored and internally mapped to their crossterm equivalents, which allows us to safely bump crossterm whenever a new version is released.
   This change will only affect you if your projects explicitly use crossterm and comfy-table at the same time **and** feed crossterm's native types into comfy-table.
@@ -78,7 +84,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-- Disable unneded crossterm `bracketed-paste` feature.
+- Disable unneeded crossterm `bracketed-paste` feature.
 
 ## [6.1.2] - 2022-10-27
 
@@ -172,7 +178,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
     The `tty` feature flag is enabled by default.
     Implemented by [roee88](https://github.com/roee88) in [#47](https://github.com/Nukesor/comfy-table/pull/47).
 
-
 ## [4.1.0] - 2021-08-09
 
 ### Added
@@ -243,6 +248,7 @@ pub enum Width {
 ```
 
 Instead of the old
+
 ```
 enum ColumnConstraints {
     ...,
@@ -263,14 +269,12 @@ enum ColumnConstraints {
     Check the docs on the trait implementations for Cell, Row and Cells
 - Add the `Cells` type, to allow super generic `Iterator -> Row` conversions.
 
-
 ## [2.1.0] - 2021-01-26
 
 ### Added
 
 - `DynamicFullWidth` arrangement.
     This mode is basically the same as the `Dynamic` arrangement mode, but it will always use the full available width, even if there isn't enough content to fill the space.
-
 
 ## [2.0.0] - 2021-01-16
 
@@ -279,15 +283,15 @@ enum ColumnConstraints {
 **Dynamic arrangement**
 
 A new logic to optimize space usage after splitting content has been added.\
-If there is a lot of unused space after the content has been arranged, this space will now be redistributed ot the remaining columns.
+If there is a lot of unused space after the content has been arranged, this space will now be redistributed to the remaining columns.
 Or it will be removed if there are no other columns.
 
 **This is considered a breaking change, since this can result in different table layouts!!**
 
 This process is far from perfect, but the behavior is better than before.
 
-
 Old behavior:
+
 ```
 +-----------------------------------+-----------------------------------+------+
 | Header1                           | Header2                           | Head |
@@ -298,6 +302,7 @@ Old behavior:
 ```
 
 New behavior:
+
 ```
 +-----------------------------------------+-----------------------------+------+
 | Header1                                 | Header2                     | Head |
@@ -308,6 +313,7 @@ New behavior:
 ```
 
 Old behavior:
+
 ```
 +------------------------------------------------+
 | Header1                                        |
@@ -318,6 +324,7 @@ Old behavior:
 ```
 
 New behavior:
+
 ```
 +-------------------------------+
 | Header1                       |
@@ -353,7 +360,7 @@ New behavior:
 
 ### Added
 
-- New ColumConstraint for hiding columns
+- New ColumnConstraint for hiding columns
 
 ## [1.2.0] - 2020-10-27
 

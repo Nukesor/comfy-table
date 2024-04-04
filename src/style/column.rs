@@ -21,7 +21,7 @@ pub enum ColumnConstraint {
     /// If the column has longer content and is allowed to grow, the column may take more space.
     LowerBoundary(Width),
     /// Specify a upper boundary, either fixed or as percentage of the total width.
-    /// A column with this constriant will be at most as wide as specified.
+    /// A column with this constraint will be at most as wide as specified.
     /// The column may be smaller than that width.
     UpperBoundary(Width),
     /// Specify both, an upper and a lower boundary.

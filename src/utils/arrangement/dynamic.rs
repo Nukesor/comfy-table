@@ -455,22 +455,22 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
         let delimiter = delimiter(table, column, cell);
 
         // Create a temporary ColumnDisplayInfo with the average space as width.
-        // That way we can simulate how the splitted text will look like.
+        // That way we can simulate how the split text will look like.
         let info = ColumnDisplayInfo::new(column, average_space.try_into().unwrap_or(u16::MAX));
 
         // Iterate over each line and split it into multiple lines, if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if line.width() > average_space {
-                let mut splitted = split_line(line, &info, delimiter);
+                let mut parts = split_line(line, &info, delimiter);
 
                 #[cfg(feature = "debug")]
                 println!(
                     "dynamic::longest_line_after_split: Splitting line with width {}. Original:\n    {}\nSplitted:\n    {:?}",
-                    line.width(), line, splitted
+                    line.width(), line, parts
                 );
 
-                column_lines.append(&mut splitted);
+                column_lines.append(&mut parts);
             } else {
                 column_lines.push(line.into());
             }
@@ -499,7 +499,7 @@ fn use_full_width(infos: &mut DisplayInfos, remaining_width: usize) {
     }
 
     // Calculate the amount of average remaining space per column.
-    // Since we do integer division, there is most likely a little bit of non equally-divisable space.
+    // Since we do integer division, there is most likely a little bit of non equally-divisible space.
     // We then try to distribute it as fair as possible (from left to right).
     let average_space = remaining_width / visible_columns;
     let mut excess = remaining_width - (average_space * visible_columns);
@@ -510,7 +510,7 @@ fn use_full_width(infos: &mut DisplayInfos, remaining_width: usize) {
             continue;
         }
 
-        // Distribute the non-divisable excess from left-to right until nothing is left.
+        // Distribute the non-divisible excess from left-to right until nothing is left.
         let width = if excess > 0 {
             excess -= 1;
             (average_space + 1).try_into().unwrap_or(u16::MAX)
@@ -535,7 +535,7 @@ fn distribute_remaining_space(
     remaining_columns: usize,
 ) {
     // Calculate the amount of average remaining space per column.
-    // Since we do integer division, there is most likely a little bit of non equally-divisable space.
+    // Since we do integer division, there is most likely a little bit of non equally-divisible space.
     // We then try to distribute it as fair as possible (from left to right).
     let average_space = remaining_width / remaining_columns;
     let mut excess = remaining_width - (average_space * remaining_columns);
@@ -546,7 +546,7 @@ fn distribute_remaining_space(
             continue;
         }
 
-        // Distribute the non-divisable excess from left-to right until nothing is left.
+        // Distribute the non-divisible excess from left-to right until nothing is left.
         let width = if excess > 0 {
             excess -= 1;
             (average_space + 1).try_into().unwrap_or(u16::MAX)

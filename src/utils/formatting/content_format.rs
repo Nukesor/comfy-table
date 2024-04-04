@@ -72,7 +72,7 @@ pub fn format_row(
             cell_iter.next();
             continue;
         }
-        // Each cell is devided into several lines devided by newline
+        // Each cell is divided into several lines divided by newline
         // Every line that's too long will be split into multiple lines
         let mut cell_lines = Vec::new();
 
@@ -92,8 +92,8 @@ pub fn format_row(
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if measure_text_width(line) > info.content_width.into() {
-                let mut splitted = split_line(line, info, delimiter);
-                cell_lines.append(&mut splitted);
+                let mut parts = split_line(line, info, delimiter);
+                cell_lines.append(&mut parts);
             } else {
                 cell_lines.push(line.into());
             }
@@ -117,7 +117,7 @@ pub fn format_row(
                     *last_line = stripped;
                 }
 
-                // Don't do anything if the collumn is smaller then 6 characters
+                // Don't do anything if the column is smaller then 6 characters
                 let width: usize = info.content_width.into();
                 if width >= 6 {
                     // Truncate the line if '...' doesn't fit

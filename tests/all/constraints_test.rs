@@ -142,7 +142,7 @@ fn unnecessary_max_min_constraints() {
 
 #[test]
 /// The user can specify constraints that result in bigger width than actually provided
-/// This is allowed, but results in a wider table than acutally aimed for.
+/// This is allowed, but results in a wider table than actually aimed for.
 /// Anyway we still try to fit everything as good as possible, which of course breaks stuff.
 fn constraints_bigger_than_table_width() {
     let mut table = get_constraint_table();

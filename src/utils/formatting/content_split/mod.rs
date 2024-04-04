@@ -39,7 +39,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
 
         // Some helper variables
         // The length of the current line when combining it with the next element
-        // Add 1 for the delimiter if we are on a non-emtpy line.
+        // Add 1 for the delimiter if we are on a non-empty line.
         let mut added_length = next_length + current_length;
         if !current_line.is_empty() {
             added_length += 1;
