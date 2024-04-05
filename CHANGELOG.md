@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Fix string width calculation with ANSI escape sequences by switching to the `ansi-str` crate.
   The previous implementation didn't respect OSC 8 hyperlink style ANSI sequences.
+  Implemented by [dsully](https://github.com/dsully) in [#137](https://github.com/Nukesor/comfy-table/pull/137).
+- `custom_styling` feature now requires `tty` feature as it should.
 
 ## [7.1.0] - 2023-10-21
 
