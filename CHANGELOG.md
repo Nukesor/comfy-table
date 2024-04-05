@@ -6,15 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
-### Changed
+## Changed
+
+## [7.1.1] - 2024-04-05
 
 ## Fix
 
-- Fix string width calculation with ANSI escape sequences by using ansi-str instead of console::measure_text_width().
-- Fix typos.
-- Fix compiler warnings in tests/all/property_test.rs
-
--
+- Fix string width calculation with ANSI escape sequences by switching to the `ansi-str` crate.
+  The previous implementation didn't respect OSC 8 hyperlink style ANSI sequences.
 
 ## [7.1.0] - 2023-10-21
 
