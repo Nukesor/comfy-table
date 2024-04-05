@@ -58,7 +58,7 @@ prop_compose! {
 
 /// Returns all data needed to build the final table.
 /// 1. A matrix of cells Row[Column[Cell]].
-/// 2. Constriants for all columns.
+/// 2. Constraints for all columns.
 /// 3. The alignment for each cell.
 /// 3. The alignment for each column.
 fn columns_and_rows() -> impl Strategy<
@@ -203,7 +203,7 @@ proptest! {
 
                     // A line can be a bit longer than u16::MAX due to formatting and borders.
                     let actual: u16 = line_length.try_into().unwrap_or(u16::MAX);
-                    if actual > expected_max.into() {
+                    if actual > expected_max {
                         return build_error(
                             &formatted,
                             &format!("Expected table to be smaller than line length!\n\
@@ -315,11 +315,7 @@ fn enforce_constraints(
         .column_iter()
         .map(|col| col.constraint().cloned())
         .filter(|constraint| {
-            if let Some(ColumnConstraint::Hidden) = constraint {
-                false
-            } else {
-                true
-            }
+            !matches!(constraint, Some(ColumnConstraint::Hidden))
         })
         .collect();
 
@@ -357,7 +353,7 @@ fn enforce_constraints(
                 ColumnConstraint::ContentWidth => continue,
                 // Absolute width is defined.
                 ColumnConstraint::Absolute(absolute) => {
-                    let mut expected = absolute_width(&table, absolute);
+                    let mut expected = absolute_width(table, absolute);
                     // The minimal amount of chars per column (with default padding)
                     // is 3 chars. 2 padding + 1 char content.
                     if expected < 3 {
@@ -375,7 +371,7 @@ fn enforce_constraints(
                     }
                 }
                 ColumnConstraint::LowerBoundary(lower) => {
-                    let expected_lower = absolute_width(&table, lower);
+                    let expected_lower = absolute_width(table, lower);
                     if actual < expected_lower.into() {
                         return build_error(
                             &formatted,
@@ -388,7 +384,7 @@ fn enforce_constraints(
                     }
                 }
                 ColumnConstraint::UpperBoundary(upper) => {
-                    let mut expected_upper = absolute_width(&table, upper);
+                    let mut expected_upper = absolute_width(table, upper);
                     // The minimal amount of chars per column (with default padding)
                     // is 3 chars. 2 padding + 1 char content.
                     if expected_upper < 3 {
@@ -407,8 +403,8 @@ fn enforce_constraints(
                     }
                 }
                 ColumnConstraint::Boundaries { lower, upper } => {
-                    let expected_lower = absolute_width(&table, lower);
-                    let mut expected_upper = absolute_width(&table, upper);
+                    let expected_lower = absolute_width(table, lower);
+                    let mut expected_upper = absolute_width(table, upper);
                     // The minimal amount of chars per column (with default padding)
                     // is 3 chars. 2 padding + 1 char content.
                     if expected_upper < 3 {

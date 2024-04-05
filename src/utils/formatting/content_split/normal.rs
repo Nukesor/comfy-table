@@ -20,7 +20,7 @@ pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<String> {
 /// wider display width than allowed.
 pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     let mut current_width = 0;
-    let mut splitted = String::new();
+    let mut parts = String::new();
 
     let mut char_iter = word.chars().peekable();
     // Check if the string might be too long, one character at a time.
@@ -41,10 +41,10 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
         let character_width = c.width().unwrap_or(1);
 
         current_width += character_width;
-        splitted.push(c);
+        parts.push(c);
     }
 
     // Collect the remaining characters.
     let remaining = char_iter.collect();
-    (splitted, remaining)
+    (parts, remaining)
 }

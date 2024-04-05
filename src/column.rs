@@ -98,7 +98,7 @@ impl Column {
         self
     }
 
-    /// Returns wheather the columns is hidden via [ColumnConstraint::Hidden].
+    /// Returns weather the columns is hidden via [ColumnConstraint::Hidden].
     pub fn is_hidden(&self) -> bool {
         matches!(self.constraint, Some(ColumnConstraint::Hidden))
     }
