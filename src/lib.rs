@@ -1,5 +1,5 @@
 #![forbid(unsafe_code)]
-#![cfg_attr(doctest, doc = include_str!("../README.md"))]
+#![doc = include_str!("../README.md")]
 
 mod cell;
 mod column;
