@@ -36,7 +36,6 @@ fn multi_character_utf8_symbols() {
 }
 
 #[test]
-///
 fn multi_character_utf8_word_splitting() {
     let mut table = Table::new();
     table

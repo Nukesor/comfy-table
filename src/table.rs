@@ -757,7 +757,7 @@ impl Table {
     }
 
     pub(crate) fn style_exists(&self, component: TableComponent) -> bool {
-        self.style.get(&component).is_some()
+        self.style.contains_key(&component)
     }
 
     /// Autogenerate new columns, if a row is added with more cells than existing columns.
