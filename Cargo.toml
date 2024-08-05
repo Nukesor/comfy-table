@@ -69,6 +69,6 @@ rstest = "0.19"
 # We don't need any of the default features for crossterm.
 # However, the windows build needs the windows feature enabled.
 [target.'cfg(not(windows))'.dependencies]
-crossterm = { version = "0.27", optional=true, default-features = false }
+crossterm = { version = "0.28", optional=true, default-features = false }
 [target.'cfg(windows)'.dependencies]
 crossterm = { version = "0.27", optional=true, default-features = false, features=["windows"] }
