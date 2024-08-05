@@ -8,13 +8,13 @@ use super::assert_table_line_width;
 fn get_constraint_table() -> Table {
     let mut table = Table::new();
     table
-        .set_header(&vec!["smol", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["smol", "Header2", "Header3"])
+        .add_row(vec![
             "smol",
             "This is another text",
             "This is the third text",
         ])
-        .add_row(&vec![
+        .add_row(vec![
             "smol",
             "Now\nadd some\nmulti line stuff",
             "This is awesome",
@@ -213,8 +213,8 @@ fn percentage() {
 fn max_100_percentage() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["smol"])
-        .add_row(&vec!["smol"])
+        .set_header(vec!["smol"])
+        .add_row(vec!["smol"])
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(40)
         .set_constraints(vec![Absolute(Percentage(200))]);

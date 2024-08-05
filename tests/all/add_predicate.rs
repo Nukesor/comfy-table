@@ -6,8 +6,8 @@ use comfy_table::*;
 fn add_predicate_single_true() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",
@@ -39,8 +39,8 @@ fn add_predicate_single_true() {
 fn add_predicate_single_false() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",
@@ -68,8 +68,8 @@ fn add_predicate_single_false() {
 fn add_predicate_single_mixed() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",
@@ -105,8 +105,8 @@ fn add_predicate_single_mixed() {
 fn add_predicate_single_wrong_row_count() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",
@@ -147,7 +147,7 @@ fn add_predicate_multi_true() {
     ];
 
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .set_header(vec!["Header1", "Header2", "Header3"])
         .add_rows_if(|_, _| true, rows);
 
     println!("{table}");
@@ -168,8 +168,8 @@ fn add_predicate_multi_true() {
 fn add_predicate_multi_false() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",
@@ -210,7 +210,7 @@ fn add_predicate_multi_mixed() {
     ];
 
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
+        .set_header(vec!["Header1", "Header2", "Header3"])
         .add_rows_if(|_, _| true, rows)
         .add_rows_if(
             |_, _| false,
@@ -239,8 +239,8 @@ fn add_predicate_multi_mixed() {
 fn add_predicate_multi_wrong_rows_count() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",

@@ -12,15 +12,15 @@ use super::assert_table_line_width;
 #[test]
 fn simple_dynamic_table() {
     let mut table = Table::new();
-    table.set_header(&vec!["Header1", "Header2", "Head"])
+    table.set_header(vec!["Header1", "Header2", "Head"])
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(25)
-        .add_row(&vec![
+        .add_row(vec![
             "This is a very long line with a lot of text",
             "This is anotherverylongtextwithlongwords text",
             "smol",
         ])
-        .add_row(&vec![
+        .add_row(vec![
             "This is another text",
             "Now let's\nadd a really long line in the middle of the cell \n and add more multi line stuff",
             "smol",
@@ -88,7 +88,7 @@ fn table_with_truncate() {
     second_row.max_height(4);
 
     table
-        .set_header(&vec!["Header1", "Header2", "Head"])
+        .set_header(vec!["Header1", "Header2", "Head"])
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(35)
         .add_row(first_row)
@@ -132,10 +132,10 @@ fn table_with_truncate() {
 fn distribute_space_after_split() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Head"])
+        .set_header(vec!["Header1", "Header2", "Head"])
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(80)
-        .add_row(&vec![
+        .add_row(vec![
             "This is a very long line with a lot of text",
             "This is text with a anotherverylongtexttesttest",
             "smol",
@@ -161,10 +161,10 @@ fn distribute_space_after_split() {
 fn unused_space_after_split() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1"])
+        .set_header(vec!["Header1"])
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(30)
-        .add_row(&vec!["This is text with a anotherverylongtext"]);
+        .add_row(vec!["This is text with a anotherverylongtext"]);
 
     println!("{table}");
     let expected = "
@@ -184,10 +184,10 @@ fn unused_space_after_split() {
 fn dynamic_full_width_after_split() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1"])
+        .set_header(vec!["Header1"])
         .set_content_arrangement(ContentArrangement::DynamicFullWidth)
         .set_width(50)
-        .add_row(&vec!["This is text with a anotherverylongtexttesttestaa"]);
+        .add_row(vec!["This is text with a anotherverylongtexttesttestaa"]);
 
     println!("{table}");
     let expected = "
@@ -209,10 +209,10 @@ fn dynamic_full_width_after_split() {
 fn dynamic_full_width() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "smol"])
+        .set_header(vec!["Header1", "Header2", "smol"])
         .set_content_arrangement(ContentArrangement::DynamicFullWidth)
         .set_width(80)
-        .add_row(&vec!["This is a short line", "small", "smol"]);
+        .add_row(vec!["This is a short line", "small", "smol"]);
 
     println!("{table}");
     let expected = "

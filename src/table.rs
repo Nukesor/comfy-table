@@ -859,7 +859,7 @@ mod tests {
     #[test]
     fn test_column_generation() {
         let mut table = Table::new();
-        table.set_header(&vec!["thr", "four", "fivef"]);
+        table.set_header(vec!["thr", "four", "fivef"]);
 
         // When adding a new row, columns are automatically generated
         assert_eq!(table.columns.len(), 3);
@@ -867,11 +867,11 @@ mod tests {
         assert_eq!(table.column_max_content_widths(), vec![3, 4, 5]);
 
         // When adding a new row, the max content width is updated accordingly
-        table.add_row(&vec!["four", "fivef", "very long text with 23"]);
+        table.add_row(vec!["four", "fivef", "very long text with 23"]);
         assert_eq!(table.column_max_content_widths(), vec![4, 5, 22]);
 
         // Now add a row that has column lines. The max content width shouldn't change
-        table.add_row(&vec!["", "", "shorter"]);
+        table.add_row(vec!["", "", "shorter"]);
         assert_eq!(table.column_max_content_widths(), vec![4, 5, 22]);
 
         println!("{table}");

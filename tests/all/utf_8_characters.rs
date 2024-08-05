@@ -9,13 +9,13 @@ use comfy_table::*;
 fn multi_character_utf8_symbols() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",
         ])
-        .add_row(&vec![
+        .add_row(vec![
             "This is another text",
             "Now\nadd some\nmulti line stuff",
             "✅",
@@ -41,8 +41,8 @@ fn multi_character_utf8_word_splitting() {
     table
         .set_width(8)
         .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_header(&vec!["test"])
-        .add_row(&vec!["abc✅def"]);
+        .set_header(vec!["test"])
+        .add_row(vec!["abc✅def"]);
 
     println!("{table}");
     let expected = "

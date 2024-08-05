@@ -64,8 +64,8 @@ mod tests {
     #[test]
     fn test_disabled_arrangement() {
         let mut table = Table::new();
-        table.set_header(&vec!["head", "head", "head"]);
-        table.add_row(&vec!["__", "fivef", "sixsix"]);
+        table.set_header(vec!["head", "head", "head"]);
+        table.add_row(vec!["__", "fivef", "sixsix"]);
 
         let display_infos = arrange_content(&table);
 
@@ -77,7 +77,7 @@ mod tests {
     #[test]
     fn test_discover_columns() {
         let mut table = Table::new();
-        table.add_row(&vec!["one", "two"]);
+        table.add_row(vec!["one", "two"]);
 
         // Get the first row and add a new cell, which would create a new column.
         let row = table.row_mut(0).unwrap();

@@ -13,9 +13,9 @@ fn custom_padding() {
             Cell::new("Header2"),
             Cell::new("Header3"),
         ])
-        .add_row(&vec!["One One", "One Two", "One Three"])
-        .add_row(&vec!["Two One", "Two Two", "Two Three"])
-        .add_row(&vec!["Three One", "Three Two", "Three Three"]);
+        .add_row(vec!["One One", "One Two", "One Three"])
+        .add_row(vec!["Two One", "Two Two", "Two Three"])
+        .add_row(vec!["Three One", "Three Two", "Three Three"]);
 
     let column = table.column_mut(0).unwrap();
     column.set_padding((5, 5));

@@ -5,7 +5,7 @@ fn get_table() -> Table {
     let mut table = Table::new();
     table
         .load_preset(presets::UTF8_FULL)
-        .set_header(&vec![
+        .set_header(vec![
             "hidden_header",
             "smol",
             "hidden_header",
@@ -14,7 +14,7 @@ fn get_table() -> Table {
             "Header3",
             "hidden_header",
         ])
-        .add_row(&vec![
+        .add_row(vec![
             "start_hidden",
             "smol",
             "middle_hidden",
@@ -23,7 +23,7 @@ fn get_table() -> Table {
             "This is the third text",
             "end_hidden",
         ])
-        .add_row(&vec![
+        .add_row(vec![
             "asdf",
             "smol",
             "asdf",

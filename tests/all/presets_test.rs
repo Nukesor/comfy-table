@@ -6,9 +6,9 @@ use comfy_table::*;
 fn get_preset_table() -> Table {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Hello", "there"])
-        .add_row(&vec!["a", "b"])
-        .add_row(&vec!["c", "d"]);
+        .set_header(vec!["Hello", "there"])
+        .add_row(vec!["a", "b"])
+        .add_row(vec!["c", "d"]);
 
     table
 }

@@ -6,13 +6,13 @@ use comfy_table::*;
 fn simple_table() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec![
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
             "This is a text",
             "This is another text",
             "This is the third text",
         ])
-        .add_row(&vec![
+        .add_row(vec![
             "This is another text",
             "Now\nadd some\nmulti line stuff",
             "This is awesome",
@@ -36,10 +36,10 @@ fn simple_table() {
 fn missing_column_table() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1", "Header2", "Header3"])
-        .add_row(&vec!["One One", "One Two", "One Three"])
-        .add_row(&vec!["Two One", "Two Two"])
-        .add_row(&vec!["Three One"]);
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec!["One One", "One Two", "One Three"])
+        .add_row(vec!["Two One", "Two Two"])
+        .add_row(vec!["Three One"]);
 
     println!("{table}");
     let expected = "
@@ -59,10 +59,10 @@ fn missing_column_table() {
 fn single_column_table() {
     let mut table = Table::new();
     table
-        .set_header(&vec!["Header1"])
-        .add_row(&vec!["One One"])
-        .add_row(&vec!["Two One"])
-        .add_row(&vec!["Three One"]);
+        .set_header(vec!["Header1"])
+        .add_row(vec!["One One"])
+        .add_row(vec!["Two One"])
+        .add_row(vec!["Three One"]);
 
     println!("{table}");
     let expected = "
