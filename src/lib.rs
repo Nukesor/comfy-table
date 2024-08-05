@@ -1,5 +1,7 @@
 #![forbid(unsafe_code)]
 #![doc = include_str!("../README.md")]
+// The README code examples should be valid mini scripts to make them properly testable.
+#![allow(clippy::needless_doctest_main)]
 
 mod cell;
 mod column;
