@@ -11,7 +11,7 @@ pub struct Row {
     /// Index of the row.
     /// This will be set as soon as the row is added to the table.
     pub(crate) index: Option<usize>,
-    pub cells: Vec<Cell>,
+    pub(crate) cells: Vec<Cell>,
     pub(crate) max_height: Option<usize>,
 }
 
@@ -79,6 +79,11 @@ impl Row {
     /// Returns an iterator over all cells of this row
     pub fn cell_iter(&self) -> Iter<Cell> {
         self.cells.iter()
+    }
+
+    /// Return the cells of this row.
+    pub fn cells(&self) -> Vec<Cell> {
+        self.cells.clone()
     }
 }
 

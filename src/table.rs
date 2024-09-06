@@ -259,7 +259,7 @@ impl Table {
     ///     .add_row(vec![Cell::new("Al-khwarizmi")]);
     ///
     /// // Sort the rows in descending order based on the first column
-    /// table.sort_rows(|a, b| b.cells[0].cmp(&a.cells[0]));
+    /// table.sort_rows(|a, b| b.cells()[0].cmp(&a.cells()[0]));
     ///
     /// // Print the table after sorting
     /// println!("Sort in descending order:");
@@ -959,11 +959,11 @@ mod tests {
             .add_row(vec![Cell::new("Neil Armstrong")])
             .add_row(vec![Cell::new("Hassan Ibn Al-haitham")])
             .add_row(vec![Cell::new("Al-khwarizmi")]);
-        table.sort_rows(|a, b| b.cells[0].cmp(&a.cells[0]));
+        table.sort_rows(|a, b| b.cells()[0].cmp(&a.cells()[0]));
         println!("\nsort in descending order:\n");
         println!("{table}");
 
-        table.sort_rows(|a, b| a.cells[0].cmp(&b.cells[0]));
+        table.sort_rows(|a, b| a.cells()[0].cmp(&b.cells()[0]));
         println!("\nsort in ascending order:\n");
         println!("{table}");
     }
