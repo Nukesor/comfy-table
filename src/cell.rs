@@ -158,6 +158,30 @@ impl<T: ToString> From<T> for Cell {
     }
 }
 
+/// Implement partial comparing for Cell
+/// ```
+/// let cell_1: Cell = "Hello world".into();
+/// let cell_2: Cell = "Hi".into();
+/// assert_eq!(cell_1.partial_cmp(&cell_2), Some(std::cmp::Ordering::Less));
+/// ```
+impl PartialOrd for Cell {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.content().partial_cmp(&other.content())
+    }
+}
+
+/// Implement comparing for Cell
+/// ```
+/// let cell_1: Cell = "Hello world".into();
+/// let cell_2: Cell = "Hi".into();
+/// assert_eq!(cell_1.cmp(&cell_2), std::cmp::Ordering::Less);
+/// ```
+impl Ord for Cell {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.content().cmp(&other.content())
+    }
+}
+
 /// A simple wrapper type for a `Vec<Cell>`.
 ///
 /// This wrapper is needed to support generic conversions between iterables and `Vec<Cell>`.
@@ -194,5 +218,12 @@ mod tests {
         let cell = Cell::new(content.clone());
 
         assert_eq!(cell.content(), content);
+    }
+    #[test]
+    fn compare_cells() {
+        let cell_1: Cell = "Hello world".into();
+        let cell_2: Cell = "Hi".into();
+        assert_eq!(cell_1.partial_cmp(&cell_2), Some(std::cmp::Ordering::Less));
+        assert_eq!(cell_1.cmp(&cell_2), std::cmp::Ordering::Less);
     }
 }

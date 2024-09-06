@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt;
 use std::iter::IntoIterator;
@@ -15,6 +16,7 @@ use crate::row::Row;
 use crate::style::presets::ASCII_FULL;
 use crate::style::{ColumnConstraint, ContentArrangement, TableComponent};
 use crate::utils::build_table;
+use crate::Cells;
 
 /// This is the main interface for building a table.
 /// Each table consists of [Rows](Row), which in turn contain [Cells](crate::cell::Cell).
@@ -234,6 +236,77 @@ impl Table {
     /// ```
     pub fn row_count(&self) -> usize {
         self.rows.len()
+    }
+
+    /// Sorts the rows of the table using a custom comparator function.
+    ///
+    /// The sorting is done in place and modifies the original table.
+    ///
+    /// ## Example
+    ///
+    /// The following example demonstrates how to sort the rows of a table
+    /// in descending order based on the content of the first column:
+    ///
+    /// ```
+    /// // Create a new table with a header and several rows
+    /// let mut table = Table::new();
+    /// table
+    ///     .set_header(vec![Cell::new("Names")])
+    ///     .add_row(vec![Cell::new("Alexander the Great")])
+    ///     .add_row(vec![Cell::new("Shahd Aldahar")])
+    ///     .add_row(vec![Cell::new("Neil Armstrong")])
+    ///     .add_row(vec![Cell::new("Hassan Ibn Al-haitham")])
+    ///     .add_row(vec![Cell::new("Al-khwarizmi")]);
+    ///
+    /// // Sort the rows in descending order based on the first column
+    /// table.sort_rows(|a, b| b.cells[0].cmp(&a.cells[0]));
+    ///
+    /// // Print the table after sorting
+    /// println!("Sort in descending order:");
+    /// println!("{table}");
+    /// ```
+    ///
+    /// **Output:**
+    /// ```plaintext
+    /// Sort in descending order:
+    /// +-----------------------+
+    /// | Names                 |
+    /// +=======================+
+    /// | Shahd Aldahar         |
+    /// |-----------------------|
+    /// | Neil Armstrong        |
+    /// |-----------------------|
+    /// | Hassan Ibn Al-haitham |
+    /// |-----------------------|
+    /// | Alexander the Great   |
+    /// |-----------------------|
+    /// | Al-khwarizmi          |
+    /// +-----------------------+
+    /// ```
+    ///
+    /// ## Arguments
+    ///
+    /// * `compare` - A comparator function that defines the sorting logic.
+    ///   The function should take two rows (`&Row`) and return an `Ordering`
+    ///   (`Ordering::Less`, `Ordering::Equal`, or `Ordering::Greater`).
+    ///
+    /// ## Notes
+    ///
+    /// - The sorting is done based on the provided comparison function.
+    /// - If you need to sort by multiple columns, you can implement more complex
+    ///   logic inside the comparator function.
+    /// 
+    /// ## Time Complexity
+    ///
+    /// The time complexity of this function is `O(n log n)`, where `n` is the number
+    /// of rows in the table. This is due to the use of the `sort_by` method, which
+    /// typically implements an efficient sorting algorithm such as Timsort or
+    /// Quicksort.
+    pub fn sort_rows<F>(&mut self, compare: F)
+    where
+        F: FnMut(&Row, &Row) -> Ordering,
+    {
+        self.rows.sort_by(compare)
     }
 
     /// Returns if the table is empty (contains no data rows).
@@ -874,6 +947,24 @@ mod tests {
         table.add_row(vec!["", "", "shorter"]);
         assert_eq!(table.column_max_content_widths(), vec![4, 5, 22]);
 
+        println!("{table}");
+    }
+    #[test]
+    fn test_rows_sorting() {
+        let mut table = Table::new();
+        table
+            .set_header(vec![Cell::new("Names")])
+            .add_row(vec![Cell::new("Alexander the Great")])
+            .add_row(vec![Cell::new("Shahd Aldahar")])
+            .add_row(vec![Cell::new("Neil Armstrong")])
+            .add_row(vec![Cell::new("Hassan Ibn Al-haitham")])
+            .add_row(vec![Cell::new("Al-khwarizmi")]);
+        table.sort_rows(|a, b| b.cells[0].cmp(&a.cells[0]));
+        println!("\nsort in descending order:\n");
+        println!("{table}");
+
+        table.sort_rows(|a, b| a.cells[0].cmp(&b.cells[0]));
+        println!("\nsort in ascending order:\n");
         println!("{table}");
     }
 }
