@@ -952,18 +952,28 @@ mod tests {
     #[test]
     fn test_rows_sorting() {
         let mut table = Table::new();
-        table
-            .set_header(vec![Cell::new("Names")])
-            .add_row(vec![Cell::new("Alexander the Great")])
-            .add_row(vec![Cell::new("Shahd Aldahar")])
-            .add_row(vec![Cell::new("Neil Armstrong")])
-            .add_row(vec![Cell::new("Hassan Ibn Al-haitham")])
-            .add_row(vec![Cell::new("Al-khwarizmi")]);
+        let mut rows = vec![
+            vec![Cell::new("Alexander the Great")],
+            vec![Cell::new("Shahd Aldahar")],
+            vec![Cell::new("Neil Armstrong")],
+            vec![Cell::new("Hassan Ibn Al-haitham")],
+            vec![Cell::new("Al-khwarizmi")],
+        ];
+        table.set_header(vec![Cell::new("Names")]).add_rows(rows.clone());
+
         table.sort_rows(|a, b| b.cells()[0].cmp(&a.cells()[0]));
+        rows.sort_by(|a, b| b[0].cmp(&a[0]));
+        
+        assert_eq!(rows, table.rows.iter().map(|row| row.cells()).collect::<Vec<_>>());
+
         println!("\nsort in descending order:\n");
         println!("{table}");
 
         table.sort_rows(|a, b| a.cells()[0].cmp(&b.cells()[0]));
+        rows.sort_by(|a, b| a[0].cmp(&b[0]));
+
+        assert_eq!(rows, table.rows.iter().map(|row| row.cells()).collect::<Vec<_>>());
+
         println!("\nsort in ascending order:\n");
         println!("{table}");
     }
