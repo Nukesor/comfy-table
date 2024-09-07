@@ -82,8 +82,8 @@ impl Row {
     }
 
     /// Return the cells of this row.
-    pub fn cells(&self) -> Vec<Cell> {
-        self.cells.clone()
+    pub fn cells(&self) -> &[Cell] {
+        self.cells.as_slice()
     }
 }
 
@@ -134,7 +134,7 @@ mod tests {
 
     #[test]
     fn test_some_functions() {
-        let cells = ["one", "two", "three"];
+        let cells = ["one", "two", "three"].map(|s| s.to_string());
         let mut row = Row::new();
         for cell in cells.iter() {
             row.add_cell(Cell::new(cell));
@@ -148,5 +148,12 @@ mod tests {
                 cell_content_iter.next().unwrap().to_string()
             );
         }
+        assert_eq!(
+            row.cells()
+                .iter()
+                .map(|c| c.content())
+                .collect::<Vec<String>>(),
+            cells.to_vec()
+        )
     }
 }
