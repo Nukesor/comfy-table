@@ -262,26 +262,7 @@ impl Table {
     /// table.sort_rows(|a, b| b.cells()[0].cmp(&a.cells()[0]));
     ///
     /// // Print the table after sorting
-    /// println!("Sort in descending order:");
     /// println!("{table}");
-    /// ```
-    ///
-    /// **Output:**
-    /// ```plaintext
-    /// Sort in descending order:
-    /// +-----------------------+
-    /// | Names                 |
-    /// +=======================+
-    /// | Shahd Aldahar         |
-    /// |-----------------------|
-    /// | Neil Armstrong        |
-    /// |-----------------------|
-    /// | Hassan Ibn Al-haitham |
-    /// |-----------------------|
-    /// | Alexander the Great   |
-    /// |-----------------------|
-    /// | Al-khwarizmi          |
-    /// +-----------------------+
     /// ```
     ///
     /// ## Arguments
@@ -289,19 +270,6 @@ impl Table {
     /// * `compare` - A comparator function that defines the sorting logic.
     ///   The function should take two rows (`&Row`) and return an `Ordering`
     ///   (`Ordering::Less`, `Ordering::Equal`, or `Ordering::Greater`).
-    ///
-    /// ## Notes
-    ///
-    /// - The sorting is done based on the provided comparison function.
-    /// - If you need to sort by multiple columns, you can implement more complex
-    ///   logic inside the comparator function.
-    /// 
-    /// ## Time Complexity
-    ///
-    /// The time complexity of this function is `O(n log n)`, where `n` is the number
-    /// of rows in the table. This is due to the use of the `sort_by` method, which
-    /// typically implements an efficient sorting algorithm such as Timsort or
-    /// Quicksort.
     pub fn sort_rows<F>(&mut self, compare: F)
     where
         F: FnMut(&Row, &Row) -> Ordering,
