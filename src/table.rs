@@ -21,7 +21,7 @@ use crate::utils::build_table;
 ///
 /// There also exists a representation of a [Column].
 /// Columns are automatically created when adding rows to a table.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Table {
     pub(crate) columns: Vec<Column>,
     style: HashMap<TableComponent, char>,
