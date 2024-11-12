@@ -237,23 +237,10 @@ As it's a "simple" formatting library it also shouldn't be needed in the future.
 
 If one disables the `tty` feature flag, this is also true for all of its dependencies.
 
-However, when enabling `tty`, Comfy-table uses two unsafe functions calls in its dependencies. \
-Both calls can additionally be disabled by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/latest/comfy_table/struct.Table.html#method.force_no_tty).
+However, when enabling `tty`, Comfy-table uses one unsafe function call in its dependencies. \
+It can be circumvented by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/latest/comfy_table/struct.Table.html#method.force_no_tty).
 
-1. `crossterm::tty::IsTty`. This function is necessary to detect whether we're currently on a tty or not.
-   This is only called if no explicit width is provided via `Table::set_width`.
-   ```rust,ignore
-   /// On unix the `isatty()` function returns true if a file
-   /// descriptor is a terminal.
-   #[cfg(unix)]
-   impl<S: AsRawFd> IsTty for S {
-       fn is_tty(&self) -> bool {
-           let fd = self.as_raw_fd();
-           unsafe { libc::isatty(fd) == 1 }
-       }
-   }
-   ```
-2. `crossterm::terminal::size`. This function is necessary to detect the current terminal width if we're on a tty.
+1. `crossterm::terminal::size`. This function is necessary to detect the current terminal width if we're on a tty.
    This is only called if no explicit width is provided via `Table::set_width`.
 
    <http://rosettacode.org/wiki/Terminal_control/Dimensions#Library:_BSD_libc>
@@ -300,7 +287,7 @@ It his however abandoned since over three years and a [rustsec/advisory-db](http
 
 One of [`comfy-table`](https://crates.io/crates/comfy-table)'s big foci is on providing a minimalistic, but rock-solid library for building text-based tables.
 This means that the code is very well tested, no usage of `unsafe` and `unwrap` is only used if we can be absolutely sure that it's safe.
-There're only two occurrences of `unsafe` in all of comfy-table's dependencies, to be exact inside the `tty` communication code, which can be explicitly disabled.
+There're only one occurrence of `unsafe` in all of comfy-table's dependencies, to be exact inside the `tty` communication code, which can be explicitly disabled.
 
 The other focus is on dynamic-length content arrangement.
 This means that a lot of work went into building an algorithm that finds a (near) optimal table layout for any given text and terminal width.
