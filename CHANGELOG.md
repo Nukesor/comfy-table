@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Changed
 
+## [7.1.2] - 2024-11-24
+
+### Chore
+
+- Bump `crossterm` to `0.28`
+- Bump `unicode-width` to `0.2`
+
 ## [7.1.1] - 2024-04-05
 
 ## Fix
@@ -58,6 +65,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
   If one wants the old behavior for convenience reasons, this can be enabled via a feature flag.
   However, **this is also a opt-in to potential breaking changes on minor/patch versions**.
+
 - Bump minimum version to v1.64
 
 ### Added
@@ -99,7 +107,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Fixed an issue where dynamic arrangement failed when setting the table to the exact width of the content [#90](https://github.com/Nukesor/comfy-table/issues/90).
 - The header size is now properly respected in the final optimization step [#90](https://github.com/Nukesor/comfy-table/issues/90).
-    Previously, this wasn't the case and lead to weird formatting behavior when both of the following were true
+  Previously, this wasn't the case and lead to weird formatting behavior when both of the following were true
   - Dynamic content adjustment was active.
   - The table didn't fit into the the available space.
   - The header of a row was longer than its content.
@@ -130,19 +138,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Breaking Changes
 
 - Renaming of several functions to be Rust idiomatic:
-    * `Cell::get_content` -> `Cell::content`
-    * `Column::get_padding_width` -> `Column::padding_width`
-    * `Column::get_constraint` -> `Column::constraint`
-    * `Table::get_header` -> `Table::header`
-    * `Table::get_table_width` -> `Table::width`
-    * `Table::set_table_width` -> `Table::set_width`
-    * `Table::set_style` -> `Table::style`
-    * `Table::get_column` -> `Table::column`
-    * `Table::get_column_mut` -> `Table::column_mut`
-    * `Table::get_row` -> `Table::row`
-    * `Table::get_row_mut` -> `Table::row_mut`
+  - `Cell::get_content` -> `Cell::content`
+  - `Column::get_padding_width` -> `Column::padding_width`
+  - `Column::get_constraint` -> `Column::constraint`
+  - `Table::get_header` -> `Table::header`
+  - `Table::get_table_width` -> `Table::width`
+  - `Table::set_table_width` -> `Table::set_width`
+  - `Table::set_style` -> `Table::style`
+  - `Table::get_column` -> `Table::column`
+  - `Table::get_column_mut` -> `Table::column_mut`
+  - `Table::get_row` -> `Table::row`
+  - `Table::get_row_mut` -> `Table::row_mut`
 - `Column::get_max_width` and `Column::get_max_content_width` have been removed as we cannot guarantee that these numbers are always correct.
-    Use `Table::column_max_content_widths` instead
+  Use `Table::column_max_content_widths` instead
 
 ### Changed
 
@@ -175,9 +183,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - `tty` feature flag, which enables tty related functionality.
-    This includes styling and terminal-width detection.
-    The `tty` feature flag is enabled by default.
-    Implemented by [roee88](https://github.com/roee88) in [#47](https://github.com/Nukesor/comfy-table/pull/47).
+  This includes styling and terminal-width detection.
+  The `tty` feature flag is enabled by default.
+  Implemented by [roee88](https://github.com/roee88) in [#47](https://github.com/Nukesor/comfy-table/pull/47).
 
 ## [4.1.0] - 2021-08-09
 
@@ -190,7 +198,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Several preset examples weren't correct.
 - Multi-character UTF8 symbols are now handled correctly in most situations.
-    Table-layout might still break for 1-character columns.
+  Table-layout might still break for 1-character columns.
 - Mid-word splitting now takes multi-character utf8 characters into account.
 
 ### Changed
@@ -219,13 +227,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Run space optimization under all circumstances.
 - Percentage constraints with values of >100 will now be capped to 100.
 - The MinConstraint would be ignored when:
-    * The content was larger than the min constraint
-    * There was less space available than specified in the constraint.
+  - The content was larger than the min constraint
+  - There was less space available than specified in the constraint.
 
 ### Changed
 
 - The way ColumnConstraints are initialized has been changed.
-    There is now
+  There is now
 
 ```
 enum ColumnConstraints {
@@ -267,7 +275,7 @@ enum ColumnConstraints {
 ### Breaking changes
 
 - Remove most custom traits and replace them with std's generic `From` trait. \
-    Check the docs on the trait implementations for Cell, Row and Cells
+   Check the docs on the trait implementations for Cell, Row and Cells
 - Add the `Cells` type, to allow super generic `Iterator -> Row` conversions.
 
 ## [2.1.0] - 2021-01-26
@@ -275,7 +283,7 @@ enum ColumnConstraints {
 ### Added
 
 - `DynamicFullWidth` arrangement.
-    This mode is basically the same as the `Dynamic` arrangement mode, but it will always use the full available width, even if there isn't enough content to fill the space.
+  This mode is basically the same as the `Dynamic` arrangement mode, but it will always use the full available width, even if there isn't enough content to fill the space.
 
 ## [2.0.0] - 2021-01-16
 
