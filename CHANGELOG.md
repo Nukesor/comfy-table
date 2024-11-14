@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Changed
 
+## [7.1.3] - 2024-11-24
+
+### Fix
+
+- Bump `crossterm` to `0.28` on Windows as well
+
 ## [7.1.2] - 2024-11-24
 
 ### Chore
