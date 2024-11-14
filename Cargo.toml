@@ -71,4 +71,4 @@ rstest = "0.23"
 [target.'cfg(not(windows))'.dependencies]
 crossterm = { version = "0.28", optional=true, default-features = false }
 [target.'cfg(windows)'.dependencies]
-crossterm = { version = "0.27", optional=true, default-features = false, features=["windows"] }
+crossterm = { version = "0.28", optional=true, default-features = false, features=["windows"] }
