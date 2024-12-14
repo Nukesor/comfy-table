@@ -4,6 +4,7 @@ use unicode_width::UnicodeWidthStr;
 
 use super::content_split::measure_text_width;
 use super::content_split::split_line;
+use super::content_split::split_long_word;
 
 use crate::cell::Cell;
 use crate::row::Row;
@@ -121,9 +122,11 @@ pub fn format_row(
                 let width: usize = info.content_width.into();
                 if width >= 6 {
                     // Truncate the line if '...' doesn't fit
-                    if last_line.width() >= width - 3 {
+                    if last_line.width() > width - 3 {
                         let surplus = (last_line.width() + 3) - width;
-                        last_line.truncate(last_line.width() - surplus);
+                        let split_result = split_long_word(last_line.width() - surplus, &last_line);
+                        last_line.clear();
+                        last_line.push_str(&split_result.0);
                     }
                     last_line.push_str("...");
                 }
