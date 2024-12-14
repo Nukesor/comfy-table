@@ -120,12 +120,13 @@ pub fn format_row(
                 // Don't do anything if the column is smaller then 6 characters
                 let width: usize = info.content_width.into();
                 if width >= 6 {
-                    // Truncate the line if '...' doesn't fit
-                    if last_line.width() >= width - 3 {
-                        let surplus = (last_line.width() + 3) - width;
+                    let indicator_width = table.truncation_indicator.width();
+                    // Truncate the line if indicator doesn't fit
+                    if last_line.width() >= width - indicator_width {
+                        let surplus = (last_line.width() + indicator_width) - width;
                         last_line.truncate(last_line.width() - surplus);
                     }
-                    last_line.push_str("...");
+                    last_line.push_str(&table.truncation_indicator);
                 }
             }
         }
