@@ -86,9 +86,10 @@ pub fn format_row(
             continue;
         };
 
+        // The delimiter is configurable, determine which one should be used for this cell.
         let delimiter = delimiter(cell, info, table);
 
-        // Iterate over each line and split it into multiple lines, if necessary.
+        // Iterate over each line and split it into multiple lines if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if measure_text_width(line) > info.content_width.into() {
@@ -99,9 +100,9 @@ pub fn format_row(
             }
         }
 
-        // Remove all unneeded lines of this cell, if the row's content should be
-        // truncated and there're too many lines in this cell.
-        // This also inserts a '...' string so users know that there's truncated stuff.
+        // Remove all unneeded lines of this cell, if the row's height is capped to a certain
+        // amount of lines and there're too many lines in this cell.
+        // This then inserts a '...' string at the end to indicate that the cell has been truncated.
         if let Some(lines) = row.max_height {
             if cell_lines.len() > lines {
                 let _ = cell_lines.split_off(lines);
@@ -110,14 +111,20 @@ pub fn format_row(
                     .get_mut(lines - 1)
                     .expect("We know it's this long.");
 
-                // we are truncate the line, so we might cuttoff a ansi code
+                // Truncate any ansi codes, as the following cutoff might break an ansi code
+                // otherwise. This could be handled smarter, but works for now.
                 #[cfg(feature = "custom_styling")]
                 {
                     let stripped = console::strip_ansi_codes(last_line).to_string();
                     *last_line = stripped;
                 }
 
-                // Don't do anything if the column is smaller then 6 characters
+                // Only show the `...` indicator if the column is smaller then 6 characters.
+                // Otherwise it feels like it doesn't make a lot of sense to show it, as it
+                // might cover up too much important content on such a small column.
+                //
+                // That's questionable though, should we really keep that limitation as users
+                // won't have an indicator that truncation is taking place?
                 let width: usize = info.content_width.into();
                 if width >= 6 {
                     // Truncate the line if '...' doesn't fit
