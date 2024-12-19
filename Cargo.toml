@@ -6,7 +6,7 @@ authors = ["Arne Beer <contact@arne.beer>"]
 homepage = "https://github.com/nukesor/comfy-table"
 repository = "https://github.com/nukesor/comfy-table"
 documentation = "https://docs.rs/comfy-table/"
-license = "MIT"
+license = "MIT OR Apache-2.0"
 keywords = ["terminal", "table", "unicode"]
 readme = "README.md"
 rust-version = "1.64"
@@ -53,11 +53,11 @@ debug = []
 integration_test = []
 
 [dependencies]
+ansi-str = { version = "0.8", optional = true }
+console = { version = "0.15", optional = true }
 strum = "0.26"
 strum_macros = "0.26"
 unicode-width = "0.2"
-ansi-str = { version = "0.8", optional = true }
-console = { version = "0.15", optional = true }
 
 [dev-dependencies]
 criterion = "0.5"
@@ -69,6 +69,8 @@ rstest = "0.23"
 # We don't need any of the default features for crossterm.
 # However, the windows build needs the windows feature enabled.
 [target.'cfg(not(windows))'.dependencies]
-crossterm = { version = "0.28", optional=true, default-features = false }
+crossterm = { version = "0.28", optional = true, default-features = false }
 [target.'cfg(windows)'.dependencies]
-crossterm = { version = "0.28", optional=true, default-features = false, features=["windows"] }
+crossterm = { version = "0.28", optional = true, default-features = false, features = [
+  "windows",
+] }
