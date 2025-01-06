@@ -107,7 +107,6 @@ impl Table {
     /// let header = Row::from(vec!["Header One", "Header Two"]);
     /// table.set_header(header);
     /// ```
-
     pub fn set_header<T: Into<Row>>(&mut self, row: T) -> &mut Self {
         let row = row.into();
         self.autogenerate_columns(&row);
@@ -581,7 +580,6 @@ impl Table {
     /// let mut table = Table::new();
     /// assert_eq!(table.style(TopLeftCorner), Some('+'));
     /// ```
-
     pub fn style(&mut self, component: TableComponent) -> Option<char> {
         self.style.get(&component).copied()
     }
