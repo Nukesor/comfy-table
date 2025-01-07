@@ -38,10 +38,23 @@ jobs:
         run: cargo build
 
       - name: cargo fmt
-        run: cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: cargo fmt
+        run: cargo fmt --all -- --check
 
       - name: cargo clippy
         run: cargo clippy --tests -- -D warnings
 
       - name: cargo clippy without default features
         run: cargo clippy --no-default-features --tests -- -D warnings
+
+      # Only run taplo on linux to save some time.
+      # Also, taplo is broken on windows for some reason.
+      - name: Install taplo-cli
+        run: cargo install taplo-cli
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Run taplo check
+        run: ~/.cargo/bin/taplo format --check
+        if: matrix.os == 'ubuntu-latest'

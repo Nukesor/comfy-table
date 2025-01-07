@@ -61,6 +61,7 @@ prop_compose! {
 /// 2. Constraints for all columns.
 /// 3. The alignment for each cell.
 /// 3. The alignment for each column.
+#[allow(clippy::type_complexity)]
 fn columns_and_rows() -> impl Strategy<
     Value = (
         Vec<Vec<String>>,

@@ -7,7 +7,7 @@ homepage = "https://github.com/nukesor/comfy-table"
 repository = "https://github.com/nukesor/comfy-table"
 documentation = "https://docs.rs/comfy-table/"
 license = "MIT"
-keywords = ["terminal", "table", "unicode"]
+keywords = ["table", "terminal", "unicode"]
 readme = "README.md"
 rust-version = "1.64"
 edition = "2021"
@@ -16,12 +16,12 @@ edition = "2021"
 maintenance = { status = "actively-developed" }
 
 [[bench]]
-name = "build_tables"
 harness = false
+name = "build_tables"
 
 [[bench]]
-name = "build_large_table"
 harness = false
+name = "build_large_table"
 
 [[example]]
 name = "no_tty"
@@ -39,10 +39,10 @@ required-features = ["custom_styling"]
 [features]
 # For more info about these flags, please check the README.
 # Everything's explained over there.
-default = ["tty"]
-tty = ["crossterm"]
 custom_styling = ["ansi-str", "console", "tty"]
+default = ["tty"]
 reexport_crossterm = ["tty"]
+tty = ["crossterm"]
 # ---- DEVELOPMENT FLAGS ----
 # This flag is for comfy-table development debugging!
 # You usually don't need this as a user of the library.
@@ -53,11 +53,11 @@ debug = []
 integration_test = []
 
 [dependencies]
+ansi-str = { version = "0.8", optional = true }
+console = { version = "0.15", optional = true }
 strum = "0.26"
 strum_macros = "0.26"
 unicode-width = "0.2"
-ansi-str = { version = "0.8", optional = true }
-console = { version = "0.15", optional = true }
 
 [dev-dependencies]
 criterion = "0.5"
@@ -69,6 +69,8 @@ rstest = "0.23"
 # We don't need any of the default features for crossterm.
 # However, the windows build needs the windows feature enabled.
 [target.'cfg(not(windows))'.dependencies]
-crossterm = { version = "0.28", optional=true, default-features = false }
+crossterm = { version = "0.28", optional = true, default-features = false }
 [target.'cfg(windows)'.dependencies]
-crossterm = { version = "0.28", optional=true, default-features = false, features=["windows"] }
+crossterm = { version = "0.28", optional = true, default-features = false, features = [
+    "windows",
+] }
