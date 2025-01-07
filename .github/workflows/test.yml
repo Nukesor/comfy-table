@@ -28,7 +28,7 @@ jobs:
           - x86_64-pc-windows-msvc
           - x86_64-apple-darwin
           - wasm32-wasi
-        toolchain: [stable, nightly, "1.74"]
+        toolchain: [stable, "1.74"]
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
