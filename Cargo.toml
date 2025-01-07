@@ -74,3 +74,21 @@ crossterm = { version = "0.28", optional = true, default-features = false }
 crossterm = { version = "0.28", optional = true, default-features = false, features = [
     "windows",
 ] }
+
+[lints.rust]
+deprecated = "warn"
+unsafe_code = "forbid"
+
+[lints.clippy]
+complexity = { level = "warn", priority = -1 }
+correctness = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+perf = { level = "warn", priority = -1 }
+style = { level = "warn", priority = -1 }
+suspicious = { level = "warn", priority = -1 }
+
+cast_possible_truncation = { level = "allow", priority = 0 }
+cast_precision_loss = { level = "allow", priority = 0 }
+cast_sign_loss = { level = "allow", priority = 0 }
+module_name_repetitions = { level = "allow", priority = 0 }

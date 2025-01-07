@@ -11,7 +11,7 @@
 /// ```
 pub const ASCII_FULL: &str = "||--+==+|-+||++++++";
 
-/// Just like ASCII_FULL, but without dividers between rows.
+/// Just like `ASCII_FULL`, but without dividers between rows.
 ///
 /// ```text
 /// +-------+-------+
@@ -22,7 +22,7 @@ pub const ASCII_FULL: &str = "||--+==+|-+||++++++";
 /// +-------+-------+
 pub const ASCII_FULL_CONDENSED: &str = "||--+==+|    ++++++";
 
-/// Just like ASCII_FULL, but without any borders.
+/// Just like `ASCII_FULL`, but without any borders.
 ///
 /// ```text
 ///  Hello | there
@@ -33,7 +33,7 @@ pub const ASCII_FULL_CONDENSED: &str = "||--+==+|    ++++++";
 /// ```
 pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 
-/// Just like ASCII_FULL, but without vertical/horizontal middle lines.
+/// Just like `ASCII_FULL`, but without vertical/horizontal middle lines.
 ///
 /// ```text
 /// +---------------+
@@ -46,7 +46,7 @@ pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 /// ```
 pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 
-/// Just like ASCII_BORDERS_ONLY, but without spacing between rows.
+/// Just like `ASCII_BORDERS_ONLY`, but without spacing between rows.
 ///
 /// ```text
 /// +---------------+
@@ -58,7 +58,7 @@ pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 /// ```
 pub const ASCII_BORDERS_ONLY_CONDENSED: &str = "||--+==+     --++++";
 
-/// Just like ASCII_FULL, but without vertical/horizontal middle lines and no side borders.
+/// Just like `ASCII_FULL`, but without vertical/horizontal middle lines and no side borders.
 ///
 /// ```text
 /// ---------------
@@ -118,7 +118,7 @@ pub const UTF8_FULL_CONDENSED: &str = "││──╞═╪╡┆    ┬┴┌�
 /// ```
 pub const UTF8_NO_BORDERS: &str = "     ═╪ ┆╌┼        ";
 
-/// Just like the UTF8_FULL style, but without vertical/horizontal middle lines.
+/// Just like the `UTF8_FULL` style, but without vertical/horizontal middle lines.
 ///
 /// ```text
 /// ┌───────────────┐

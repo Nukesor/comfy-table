@@ -2,20 +2,19 @@ use crate::style::TableComponent;
 use crate::table::Table;
 use crate::utils::ColumnDisplayInfo;
 
-pub(crate) fn draw_borders(
+pub fn draw_borders(
     table: &Table,
     rows: &[Vec<Vec<String>>],
     display_info: &[ColumnDisplayInfo],
 ) -> Vec<String> {
     // We know how many lines there should be. Initialize the vector with the rough correct amount.
     // We might over allocate a bit, but that's better than under allocating.
-    let mut lines = if let Some(capacity) = rows.first().map(|lines| lines.len()) {
-        // Lines * 2 -> Lines + delimiters
-        // + 5 -> header delimiters + header + bottom/top borders
-        Vec::with_capacity(capacity * 2 + 5)
-    } else {
-        Vec::new()
-    };
+    // Lines * 2 -> Lines + delimiters
+    // + 5 -> header delimiters + header + bottom/top borders
+    let mut lines = rows
+        .first()
+        .map(std::vec::Vec::len)
+        .map_or_else(Vec::new, |capacity| Vec::with_capacity(capacity * 2 + 5));
 
     if should_draw_top_border(table) {
         lines.push(draw_top_border(table, display_info));
@@ -45,7 +44,7 @@ fn draw_top_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> String 
     // Build the top border line depending on the columns' width.
     // Also add the border intersections.
     let mut first = true;
-    for info in display_info.iter() {
+    for info in display_info {
         // Only add something, if the column isn't hidden
         if !info.is_hidden {
             if !first {
@@ -74,7 +73,7 @@ fn draw_rows(
     let mut row_iter = rows.iter().enumerate().peekable();
     while let Some((row_index, row)) = row_iter.next() {
         // Concatenate the line parts and insert the vertical borders if needed
-        for line_parts in row.iter() {
+        for line_parts in row {
             lines.push(embed_line(line_parts, table));
         }
 
@@ -149,7 +148,7 @@ fn draw_horizontal_lines(
     // Append the middle lines depending on the columns' widths.
     // Also add the middle intersections.
     let mut first = true;
-    for info in display_info.iter() {
+    for info in display_info {
         // Only add something, if the column isn't hidden
         if !info.is_hidden {
             if !first {
@@ -183,7 +182,7 @@ fn draw_bottom_border(table: &Table, display_info: &[ColumnDisplayInfo]) -> Stri
     // Add the bottom border lines depending on column width
     // Also add the border intersections.
     let mut first = true;
-    for info in display_info.iter() {
+    for info in display_info {
         // Only add something, if the column isn't hidden
         if !info.is_hidden {
             if !first {

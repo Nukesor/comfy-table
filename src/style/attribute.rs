@@ -27,7 +27,7 @@
 ///
 /// Usage:
 ///
-/// Check [crate::Cell::add_attribute] on how to use it.
+/// Check [`crate::Cell::add_attribute`] on how to use it.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd, Hash)]
 #[non_exhaustive]
 pub enum Attribute {
@@ -66,7 +66,7 @@ pub enum Attribute {
     ///
     /// Mostly used for [mathematical alphanumeric symbols](https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols).
     Fraktur,
-    /// Turns off the `Bold` attribute. - Inconsistent - Prefer to use NormalIntensity
+    /// Turns off the `Bold` attribute. - Inconsistent - Prefer to use `NormalIntensity`
     NoBold,
     /// Switches the text back to normal intensity (no bold, italic).
     NormalIntensity,
@@ -94,8 +94,9 @@ pub enum Attribute {
     NotOverLined,
 }
 
-/// Map the internal mirrored [Attribute] to the actually used [crossterm::style::Attribute]
-pub(crate) fn map_attribute(attribute: Attribute) -> crossterm::style::Attribute {
+/// Map the internal mirrored [Attribute] to the actually used [`crossterm::style::Attribute`]
+#[must_use]
+pub const fn map_attribute(attribute: Attribute) -> crossterm::style::Attribute {
     match attribute {
         Attribute::Reset => crossterm::style::Attribute::Reset,
         Attribute::Bold => crossterm::style::Attribute::Bold,

@@ -5,7 +5,7 @@ mod cell;
 mod color;
 mod column;
 /// Contains modifiers, that can be used to alter certain parts of a preset.\
-/// For instance, the [UTF8_ROUND_CORNERS](modifiers::UTF8_ROUND_CORNERS) replaces all corners with round UTF8 box corners.
+/// For instance, the [`UTF8_ROUND_CORNERS`](modifiers::UTF8_ROUND_CORNERS) replaces all corners with round UTF8 box corners.
 pub mod modifiers;
 /// This module provides styling presets for tables.\
 /// Every preset has an example preview.
@@ -15,7 +15,7 @@ mod table;
 pub use cell::CellAlignment;
 pub use column::{ColumnConstraint, Width};
 #[cfg(feature = "tty")]
-pub(crate) use styling_enums::{map_attribute, map_color};
+pub use styling_enums::{map_attribute, map_color};
 #[cfg(feature = "tty")]
 pub use styling_enums::{Attribute, Color};
 pub use table::{ContentArrangement, TableComponent};

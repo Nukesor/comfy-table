@@ -2,7 +2,6 @@ use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 /// returns printed length of string
 /// if ansi feature enabled, takes into account escape codes
-#[inline(always)]
 pub fn measure_text_width(s: &str) -> usize {
     s.width()
 }

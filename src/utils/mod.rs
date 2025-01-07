@@ -8,7 +8,7 @@ use arrangement::arrange_content;
 use formatting::borders::draw_borders;
 use formatting::content_format::format_content;
 
-/// This struct is ONLY used when table.to_string() is called.
+/// This struct is ONLY used when `table.to_string()` is called.
 /// It's purpose is to store intermediate results, information on how to
 /// arrange the table and other convenience variables.
 ///
@@ -26,7 +26,7 @@ pub struct ColumnDisplayInfo {
 }
 
 impl ColumnDisplayInfo {
-    pub fn new(column: &Column, mut content_width: u16) -> Self {
+    pub const fn new(column: &Column, mut content_width: u16) -> Self {
         // The min contend width may only be 1
         if content_width == 0 {
             content_width = 1;
@@ -40,7 +40,7 @@ impl ColumnDisplayInfo {
         }
     }
 
-    pub fn width(&self) -> u16 {
+    pub const fn width(&self) -> u16 {
         self.content_width
             .saturating_add(self.padding.0)
             .saturating_add(self.padding.1)

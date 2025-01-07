@@ -3,7 +3,7 @@
 /// They allow some control over Column widths as well as the dynamic arrangement process.
 ///
 /// All percental boundaries will be ignored, if:
-/// - you aren't using one of ContentArrangement::{Dynamic, DynamicFullWidth}
+/// - you aren't using one of `ContentArrangement::{Dynamic`, `DynamicFullWidth`}
 /// - the width of the table/terminal cannot be determined.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum ColumnConstraint {
@@ -36,7 +36,7 @@ pub enum Width {
     /// Values above 100 will be automatically reduced to 100.
     ///
     /// **Warning:** This option will be ignored if:
-    /// - you aren't using one of ContentArrangement::{Dynamic, DynamicFullWidth}
+    /// - you aren't using one of `ContentArrangement::{Dynamic`, `DynamicFullWidth`}
     /// - the width of the table/terminal cannot be determined.
     Percentage(u16),
 }

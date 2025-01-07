@@ -19,11 +19,11 @@
 /// | `White`    | `Grey`        |
 ///
 /// Most UNIX terminals and Windows 10 consoles support additional colors.
-/// See [Color::Rgb] or [Color::AnsiValue] for more info.
+/// See [`Color::Rgb`] or [`Color::AnsiValue`] for more info.
 ///
 /// Usage:
 ///
-/// Check [crate::Cell::bg], [crate::Cell::fg] and  on how to use it.
+/// Check [`crate::Cell::bg`], [`crate::Cell::fg`] and  on how to use it.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd, Hash)]
 pub enum Color {
     /// Resets the terminal color.
@@ -90,8 +90,9 @@ pub enum Color {
     AnsiValue(u8),
 }
 
-/// Map the internal mirrored [Color] enum to the actually used [crossterm::style::Color].
-pub(crate) fn map_color(color: Color) -> crossterm::style::Color {
+/// Map the internal mirrored [Color] enum to the actually used [`crossterm::style::Color`].
+#[must_use]
+pub const fn map_color(color: Color) -> crossterm::style::Color {
     match color {
         Color::Reset => crossterm::style::Color::Reset,
         Color::Black => crossterm::style::Color::Black,

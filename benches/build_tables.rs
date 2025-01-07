@@ -1,9 +1,9 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 
 use comfy_table::presets::UTF8_FULL;
-use comfy_table::ColumnConstraint::*;
-use comfy_table::Width::*;
-use comfy_table::*;
+use comfy_table::ColumnConstraint::{Absolute, Boundaries, LowerBoundary, UpperBoundary};
+use comfy_table::Width::{Fixed, Percentage};
+use comfy_table::{Attribute, Cell, Color, ContentArrangement, Table};
 
 /// Build the readme table
 #[cfg(feature = "tty")]

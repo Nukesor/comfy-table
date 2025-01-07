@@ -1,7 +1,7 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 
 use comfy_table::presets::UTF8_FULL;
-use comfy_table::*;
+use comfy_table::{ContentArrangement, Table};
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 

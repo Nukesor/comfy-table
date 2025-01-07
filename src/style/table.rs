@@ -1,6 +1,6 @@
 use strum_macros::EnumIter;
 
-/// Specify how comfy_table should arrange the content in your table.
+/// Specify how `comfy_table` should arrange the content in your table.
 ///
 /// ```
 /// use comfy_table::{Table, ContentArrangement};
@@ -19,21 +19,22 @@ pub enum ContentArrangement {
     /// for the given content.\
     /// Constraints on columns are still respected.
     ///
-    /// **Warning:** If terminal width cannot be determined and no table_width is set via
-    /// [Table::set_width](crate::table::Table::set_width),
+    /// **Warning:** If terminal width cannot be determined and no `table_width` is set via
+    /// [`Table::set_width`](crate::table::Table::set_width),
     /// this option won't work and [Disabled](ContentArrangement::Disabled) will be used as a fallback.
     Dynamic,
-    /// This is mode is the same as the [ContentArrangement::Dynamic] arrangement, but it will always use as much
+    /// This is mode is the same as the [`ContentArrangement::Dynamic`] arrangement, but it will always use as much
     /// space as it's given. Any surplus space will be distributed between all columns.
     DynamicFullWidth,
 }
 
 /// All configurable table components.
-/// A character can be assigned to each component via [Table::set_style](crate::table::Table::set_style).
+///
+/// A character can be assigned to each component via [`Table::set_style`](crate::table::Table::set_style).
 /// This is then used to draw character of the respective component to the commandline.
 ///
 /// I hope that most component names are self-explanatory. Just in case:
-/// BorderIntersections are Intersections, where rows/columns lines meet outer borders.
+/// `BorderIntersections` are Intersections, where rows/columns lines meet outer borders.
 /// E.g.:
 /// ```text
 ///        ---------

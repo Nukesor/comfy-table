@@ -16,6 +16,7 @@ pub struct Row {
 }
 
 impl Row {
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
@@ -26,7 +27,7 @@ impl Row {
     /// If a row has already been added to a table and you add more cells to it
     /// than there're columns currently know to the [Table](crate::Table) struct,
     /// these columns won't be known to the table unless you call
-    /// [crate::Table::discover_columns].
+    /// [`crate::Table::discover_columns`].
     ///
     /// ```rust
     /// use comfy_table::{Row, Cell};
@@ -72,6 +73,7 @@ impl Row {
     }
 
     /// Get the amount of cells on this row.
+    #[must_use]
     pub fn cell_count(&self) -> usize {
         self.cells.len()
     }
@@ -131,7 +133,7 @@ mod tests {
     fn test_some_functions() {
         let cells = ["one", "two", "three"];
         let mut row = Row::new();
-        for cell in cells.iter() {
+        for cell in &cells {
             row.add_cell(Cell::new(cell));
         }
         assert_eq!(row.cell_count(), cells.len());
@@ -140,7 +142,7 @@ mod tests {
         for cell in row.cell_iter() {
             assert_eq!(
                 cell.content(),
-                cell_content_iter.next().unwrap().to_string()
+                (*cell_content_iter.next().unwrap()).to_string()
             );
         }
     }

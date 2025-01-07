@@ -13,7 +13,7 @@ use crate::style::{map_attribute, map_color};
 use crate::table::Table;
 use crate::utils::ColumnDisplayInfo;
 
-pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
+pub const fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
     // Determine, which delimiter should be used
     if let Some(delimiter) = cell.delimiter {
         delimiter
@@ -51,7 +51,7 @@ pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<
         table_content.push(format_row(header, display_info, table));
     }
 
-    for row in table.rows.iter() {
+    for row in &table.rows {
         table_content.push(format_row(row, display_info, table));
     }
     table_content
@@ -67,7 +67,7 @@ pub fn format_row(
 
     let mut cell_iter = row.cells.iter();
     // Now iterate over all cells and handle them according to their alignment
-    for info in display_infos.iter() {
+    for info in display_infos {
         if info.is_hidden {
             cell_iter.next();
             continue;
@@ -91,7 +91,7 @@ pub fn format_row(
 
         // Iterate over each line and split it into multiple lines if necessary.
         // Newlines added by the user will be preserved.
-        for line in cell.content.iter() {
+        for line in &cell.content {
             if measure_text_width(line) > info.content_width.into() {
                 let mut parts = split_line(line, info, delimiter);
                 cell_lines.append(&mut parts);
@@ -170,7 +170,7 @@ pub fn format_row(
         let mut line = Vec::with_capacity(display_infos.len());
         let mut cell_iter = temp_row_content.iter();
 
-        for info in display_infos.iter() {
+        for info in display_infos {
             if info.is_hidden {
                 continue;
             }
@@ -208,13 +208,11 @@ fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: St
     // Determine the alignment of the column cells.
     // Cell settings overwrite the columns Alignment settings.
     // Default is Left
-    let alignment = if let Some(alignment) = cell.alignment {
-        alignment
-    } else if let Some(alignment) = info.cell_alignment {
-        alignment
-    } else {
-        CellAlignment::Left
-    };
+    let alignment = cell.alignment.map_or(
+        info.cell_alignment
+            .map_or(CellAlignment::Left, |alignment| alignment),
+        |alignment| alignment,
+    );
 
     // Apply left/right/both side padding depending on the alignment of the column
     match alignment {
@@ -271,7 +269,7 @@ fn style_line(line: String, cell: &Cell) -> String {
         content = content.on(map_color(color));
     }
 
-    for attribute in cell.attributes.iter() {
+    for attribute in &cell.attributes {
         content = content.attribute(map_attribute(*attribute));
     }
 

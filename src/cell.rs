@@ -48,6 +48,7 @@ impl Cell {
     }
 
     /// Return a copy of the content contained in this cell.
+    #[must_use]
     pub fn content(&self) -> String {
         self.content.join("\n")
     }
@@ -56,7 +57,7 @@ impl Cell {
     /// Normal text uses spaces (` `) as delimiters. This is necessary to help comfy-table
     /// understand the concept of _words_.
     #[must_use]
-    pub fn set_delimiter(mut self, delimiter: char) -> Self {
+    pub const fn set_delimiter(mut self, delimiter: char) -> Self {
         self.delimiter = Some(delimiter);
 
         self
@@ -74,7 +75,7 @@ impl Cell {
     ///     .set_alignment(CellAlignment::Center);
     /// ```
     #[must_use]
-    pub fn set_alignment(mut self, alignment: CellAlignment) -> Self {
+    pub const fn set_alignment(mut self, alignment: CellAlignment) -> Self {
         self.alignment = Some(alignment);
 
         self
@@ -92,7 +93,7 @@ impl Cell {
     /// ```
     #[cfg(feature = "tty")]
     #[must_use]
-    pub fn fg(mut self, color: Color) -> Self {
+    pub const fn fg(mut self, color: Color) -> Self {
         self.fg = Some(color);
 
         self
@@ -110,7 +111,7 @@ impl Cell {
     /// ```
     #[cfg(feature = "tty")]
     #[must_use]
-    pub fn bg(mut self, color: Color) -> Self {
+    pub const fn bg(mut self, color: Color) -> Self {
         self.bg = Some(color);
 
         self
@@ -135,7 +136,7 @@ impl Cell {
         self
     }
 
-    /// Same as add_attribute, but you can pass a vector of [Attributes](Attribute)
+    /// Same as `add_attribute`, but you can pass a vector of [Attributes](Attribute)
     #[cfg(feature = "tty")]
     #[must_use]
     pub fn add_attributes(mut self, mut attribute: Vec<Attribute>) -> Self {
@@ -145,7 +146,7 @@ impl Cell {
     }
 }
 
-/// Convert anything with [ToString] to a new [Cell].
+/// Convert anything with [`ToString`] to a new [Cell].
 ///
 /// ```
 /// # use comfy_table::Cell;
@@ -166,7 +167,7 @@ pub struct Cells(pub Vec<Cell>);
 
 /// Allow the conversion of a type to a [Cells], which is a simple vector of cells.
 ///
-/// By default this is implemented for all Iterators over items implementing [ToString].
+/// By default this is implemented for all Iterators over items implementing [`ToString`].
 ///
 /// ```
 /// use comfy_table::{Row, Cells};

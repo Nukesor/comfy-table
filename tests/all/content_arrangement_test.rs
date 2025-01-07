@@ -179,7 +179,7 @@ fn table_with_truncate_indicator() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
-/// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
+/// This table checks the scenario, where a column has a big `max_width`, but a lot of the assigned
 /// space doesn't get used after splitting the lines. This happens mostly when there are
 /// many long words in a single column.
 /// The remaining space should rather be distributed to other cells.
@@ -257,7 +257,7 @@ fn dynamic_full_width_after_split() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
-/// This table checks the scenario, where a column has a big max_width, but a lot of the assigned
+/// This table checks the scenario, where a column has a big `max_width`, but a lot of the assigned
 /// space isn't used after splitting the lines.
 /// The remaining space should rather distributed between all cells.
 #[test]

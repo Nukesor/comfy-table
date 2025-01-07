@@ -21,6 +21,7 @@ use crate::utils::build_table;
 ///
 /// There also exists a representation of a [Column].
 /// Columns are automatically created when adding rows to a table.
+#[allow(clippy::struct_excessive_bools)] // Would be better to have less but ok for now
 #[derive(Debug, Clone)]
 pub struct Table {
     pub(crate) columns: Vec<Column>,
@@ -57,6 +58,7 @@ impl Default for Table {
 
 impl Table {
     /// Create a new table with default ASCII styling.
+    #[must_use]
     pub fn new() -> Self {
         let mut table = Self {
             columns: Vec::new(),
@@ -84,6 +86,7 @@ impl Table {
 
     /// This is an alternative `fmt` function, which simply removes any trailing whitespaces.
     /// Trailing whitespaces often occur, when using tables without a right border.
+    #[must_use]
     pub fn trim_fmt(&self) -> String {
         self.lines()
             .map(|line| line.trim_end().to_string())
@@ -115,7 +118,8 @@ impl Table {
         self
     }
 
-    pub fn header(&self) -> Option<&Row> {
+    #[must_use]
+    pub const fn header(&self) -> Option<&Row> {
         self.header.as_ref()
     }
 
@@ -188,7 +192,7 @@ impl Table {
         I: IntoIterator,
         I::Item: Into<Row>,
     {
-        for row in rows.into_iter() {
+        for row in rows {
             let mut row = row.into();
             self.autogenerate_columns(&row);
             row.index = Some(self.rows.len());
@@ -233,6 +237,7 @@ impl Table {
     ///
     /// assert_eq!(table.row_count(), 1);
     /// ```
+    #[must_use]
     pub fn row_count(&self) -> usize {
         self.rows.len()
     }
@@ -248,6 +253,7 @@ impl Table {
     /// table.add_row(vec!["One", "Two"]);
     /// assert!(!table.is_empty());
     /// ```
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.rows.is_empty()
     }
@@ -263,23 +269,27 @@ impl Table {
 
     /// Get the expected width of the table.
     ///
-    /// This will be `Some(width)`, if the terminal width can be detected or if the table width is set via [set_width](Table::set_width).
+    /// This will be `Some(width)`, if the terminal width can be detected or if the table width is set via [`set_width`](Table::set_width).
     ///
     /// If neither is not possible, `None` will be returned.\
     /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::Width::Percentage) constraint won't work.
     #[cfg(feature = "tty")]
+    #[must_use]
     pub fn width(&self) -> Option<u16> {
-        if let Some(width) = self.width {
-            Some(width)
-        } else if self.is_tty() {
-            if let Ok((width, _)) = terminal::size() {
-                Some(width)
-            } else {
-                None
-            }
-        } else {
-            None
-        }
+        self.width.map_or_else(
+            || {
+                if self.is_tty() {
+                    if let Ok((width, _)) = terminal::size() {
+                        Some(width)
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            },
+            Some,
+        )
     }
 
     #[cfg(not(feature = "tty"))]
@@ -302,6 +312,7 @@ impl Table {
     }
 
     /// Get the current content arrangement of the table.
+    #[must_use]
     pub fn content_arrangement(&self) -> ContentArrangement {
         self.arrangement.clone()
     }
@@ -327,15 +338,15 @@ impl Table {
     }
 
     /// In case you are sure you don't want export tables to a tty or you experience
-    /// problems with tty specific code, you can enforce a non_tty mode.
+    /// problems with tty specific code, you can enforce a `non_tty` mode.
     ///
     /// This disables:
     ///
     /// - width lookup from the current tty
-    /// - Styling and attributes on cells (unless you use [Table::enforce_styling])
+    /// - Styling and attributes on cells (unless you use [`Table::enforce_styling`])
     ///
     /// If you use the [dynamic content arrangement](ContentArrangement::Dynamic),
-    /// you need to set the width of your desired table manually with [set_width](Table::set_width).
+    /// you need to set the width of your desired table manually with [`set_width`](Table::set_width).
     #[cfg(feature = "tty")]
     pub fn force_no_tty(&mut self) -> &mut Self {
         self.no_tty = true;
@@ -356,8 +367,9 @@ impl Table {
     /// Returns whether the table will be handled as if it's printed to a tty.
     ///
     /// By default, comfy-table looks at `stdout` and checks whether it's a tty.
-    /// This behavior can be changed via [Table::force_no_tty] and [Table::use_stderr].
+    /// This behavior can be changed via [`Table::force_no_tty`] and [`Table::use_stderr`].
     #[cfg(feature = "tty")]
+    #[must_use]
     pub fn is_tty(&self) -> bool {
         if self.no_tty {
             return false;
@@ -391,6 +403,7 @@ impl Table {
     /// Returns whether the content of this table should be styled with the current settings and
     /// environment.
     #[cfg(feature = "tty")]
+    #[must_use]
     pub fn should_style(&self) -> bool {
         if self.enforce_styling {
             return true;
@@ -406,7 +419,7 @@ impl Table {
         self.style_text_only = true;
     }
 
-    /// Convenience method to set a [ColumnConstraint] for all columns at once.
+    /// Convenience method to set a [`ColumnConstraint`] for all columns at once.
     /// Constraints are used to influence the way the columns will be arranged.
     /// Check out their docs for more information.
     ///
@@ -442,15 +455,15 @@ impl Table {
         self
     }
 
-    /// This function creates a TableStyle from a given preset string.\
+    /// This function creates a `TableStyle` from a given preset string.\
     /// Preset strings can be found in `styling::presets::*`.
     ///
     /// You can also write your own preset strings and use them with this function.
-    /// There's the convenience method [Table::current_style_as_preset], which prints you a preset
+    /// There's the convenience method [`Table::current_style_as_preset`], which prints you a preset
     /// string from your current style configuration. \
-    /// The function expects the to-be-drawn characters to be in the same order as in the [TableComponent] enum.
+    /// The function expects the to-be-drawn characters to be in the same order as in the [`TableComponent`] enum.
     ///
-    /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all remaining components.
+    /// If the string isn't long enough, the default [`ASCII_FULL`] style will be used for all remaining components.
     ///
     /// If the string is too long, remaining charaacters will be simply ignored.
     pub fn load_preset(&mut self, preset: &str) -> &mut Self {
@@ -504,7 +517,7 @@ impl Table {
 
     /// Modify a preset with a modifier string from [modifiers](crate::style::modifiers).
     ///
-    /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
+    /// For instance, the [`UTF8_ROUND_CORNERS`](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
     ///
     /// ```
     /// use comfy_table::Table;
@@ -535,10 +548,10 @@ impl Table {
     }
 
     /// Define the char that will be used to draw a specific component.\
-    /// Look at [TableComponent] to see all stylable components
+    /// Look at [`TableComponent`] to see all stylable components
     ///
     /// If `None` is supplied, the element won't be displayed.\
-    /// In case of a e.g. *BorderIntersection a whitespace will be used as placeholder,
+    /// In case of a e.g. *`BorderIntersection` a whitespace will be used as placeholder,
     /// unless related borders and and corners are set to `None` as well.
     ///
     /// For example, if `TopBorderIntersections` is `None` the first row would look like this:
@@ -594,6 +607,7 @@ impl Table {
     }
 
     /// Get a reference to a specific column.
+    #[must_use]
     pub fn column(&self, index: usize) -> Option<&Column> {
         self.columns.get(index)
     }
@@ -654,6 +668,7 @@ impl Table {
     /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "Fifth");
     /// assert!(cell_iter.next().is_none());
     /// ```
+    #[must_use]
     pub fn column_cells_iter(&self, column_index: usize) -> ColumnCellIter {
         ColumnCellIter {
             rows: &self.rows,
@@ -683,6 +698,7 @@ impl Table {
     /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "Fifth");
     /// assert!(cell_iter.next().is_none());
     /// ```
+    #[must_use]
     pub fn column_cells_with_header_iter(&self, column_index: usize) -> ColumnCellsWithHeaderIter {
         ColumnCellsWithHeaderIter {
             header_checked: false,
@@ -694,6 +710,7 @@ impl Table {
     }
 
     /// Reference to a specific row
+    #[must_use]
     pub fn row(&self, index: usize) -> Option<&Row> {
         self.rows.get(index)
     }
@@ -728,6 +745,7 @@ impl Table {
     /// Return a vector representing the maximum amount of characters in any line of this column.\
     ///
     /// **Attention** This scans the whole current content of the table.
+    #[must_use]
     pub fn column_max_content_widths(&self) -> Vec<u16> {
         fn set_max_content_widths(max_widths: &mut [u16], row: &Row) {
             // Get the max width for each cell of the row
@@ -751,7 +769,7 @@ impl Table {
             set_max_content_widths(&mut max_widths, header);
         }
         // Iterate through all rows of the table.
-        for row in self.rows.iter() {
+        for row in &self.rows {
             set_max_content_widths(&mut max_widths, row);
         }
 
@@ -759,10 +777,9 @@ impl Table {
     }
 
     pub(crate) fn style_or_default(&self, component: TableComponent) -> String {
-        match self.style.get(&component) {
-            None => " ".to_string(),
-            Some(character) => character.to_string(),
-        }
+        self.style
+            .get(&component)
+            .map_or_else(|| " ".to_string(), std::string::ToString::to_string)
     }
 
     pub(crate) fn style_exists(&self, component: TableComponent) -> bool {
@@ -788,7 +805,7 @@ impl Table {
     /// To make sure everything works as expected, just call this function if you're adding cells
     /// to rows that're already added to the table.
     pub fn discover_columns(&mut self) {
-        for row in self.rows.iter() {
+        for row in &self.rows {
             if row.cell_count() > self.columns.len() {
                 for index in self.columns.len()..row.cell_count() {
                     self.columns.push(Column::new(index));
@@ -799,8 +816,9 @@ impl Table {
 }
 
 /// An iterator over cells of a specific column.
+///
 /// A dedicated struct is necessary, as data is usually handled by rows and thereby stored in
-/// `Table::rows`. This type is returned by [Table::column_cells_iter].
+/// `Table::rows`. This type is returned by [`Table::column_cells_iter`].
 pub struct ColumnCellIter<'a> {
     rows: &'a [Row],
     column_index: usize,
@@ -824,7 +842,7 @@ impl<'a> Iterator for ColumnCellIter<'a> {
 
 /// An iterator over cells of a specific column.
 /// A dedicated struct is necessary, as data is usually handled by rows and thereby stored in
-/// `Table::rows`. This type is returned by [Table::column_cells_iter].
+/// `Table::rows`. This type is returned by [`Table::column_cells_iter`].
 pub struct ColumnCellsWithHeaderIter<'a> {
     header_checked: bool,
     header: &'a Option<Row>,

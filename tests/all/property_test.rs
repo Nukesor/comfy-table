@@ -3,7 +3,7 @@ use comfy_table::ColumnConstraint::*;
 use comfy_table::Width::*;
 use comfy_table::*;
 
-/// Pick any of the three existing ContentArrangement types for the table.
+/// Pick any of the three existing `ContentArrangement` types for the table.
 fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
     prop_oneof![
         Just(ContentArrangement::Disabled),
@@ -22,7 +22,7 @@ fn cell_alignment() -> impl Strategy<Value = Option<CellAlignment>> {
     ]
 }
 
-/// Any Column can have any constellation of ColumnConstraints
+/// Any Column can have any constellation of `ColumnConstraints`
 fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
     prop_oneof![
         Just(None),
@@ -37,7 +37,7 @@ fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
     ]
 }
 
-/// We test the Row::max_height with a few values.
+/// We test the `Row::max_height` with a few values.
 fn max_height() -> impl Strategy<Value = Option<usize>> {
     prop_oneof![
         Just(None),
@@ -100,7 +100,7 @@ fn columns_and_rows() -> impl Strategy<
     })
 }
 
-/// We test the Row::max_height with a few values.
+/// We test the `Row::max_height` with a few values.
 fn table_width() -> impl Strategy<Value = u16> {
     0..1000u16
 }
@@ -121,7 +121,7 @@ prop_compose! {
         }
 
         let mut cell_alignments = cell_alignments.iter();
-        for row in rows.iter() {
+        for row in &rows {
             // Convert a vector of Strings to a vector of Cells and
             // set the content alignment for each cell
             let row: Vec<Cell> = row.iter().map(|content| {
@@ -170,18 +170,14 @@ proptest! {
         let formatted = table.to_string();
 
         // We'll take a look at each individual line to ensure they all share some properties.
-        let lines: Vec<String> = formatted.split_terminator('\n').map(|line| line.to_owned()).collect();
+        let lines: Vec<String> = formatted.split_terminator('\n').map(std::borrow::ToOwned::to_owned).collect();
         let mut line_iter = lines.iter();
 
         // ----- Table width check ------
 
         // Get the length of the very first line.
         // We're lateron going to ensure, that all lines have the same length.
-        let line_length = if let Some(line) = line_iter.next() {
-            line.trim().len()
-        } else {
-            0
-        };
+        let line_length = line_iter.next().map_or(0, |line| line.trim().len());
 
         // Make sure all lines have the same length
         for line in line_iter {

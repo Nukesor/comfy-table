@@ -36,13 +36,14 @@ pub struct Column {
     /// The delimiter which is used to split the text into consistent pieces.
     /// Default is ` `.
     pub(crate) delimiter: Option<char>,
-    /// Define the [CellAlignment] for all cells of this column
+    /// Define the [`CellAlignment`] for all cells of this column
     pub(crate) cell_alignment: Option<CellAlignment>,
     pub(crate) constraint: Option<ColumnConstraint>,
 }
 
 impl Column {
-    pub fn new(index: usize) -> Self {
+    #[must_use]
+    pub const fn new(index: usize) -> Self {
         Self {
             index,
             padding: (1, 1),
@@ -63,7 +64,8 @@ impl Column {
     }
 
     /// Convenience helper that returns the total width of the combined padding.
-    pub fn padding_width(&self) -> u16 {
+    #[must_use]
+    pub const fn padding_width(&self) -> u16 {
         self.padding.0.saturating_add(self.padding.1)
     }
 
@@ -87,7 +89,8 @@ impl Column {
     }
 
     /// Get the constraint that is used for this column.
-    pub fn constraint(&self) -> Option<&ColumnConstraint> {
+    #[must_use]
+    pub const fn constraint(&self) -> Option<&ColumnConstraint> {
         self.constraint.as_ref()
     }
 
@@ -98,8 +101,9 @@ impl Column {
         self
     }
 
-    /// Returns weather the columns is hidden via [ColumnConstraint::Hidden].
-    pub fn is_hidden(&self) -> bool {
+    /// Returns weather the columns is hidden via [`ColumnConstraint::Hidden`].
+    #[must_use]
+    pub const fn is_hidden(&self) -> bool {
         matches!(self.constraint, Some(ColumnConstraint::Hidden))
     }
 

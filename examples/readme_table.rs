@@ -1,5 +1,5 @@
 use comfy_table::presets::UTF8_FULL;
-use comfy_table::*;
+use comfy_table::{Attribute, Cell, Color, ContentArrangement, Table};
 
 fn main() {
     let mut table = Table::new();

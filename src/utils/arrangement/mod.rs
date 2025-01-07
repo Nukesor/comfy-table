@@ -22,7 +22,7 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     // Check if we can already resolve some constraints.
     // This step also populates the ColumnDisplayInfo structs.
     let visible_columns = helper::count_visible_columns(&table.columns);
-    for column in table.columns.iter() {
+    for column in &table.columns {
         if column.constraint.is_some() {
             constraint::evaluate(
                 table,
@@ -47,7 +47,7 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
 
     match &table.arrangement {
         ContentArrangement::Disabled => {
-            disabled::arrange(table, &mut infos, visible_columns, &max_content_widths)
+            disabled::arrange(table, &mut infos, visible_columns, &max_content_widths);
         }
         ContentArrangement::Dynamic | ContentArrangement::DynamicFullWidth => {
             dynamic::arrange(table, &mut infos, table_width, &max_content_widths);
