@@ -1,5 +1,3 @@
-use strum_macros::EnumIter;
-
 /// Specify how comfy_table should arrange the content in your table.
 ///
 /// ```
@@ -46,7 +44,7 @@ pub enum ContentArrangement {
 /// |   |   |   |    The inner "+" chars are MiddleIntersections
 /// +---+---+---+
 /// ```
-#[derive(Debug, PartialEq, Eq, Hash, EnumIter, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum TableComponent {
     LeftBorder,
     RightBorder,
@@ -67,4 +65,34 @@ pub enum TableComponent {
     TopRightCorner,
     BottomLeftCorner,
     BottomRightCorner,
+}
+
+impl TableComponent {
+    const fn components() -> [TableComponent; 19] {
+        [
+            TableComponent::LeftBorder,
+            TableComponent::RightBorder,
+            TableComponent::TopBorder,
+            TableComponent::BottomBorder,
+            TableComponent::LeftHeaderIntersection,
+            TableComponent::HeaderLines,
+            TableComponent::MiddleHeaderIntersections,
+            TableComponent::RightHeaderIntersection,
+            TableComponent::VerticalLines,
+            TableComponent::HorizontalLines,
+            TableComponent::MiddleIntersections,
+            TableComponent::LeftBorderIntersections,
+            TableComponent::RightBorderIntersections,
+            TableComponent::TopBorderIntersections,
+            TableComponent::BottomBorderIntersections,
+            TableComponent::TopLeftCorner,
+            TableComponent::TopRightCorner,
+            TableComponent::BottomLeftCorner,
+            TableComponent::BottomRightCorner,
+        ]
+    }
+
+    pub fn iter() -> impl Iterator<Item = TableComponent> {
+        TableComponent::components().into_iter()
+    }
 }

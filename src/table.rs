@@ -7,7 +7,6 @@ use std::slice::{Iter, IterMut};
 use crossterm::terminal;
 #[cfg(feature = "tty")]
 use crossterm::tty::IsTty;
-use strum::IntoEnumIterator;
 
 use crate::cell::Cell;
 use crate::column::Column;
