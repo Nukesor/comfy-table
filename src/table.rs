@@ -453,7 +453,7 @@ impl Table {
     ///
     /// If the string is too long, remaining charaacters will be simply ignored.
     pub fn load_preset(&mut self, preset: &str) -> &mut Self {
-        let mut components = TableComponent::components();
+        let mut components = TableComponent::iter();
 
         for character in preset.chars() {
             if let Some(component) = components.next() {
@@ -488,7 +488,7 @@ impl Table {
     /// assert_eq!(UTF8_FULL, table.current_style_as_preset())
     /// ```
     pub fn current_style_as_preset(&mut self) -> String {
-        let components = TableComponent::components();
+        let components = TableComponent::iter();
         let mut preset_string = String::new();
 
         for component in components {
@@ -515,7 +515,7 @@ impl Table {
     /// table.apply_modifier(UTF8_ROUND_CORNERS);
     /// ```
     pub fn apply_modifier(&mut self, modifier: &str) -> &mut Self {
-        let mut components = TableComponent::components();
+        let mut components = TableComponent::iter();
 
         for character in modifier.chars() {
             // Skip spaces while applying modifiers.

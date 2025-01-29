@@ -68,7 +68,7 @@ pub enum TableComponent {
 }
 
 impl TableComponent {
-    pub fn components() -> impl Iterator<Item = TableComponent> {
+    const fn components() -> [TableComponent; 19] {
         [
             TableComponent::LeftBorder,
             TableComponent::RightBorder,
@@ -90,6 +90,9 @@ impl TableComponent {
             TableComponent::BottomLeftCorner,
             TableComponent::BottomRightCorner,
         ]
-        .into_iter()
+    }
+
+    pub fn iter() -> impl Iterator<Item = TableComponent> {
+        TableComponent::components().into_iter()
     }
 }
