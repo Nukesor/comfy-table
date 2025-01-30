@@ -36,6 +36,11 @@ jobs:
           - target: wasm32-wasi
             os: ubuntu-latest
             minimal_setup: true
+            toolchain: "1.74"
+          - target: wasm32-wasip1
+            os: ubuntu-latest
+            minimal_setup: true
+            toolchain: "stable"
           - target: x86_64-pc-windows-msvc
             os: windows-latest
             minimal_setup: false
