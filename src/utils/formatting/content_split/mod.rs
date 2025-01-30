@@ -158,3 +158,26 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
 
     current_line
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use unicode_width::UnicodeWidthStr;
+
+    #[test]
+    fn test_split_long_word() {
+        let emoji = "🙂‍↕️"; // U+1F642 U+200D U+2195 U+FE0F head shaking vertically
+        assert_eq!(emoji.len(), 13);
+        assert_eq!(emoji.chars().count(), 4);
+        assert_eq!(emoji.width(), 2);
+
+        let (word, remaining) = split_long_word(emoji.width(), emoji);
+
+        assert_eq!(word, "\u{1F642}\u{200D}\u{2195}\u{FE0F}");
+        assert_eq!(word.len(), 13);
+        assert_eq!(word.chars().count(), 4);
+        assert_eq!(word.width(), 2);
+
+        assert!(remaining.is_empty());
+    }
+}
