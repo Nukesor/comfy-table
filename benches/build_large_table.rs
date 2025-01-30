@@ -2,11 +2,11 @@ use criterion::{criterion_group, criterion_main, Criterion};
 
 use comfy_table::presets::UTF8_FULL;
 use comfy_table::*;
-use rand::distributions::Alphanumeric;
+use rand::distr::Alphanumeric;
 use rand::Rng;
 
 /// Create a dynamic 10x500 Table with width 300 and unevenly distributed content.
-/// There're no constriant, the content simply has to be formatted to fit as good as possible into
+/// There are no constraint, the content simply has to be formatted to fit as good as possible into
 /// the given space.
 fn build_huge_table() {
     let mut table = Table::new();
@@ -16,12 +16,12 @@ fn build_huge_table() {
         .set_width(300)
         .set_header(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     // Create a 10x10 grid
     for _ in 0..500 {
         let mut row = Vec::new();
         for _ in 0..10 {
-            let string_length = rng.gen_range(2..100);
+            let string_length = rng.random_range(2..100);
             let random_string: String = (&mut rng)
                 .sample_iter(&Alphanumeric)
                 .take(string_length)

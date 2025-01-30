@@ -53,15 +53,18 @@ debug = []
 integration_test = []
 
 [dependencies]
+unicode-segmentation = { version = "1" }
+unicode-width = { version = "0.2" }
+
+# Optional dependencies
 ansi-str = { version = "0.8", optional = true }
 console = { version = "0.15", optional = true }
-unicode-width = "0.2"
 
 [dev-dependencies]
 criterion = "0.5"
 pretty_assertions = "1"
 proptest = "1"
-rand = "0.8"
+rand = "0.9"
 rstest = "0.24"
 
 # We don't need any of the default features for crossterm.
