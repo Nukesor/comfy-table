@@ -17,15 +17,15 @@ pub use normal::*;
 /// These "elements" then get added one-by-one to the lines, until a line is full.
 /// As soon as the line is full, we add it to the result set and start a new line.
 ///
-/// This is repeated until there're no more "elements".
+/// This is repeated until there are no more "elements".
 ///
-/// Mid-element splits only occurs if a element doesn't fit in a single line by itself.
+/// Mid-element splits only occurs if an element doesn't fit in a single line by itself.
 pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<String> {
     let mut lines = Vec::new();
     let content_width = usize::from(info.content_width);
 
     // Split the line by the given deliminator and turn the content into a stack.
-    // Also clone it and convert it into a Vec<String>. Otherwise we get some burrowing problems
+    // Also clone it and convert it into a Vec<String>. Otherwise, we get some burrowing problems
     // due to early drops of borrowed values that need to be inserted into `Vec<&str>`
     let mut elements = split_line_by_delimiter(line, delimiter);
 
@@ -81,7 +81,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
         // There are two scenarios:
         //
         // 1. The word is too long for a single line.
-        //    In this case, we have to split the element anyways. Let's fill the remaining space on
+        //    In this case, we have to split the element anyway. Let's fill the remaining space on
         //    the current line with, start a new line and push the remaining part on the stack.
         // 2. The word is short enough to fit as a whole into a line
         //    In that case we simply push the current line and start a new one with the current element
@@ -99,9 +99,9 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
 
             let (mut next, mut remaining) = split_long_word(remaining_width, &next);
 
-            // This is a ugly hack, but it's needed for now.
+            // This is an ugly hack, but it's needed for now.
             //
-            // Scenario: The current column has to have a width of 1 and we work with a new line.
+            // Scenario: The current column has to have a width of 1, and we work with a new line.
             // However, the next char is a multi-character UTF-8 symbol.
             //
             // Since a multi-character wide symbol doesn't fit into a 1-character column,
@@ -141,7 +141,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
 
 /// This is the minimum of available characters per line.
 /// It's used to check, whether another element can be added to the current line.
-/// Otherwise the line will simply be left as it is and we start with a new one.
+/// Otherwise, the line will simply be left as it is, and we start with a new one.
 /// Two chars seems like a reasonable approach, since this would require next element to be
 /// a single char + delimiter.
 const MIN_FREE_CHARS: usize = 2;

@@ -85,15 +85,15 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
             }
         } else {
             assert!(!is_esc);
-            let mut char_iter = str_slice.graphemes(true).peekable();
-            while let Some(c) = char_iter.peek() {
+            let mut graphmes = str_slice.graphemes(true).peekable();
+            while let Some(c) = graphmes.peek() {
                 let character_width = c.width();
                 if allowed_width < head_len + character_width {
                     break;
                 }
 
                 head_len += character_width;
-                let c = char_iter.next().unwrap();
+                let c = graphmes.next().unwrap();
                 head.push_str(c);
 
                 // c is not escape code
@@ -110,7 +110,7 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
             for esc in escapes {
                 tail.push_str(esc);
             }
-            let remaining: String = char_iter.collect();
+            let remaining: String = graphmes.collect();
             tail.push_str(&remaining);
             break;
         }
