@@ -48,3 +48,30 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     let remaining = char_iter.collect();
     (parts, remaining)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_split_long_word() {
+        let emoji = "🙂‍↕️"; // U+1F642 U+200D U+2195 U+FE0F head shaking vertically
+        assert_eq!(emoji.len(), 13);
+        assert_eq!(emoji.chars().count(), 4);
+        assert_eq!(emoji.width(), 2);
+
+        let (word, remaining) = split_long_word(emoji.width(), &emoji);
+
+        println!("{word}");
+        assert_eq!(word, "\u{1F642}\u{200D}");
+        assert_eq!(word.len(), 7);
+        assert_eq!(word.chars().count(), 2);
+        assert_eq!(word.width(), 2);
+
+        println!("{remaining}");
+        assert_eq!(remaining, "\u{2195}\u{FE0F}");
+        assert_eq!(remaining.len(), 6);
+        assert_eq!(remaining.chars().count(), 2);
+        assert_eq!(remaining.width(), 2);
+    }
+}
