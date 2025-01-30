@@ -61,7 +61,7 @@ mod tests {
         assert_eq!(emoji.chars().count(), 4);
         assert_eq!(emoji.width(), 2);
 
-        let (word, remaining) = split_long_word(emoji.width(), &emoji);
+        let (word, remaining) = split_long_word(emoji.width(), emoji);
 
         assert_eq!(word, "\u{1F642}\u{200D}\u{2195}\u{FE0F}");
         assert_eq!(word.len(), 13);
