@@ -24,9 +24,16 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     let mut parts = String::new();
 
     let mut graphmes = word.graphemes(true).peekable();
+
     // Check if the string might be too long, one Unicode grapheme at a time.
     // Peek into the next grapheme and check the exit condition.
-    // That is, pushing the next grapheme would result in the string being too long.
+    //
+    // This code uses graphemes to handle both zero-width joiner[0] UTF-8 chars, which
+    // combine multiple UTF-8 chars into a single grapheme, and variant selectors [1],
+    // which pick a certain variant of the preceding char.
+    //
+    // [0]: https://en.wikipedia.org/wiki/Zero-width_joiner
+    // [1]: https://en.wikipedia.org/wiki/Variation_Selectors_(Unicode_block)
     while let Some(c) = graphmes.peek() {
         if (current_width + c.width()) > allowed_width {
             break;
