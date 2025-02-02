@@ -4,9 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [7.1.4] - 2025-02-07
 
-## Changed
+### Fix
+
+- Handle UTF-8 graphemes when truncating cells. [#167](https://github.com/Nukesor/comfy-table/pull/167)
+- Respect UTF-8 zero-width joiner and variation selection characters when splitting words. [#168](https://github.com/Nukesor/comfy-table/pull/168) by [tisonkun](https://github.com/tisonkun)
+
+### Change
+
+- Remove strum dependency. [#169](https://github.com/Nukesor/comfy-table/pull/169) by [tisonkun](https://github.com/tisonkun)
 
 ## Chore
 

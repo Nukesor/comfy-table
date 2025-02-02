@@ -1,5 +1,6 @@
 #[cfg(feature = "tty")]
 use crossterm::style::{style, Stylize};
+use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
 use super::content_split::measure_text_width;
@@ -102,39 +103,115 @@ pub fn format_row(
 
         // Remove all unneeded lines of this cell, if the row's height is capped to a certain
         // amount of lines and there're too many lines in this cell.
-        // This then inserts a '...' string at the end to indicate that the cell has been truncated.
+        // This then truncates and inserts a '...' string at the end of the last line to indicate
+        // that the cell has been truncated.
         if let Some(lines) = row.max_height {
             if cell_lines.len() > lines {
+                // We already have to many lines. Cut off the surplus lines.
                 let _ = cell_lines.split_off(lines);
-                // Direct access.
+
+                // Directly access the last line.
                 let last_line = cell_lines
                     .get_mut(lines - 1)
                     .expect("We know it's this long.");
 
-                // Truncate any ansi codes, as the following cutoff might break an ansi code
-                // otherwise. This could be handled smarter, but works for now.
+                // Truncate any ansi codes, as the following cutoff might break ansi code
+                // otherwise anyway. This could be handled smarter, but it's simple and just works.
                 #[cfg(feature = "custom_styling")]
                 {
                     let stripped = console::strip_ansi_codes(last_line).to_string();
                     *last_line = stripped;
                 }
 
-                // Only show the `...` indicator if the column is smaller then 6 characters.
-                // Otherwise it feels like it doesn't make a lot of sense to show it, as it
-                // might cover up too much important content on such a small column.
-                //
-                // That's questionable though, should we really keep that limitation as users
-                // won't have an indicator that truncation is taking place?
-                let width: usize = info.content_width.into();
-                if width >= 6 {
-                    let indicator_width = table.truncation_indicator.width();
-                    // Truncate the line if indicator doesn't fit
-                    if last_line.width() >= width - indicator_width {
-                        let surplus = (last_line.width() + indicator_width) - width;
-                        last_line.truncate(last_line.width() - surplus);
+                let max_width: usize = info.content_width.into();
+                let indicator_width = table.truncation_indicator.width();
+
+                let mut truncate_at = 0;
+                // Start the accumulated_width with the indicator_width, which is the minimum width
+                // we may show anyway.
+                let mut accumulated_width = indicator_width;
+                let mut full_string_fits = false;
+
+                // Leave these print statements in here in case we ever have to debug this annoying
+                // stuff again.
+                //println!("\nSTART:");
+                //println!("\nMax width: {max_width}, Indicator width: {indicator_width}");
+                //println!("Full line hex: {last_line}");
+                //println!(
+                //    "Full line hex: {}",
+                //    last_line
+                //        .as_bytes()
+                //        .iter()
+                //        .map(|byte| format!("{byte:02x}"))
+                //        .collect::<Vec<String>>()
+                //        .join(", ")
+                //);
+
+                // Iterate through the UTF-8 graphemes.
+                // Check the `split_long_word` inline function docs to see why we're using
+                // graphemes.
+                // **Note:** The `index` here is the **byte** index. So we cannot just
+                //    String::truncate afterwards. We have to convert to a byte vector to perform
+                //    the truncation first.
+                let mut grapheme_iter = last_line.grapheme_indices(true).peekable();
+                while let Some((index, grapheme)) = grapheme_iter.next() {
+                    // Leave these print statements in here in case we ever have to debug this
+                    // annoying stuff again
+                    //println!(
+                    //    "Current index: {index}, Next grapheme: {grapheme} (width: {})",
+                    //    grapheme.width()
+                    //);
+                    //println!(
+                    //    "Next grapheme hex: {}",
+                    //    grapheme
+                    //        .as_bytes()
+                    //        .iter()
+                    //        .map(|byte| format!("{byte:02x}"))
+                    //        .collect::<Vec<String>>()
+                    //        .join(", ")
+                    //);
+
+                    // Immediately save where to truncate in case this grapheme doesn't fit.
+                    // The index is just before the current grapheme actually starts.
+                    truncate_at = index;
+                    // Check if the next grapheme would break the boundary of the allowed line
+                    // length.
+                    let new_width = accumulated_width + grapheme.width();
+                    //println!(
+                    //    "Next width: {new_width}/{max_width} ({accumulated_width} + {})",
+                    //    grapheme.width()
+                    //);
+                    if new_width > max_width {
+                        //println!(
+                        //    "Breaking: {:?}",
+                        //    accumulated_width + grapheme.width() > max_width
+                        //);
+                        break;
                     }
-                    last_line.push_str(&table.truncation_indicator);
+
+                    // The grapheme seems to fit. Save the index and check the next one.
+                    accumulated_width += grapheme.width();
+
+                    // This is a special case.
+                    // We reached the last char, meaning that full last line + the indicator fit.
+                    if grapheme_iter.peek().is_none() {
+                        full_string_fits = true
+                    }
                 }
+
+                // Only do any truncation logic if the line doesn't fit.
+                if !full_string_fits {
+                    // Truncate the string at the byte index just behind the last valid grapheme
+                    // and overwrite the last line with the new truncated string.
+                    let mut last_line_bytes = last_line.clone().into_bytes();
+                    last_line_bytes.truncate(truncate_at);
+                    let new_last_line = String::from_utf8(last_line_bytes)
+                        .expect("We cut at an exact char boundary");
+                    *last_line = new_last_line;
+                }
+
+                // Push the truncation indicator.
+                last_line.push_str(&table.truncation_indicator);
             }
         }
 

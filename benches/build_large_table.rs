@@ -17,7 +17,6 @@ fn build_huge_table() {
         .set_header(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
     let mut rng = rand::rng();
-    // Create a 10x10 grid
     for _ in 0..500 {
         let mut row = Vec::new();
         for _ in 0..10 {

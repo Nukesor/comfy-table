@@ -20,6 +20,7 @@ mod property_test;
 mod simple_test;
 #[cfg(feature = "tty")]
 mod styling_test;
+mod truncation;
 mod utf_8_characters;
 
 pub fn assert_table_line_width(table: &Table, count: usize) {
