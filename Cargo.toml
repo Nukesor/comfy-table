@@ -53,7 +53,7 @@ debug = []
 integration_test = []
 
 [dependencies]
-ansi-str = { version = "0.8", optional = true }
+ansi-str = { version = "0.9", optional = true }
 console = { version = "0.15", optional = true }
 unicode-width = "0.2"
 
