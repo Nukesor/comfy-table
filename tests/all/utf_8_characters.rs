@@ -57,6 +57,29 @@ fn multi_character_utf8_word_splitting() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
+#[test]
+fn multi_character_cjk_word_splitting() {
+    let mut table = Table::new();
+    table
+        .set_width(8)
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_header(vec!["test"])
+        .add_row(vec!["abc新年快乐edf"]);
+
+    println!("{table}");
+    let expected = "
++------+
+| test |
++======+
+| abc  |
+| 新年 |
+| 快乐 |
+| edf  |
++------+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
 /// Handle emojis that'd joined via the "zero-width joiner" character U+200D and contain variant
 /// selectors.
 ///
