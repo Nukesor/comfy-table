@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Changed
 
+## Chore
+
+- Bump ansi-str
+
 ## [7.1.3] - 2024-11-24
 
 ### Fix
