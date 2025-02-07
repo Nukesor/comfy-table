@@ -53,8 +53,8 @@ debug = []
 integration_test = []
 
 [dependencies]
-unicode-segmentation = { version = "1" }
-unicode-width = { version = "0.2" }
+unicode-segmentation = "1"
+unicode-width = "0.2"
 
 # Optional dependencies
 ansi-str = { version = "0.9", optional = true }
