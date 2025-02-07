@@ -1,4 +1,5 @@
 use ansi_str::AnsiStr;
+use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 const ANSI_RESET: &str = "\u{1b}[0m";
@@ -84,16 +85,16 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
             }
         } else {
             assert!(!is_esc);
-            let mut char_iter = str_slice.chars().peekable();
-            while let Some(c) = char_iter.peek() {
-                let character_width = c.width().unwrap_or(0);
+            let mut graphmes = str_slice.graphemes(true).peekable();
+            while let Some(c) = graphmes.peek() {
+                let character_width = c.width();
                 if allowed_width < head_len + character_width {
                     break;
                 }
 
                 head_len += character_width;
-                let c = char_iter.next().unwrap();
-                head.push(c);
+                let c = graphmes.next().unwrap();
+                head.push_str(c);
 
                 // c is not escape code
                 head_len_last = head.len();
@@ -109,7 +110,7 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
             for esc in escapes {
                 tail.push_str(esc);
             }
-            let remaining: String = char_iter.collect();
+            let remaining: String = graphmes.collect();
             tail.push_str(&remaining);
             break;
         }

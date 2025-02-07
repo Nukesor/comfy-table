@@ -1,4 +1,5 @@
-use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+use unicode_segmentation::UnicodeSegmentation;
+use unicode_width::UnicodeWidthStr;
 
 /// returns printed length of string
 /// if ansi feature enabled, takes into account escape codes
@@ -22,29 +23,31 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     let mut current_width = 0;
     let mut parts = String::new();
 
-    let mut char_iter = word.chars().peekable();
-    // Check if the string might be too long, one character at a time.
-    // Peek into the next char and check the exit condition.
-    // That is, pushing the next character would result in the string being too long.
-    while let Some(c) = char_iter.peek() {
-        if (current_width + c.width().unwrap_or(1)) > allowed_width {
+    let mut graphmes = word.graphemes(true).peekable();
+
+    // Check if the string might be too long, one Unicode grapheme at a time.
+    // Peek into the next grapheme and check the exit condition.
+    //
+    // This code uses graphemes to handle both zero-width joiner[0] UTF-8 chars, which
+    // combine multiple UTF-8 chars into a single grapheme, and variant selectors [1],
+    // which pick a certain variant of the preceding char.
+    //
+    // [0]: https://en.wikipedia.org/wiki/Zero-width_joiner
+    // [1]: https://en.wikipedia.org/wiki/Variation_Selectors_(Unicode_block)
+    while let Some(c) = graphmes.peek() {
+        if (current_width + c.width()) > allowed_width {
             break;
         }
 
-        // We can unwrap, as we just checked that a suitable character is next in line.
-        let c = char_iter.next().unwrap();
+        // We can unwrap, as we just checked that a suitable grapheme is next in line.
+        let c = graphmes.next().unwrap();
 
-        // We default to 1 char, if the character length cannot be determined.
-        // The user has to live with this, if they decide to add control characters or some fancy
-        // stuff into their tables. This is considered undefined behavior and we try to handle this
-        // to the best of our capabilities.
-        let character_width = c.width().unwrap_or(1);
-
+        let character_width = c.width();
         current_width += character_width;
-        parts.push(c);
+        parts.push_str(c);
     }
 
     // Collect the remaining characters.
-    let remaining = char_iter.collect();
+    let remaining = graphmes.collect();
     (parts, remaining)
 }
