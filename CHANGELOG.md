@@ -14,6 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Change
 
 - Remove strum dependency. [#169](https://github.com/Nukesor/comfy-table/pull/169) by [tisonkun](https://github.com/tisonkun)
+- Introduce the `unicode-segmentation` library in the scope of #167 and #168.
+- The new changes for correct UTF-8 handling have a performance hit of up to ~67%.
+  However, this will most likely unnoticable for most people.
+  The benchmark table with 10 columns and 500 rows slowed down from 15ms to 25ms.
+  For "normal" tables, the performance hit is negligible.
 
 ## Chore
 
