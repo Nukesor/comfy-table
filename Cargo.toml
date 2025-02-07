@@ -39,10 +39,10 @@ required-features = ["custom_styling"]
 [features]
 # For more info about these flags, please check the README.
 # Everything's explained over there.
-custom_styling = ["ansi-str", "console", "tty"]
+custom_styling = ["dep:ansi-str", "dep:console", "tty"]
 default = ["tty"]
 reexport_crossterm = ["tty"]
-tty = ["crossterm"]
+tty = ["dep:crossterm"]
 # ---- DEVELOPMENT FLAGS ----
 # This flag is for comfy-table development debugging!
 # You usually don't need this as a user of the library.
@@ -57,7 +57,7 @@ unicode-segmentation = { version = "1" }
 unicode-width = { version = "0.2" }
 
 # Optional dependencies
-ansi-str = { version = "0.8", optional = true }
+ansi-str = { version = "0.9", optional = true }
 console = { version = "0.15", optional = true }
 
 [dev-dependencies]
