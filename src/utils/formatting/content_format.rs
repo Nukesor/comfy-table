@@ -1,5 +1,5 @@
 #[cfg(feature = "tty")]
-use crossterm::style::{style, Stylize};
+use crossterm::style::{Stylize, style};
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 

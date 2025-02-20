@@ -1,6 +1,5 @@
 # If you change anything in here, make sure to also adjust the lint CI job!
 lint:
-    just ensure-command cargo-nextest
     cargo fmt --all -- --check
     taplo format --check
     cargo clippy --tests --workspace -- -D warnings

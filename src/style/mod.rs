@@ -15,9 +15,9 @@ mod table;
 pub use cell::CellAlignment;
 pub use column::{ColumnConstraint, Width};
 #[cfg(feature = "tty")]
-pub(crate) use styling_enums::{map_attribute, map_color};
-#[cfg(feature = "tty")]
 pub use styling_enums::{Attribute, Color};
+#[cfg(feature = "tty")]
+pub(crate) use styling_enums::{map_attribute, map_color};
 pub use table::{ContentArrangement, TableComponent};
 
 /// Convenience module to have cleaner and "identical" conditional re-exports for style enums.
