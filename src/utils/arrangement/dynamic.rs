@@ -467,7 +467,9 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
                 #[cfg(feature = "debug")]
                 println!(
                     "dynamic::longest_line_after_split: Splitting line with width {}. Original:\n    {}\nSplitted:\n    {:?}",
-                    line.width(), line, parts
+                    line.width(),
+                    line,
+                    parts
                 );
 
                 column_lines.append(&mut parts);
