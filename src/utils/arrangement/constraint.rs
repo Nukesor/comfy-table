@@ -9,7 +9,7 @@ use crate::{Column, Table};
 /// For example:
 /// - We get an absolute width.
 /// - MinWidth constraints on columns, whose content is garantueed to be smaller than the specified
-///     minimal width.
+///   minimal width.
 /// - The Column is supposed to be hidden.
 pub fn evaluate(
     table: &Table,

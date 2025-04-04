@@ -178,17 +178,17 @@ fn available_content_width(
 /// The algorithm is a while loop with a nested for loop.
 /// 1. We iterate over all columns and check if there are columns that take less space.
 /// 2. If we find one or more such columns, we fix their width and add the surplus space to the
-///     remaining space. Due to this step, the average space per column increased. Now some other
-///     column might be fixed in width as well.
+///    emaining space. Due to this step, the average space per column increased. Now some other
+///    column might be fixed in width as well.
 /// 3. Do step 1 and 2, as long as there are columns left and as long as we find columns
-///     that take up less space than the current remaining average.
+///    that take up less space than the current remaining average.
 ///
 /// Parameters:
 /// - `table_width`: The absolute amount of available space.
 /// - `remaining_width`: This is the amount of space that isn't yet reserved by any other column.
-///                      We need this to determine the average space each column has left.
-///                      Any columns that needs less than this average receives a fixed width.
-///                      The leftover space can then be used for the other columns.
+///   We need this to determine the average space each column has left.
+///   Any columns that needs less than this average receives a fixed width.
+///   The leftover space can then be used for the other columns.
 /// - `visible_columns`: All visible columns that should be displayed.
 ///
 /// Returns:
