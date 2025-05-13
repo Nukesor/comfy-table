@@ -202,3 +202,18 @@ fn test_nothing() {
     println!("{expected}");
     assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
 }
+
+#[test]
+fn test_nothing_without_padding() {
+    let mut table = get_preset_table();
+    table.load_preset(NOTHING);
+    let column = table.column_iter_mut().next().unwrap();
+    column.set_padding((0, 1));
+    println!("{table}");
+    let expected = "
+Hello  there
+a      b
+c      d";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.trim_fmt());
+}
