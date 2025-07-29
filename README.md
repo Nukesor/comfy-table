@@ -23,8 +23,11 @@ Comfy-table is designed as a library for building beautiful terminal tables, whi
 
 ## State of the Project
 
-Comfy-table is considered practically finished.
+Comfy-table can be considered "finished".
 It contains all major features that were planned and received a lot of additional features along the way!
+As far as I'm aware, there're no lingering bugs and the project has a lot of test coverage.
+
+"Finished" means:
 
 - Comfy-table still receives regular version bumps for its few dependencies.
 - Pull requests for wished for and approved features will be reviewed and eventually merged.
