@@ -21,6 +21,15 @@ Comfy-table is designed as a library for building beautiful terminal tables, whi
 - [Usage of unsafe](#unsafe)
 - [Comparison with other libraries](#comparison-with-other-libraries)
 
+## State of the Project
+
+Comfy-table is considered practically finished.
+It contains all major features that were planned and received a lot of additional features along the way!
+
+- Comfy-table still receives regular version bumps for its few dependencies.
+- Pull requests for wished for and approved features will be reviewed and eventually merged.
+- New releases are pushed when new features are added or when requested.
+
 ## Features
 
 - Dynamic arrangement of content depending on a given width.
