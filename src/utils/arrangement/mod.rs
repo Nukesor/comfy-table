@@ -33,7 +33,7 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
             );
         }
     }
-    #[cfg(feature = "debug")]
+    #[cfg(feature = "_debug")]
     println!("After initial constraints: {infos:#?}");
 
     // Fallback to `ContentArrangement::Disabled`, if we don't have any information

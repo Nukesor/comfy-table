@@ -40,11 +40,11 @@ pub fn arrange(
         available_content_width(table, infos, visible_columns, table_width);
     let mut remaining_columns = count_remaining_columns(visible_columns, infos);
 
-    #[cfg(feature = "debug")]
+    #[cfg(feature = "_debug")]
     println!(
         "dynamic::arrange: Table width: {table_width}, Start remaining width {remaining_width}"
     );
-    #[cfg(feature = "debug")]
+    #[cfg(feature = "_debug")]
     println!("dynamic::arrange: Max content widths: {max_content_widths:#?}");
 
     // Step 2.
@@ -73,7 +73,7 @@ pub fn arrange(
         max_content_widths,
     );
 
-    #[cfg(feature = "debug")]
+    #[cfg(feature = "_debug")]
     {
         println!("After less than average: {infos:#?}");
         println!("Remaining width {remaining_width}, column {remaining_columns}");
@@ -95,7 +95,7 @@ pub fn arrange(
         );
     }
 
-    #[cfg(feature = "debug")]
+    #[cfg(feature = "_debug")]
     {
         println!("dynamic::arrange: After optimize: {infos:#?}",);
         println!("dynamic::arrange: Remaining width {remaining_width}, column {remaining_columns}",);
@@ -110,7 +110,7 @@ pub fn arrange(
         if remaining_width > 0 && matches!(table.arrangement, ContentArrangement::DynamicFullWidth)
         {
             use_full_width(infos, remaining_width);
-            #[cfg(feature = "debug")]
+            #[cfg(feature = "_debug")]
             println!("dynamic::arrange: After full width: {infos:#?}");
         }
         return;
@@ -124,7 +124,7 @@ pub fn arrange(
 
     distribute_remaining_space(&table.columns, infos, remaining_width, remaining_columns);
 
-    #[cfg(feature = "debug")]
+    #[cfg(feature = "_debug")]
     println!("dynamic::arrange: After distribute: {infos:#?}");
 }
 
@@ -245,7 +245,7 @@ fn find_columns_that_fit_into_average(
                     let info = ColumnDisplayInfo::new(column, width);
                     infos.insert(column.index, info);
 
-                    #[cfg(feature = "debug")]
+                    #[cfg(feature = "_debug")]
                     println!(
                         "dynamic::find_columns_that_fit_into_average: Fixed column {} via MaxWidth constraint with size {}, as it's bigger than average {}",
                         column.index, width, average_space
@@ -270,7 +270,7 @@ fn find_columns_that_fit_into_average(
                 let info = ColumnDisplayInfo::new(column, max_column_width);
                 infos.insert(column.index, info);
 
-                #[cfg(feature = "debug")]
+                #[cfg(feature = "_debug")]
                 println!(
                     "dynamic::find_columns_that_fit_into_average: Fixed column {} with size {}, as it's smaller than average {}",
                     column.index, max_column_width, average_space
@@ -334,7 +334,7 @@ fn enforce_lower_boundary_constraints(
         let info = ColumnDisplayInfo::new(column, width);
         infos.insert(column.index, info);
 
-        #[cfg(feature = "debug")]
+        #[cfg(feature = "_debug")]
         println!(
             "dynamic::enforce_lower_boundary_constraints: Fixed column {} to min constraint width {}",
             column.index, width
@@ -382,7 +382,7 @@ fn optimize_space_after_split(
     // Calculate the average space that remains for each column.
     let mut average_space = remaining_width / remaining_columns;
 
-    #[cfg(feature = "debug")]
+    #[cfg(feature = "_debug")]
     println!(
         "dynamic::optimize_space_after_split: Start with average_space {}",
         average_space
@@ -399,7 +399,7 @@ fn optimize_space_after_split(
 
             let longest_line = longest_line_after_split(average_space, column, table);
 
-            #[cfg(feature = "debug")]
+            #[cfg(feature = "_debug")]
             println!(
                 "dynamic::optimize_space_after_split: Longest line after split for column {} is {}",
                 column.index, longest_line
@@ -420,7 +420,7 @@ fn optimize_space_after_split(
                 }
                 average_space = remaining_width / remaining_columns;
 
-                #[cfg(feature = "debug")]
+                #[cfg(feature = "_debug")]
                 println!(
                     "dynamic::optimize_space_after_split: average_space is now {}",
                     average_space
@@ -464,7 +464,7 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
             if line.width() > average_space {
                 let mut parts = split_line(line, &info, delimiter);
 
-                #[cfg(feature = "debug")]
+                #[cfg(feature = "_debug")]
                 println!(
                     "dynamic::longest_line_after_split: Splitting line with width {}. Original:\n    {}\nSplitted:\n    {:?}",
                     line.width(),

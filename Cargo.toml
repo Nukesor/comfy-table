@@ -46,11 +46,11 @@ tty = ["dep:crossterm"]
 # ---- DEVELOPMENT FLAGS ----
 # This flag is for comfy-table development debugging!
 # You usually don't need this as a user of the library.
-debug = []
+_debug = []
 # This feature is used to for integration testing of comfy_table.
 # It exposes normally unexposed internal functionality for easier testing.
 # DON'T USE. You opt in for breaking changes, as the internal API might change on minor/patch versions.
-integration_test = []
+_integration_test = []
 
 [dependencies]
 unicode-segmentation = "1"

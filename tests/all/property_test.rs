@@ -193,7 +193,7 @@ proptest! {
         // Make sure that the table is within its width, if arrangement isn't enabled.
         // This is a bit tricky.
         // A table can be larger than the specified width, if the user forces it to be larger.
-        #[cfg(feature = "integration_test")]
+        #[cfg(feature = "_integration_test")]
         {
             let current_arrangement = table.content_arrangement();
             match current_arrangement {
@@ -215,7 +215,7 @@ proptest! {
             }
         }
 
-        #[cfg(feature = "integration_test")]
+        #[cfg(feature = "_integration_test")]
         // Only run this test, if the `integration_test` is enabled.
         // Without this flag, we don't have access to some util functions in comfy_table, that
         // aren't exposed by default.
@@ -231,7 +231,7 @@ fn build_error(table: &str, context: &str) -> Result<(), TestCaseError> {
 
 /// The user can actually force a table to be longer than the specified `table.width()`
 /// by specifying [ColumnConstraint]s.
-#[cfg(feature = "integration_test")]
+#[cfg(feature = "_integration_test")]
 fn determine_max_table_width(table: &Table) -> u16 {
     use comfy_table::utils::arrangement::helper::count_border_columns;
     let table_width = table.width().unwrap();
@@ -294,7 +294,7 @@ fn determine_max_table_width(table: &Table) -> u16 {
 }
 
 /// Enforce that Column constraints are enforced as expected in `Dynamic` mode.
-#[cfg(feature = "integration_test")]
+#[cfg(feature = "_integration_test")]
 fn enforce_constraints(
     table: &Table,
     formatted: String,
@@ -439,7 +439,7 @@ fn enforce_constraints(
 }
 
 /// Resolve an absolute value from a given boundary
-#[cfg(feature = "integration_test")]
+#[cfg(feature = "_integration_test")]
 pub fn absolute_width(table: &Table, width: &Width) -> u16 {
     use comfy_table::utils::arrangement::constraint::absolute_value_from_width;
 
