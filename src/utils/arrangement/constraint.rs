@@ -96,7 +96,7 @@ pub fn max(
     };
 
     match constraint {
-        UpperBoundary(width) | Boundaries { upper: width, .. } => {
+        UpperBoundary(width) | Boundaries { upper: width, .. } | Absolute(width) => {
             absolute_value_from_width(table, width, visible_columns)
         }
         _ => None,
