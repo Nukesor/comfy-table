@@ -61,7 +61,7 @@ ansi-str = { version = "0.9", optional = true }
 console = { version = "0.16", optional = true }
 
 [dev-dependencies]
-criterion = "0.6"
+criterion = "0.7"
 pretty_assertions = "1"
 proptest = "1"
 rand = "0.9"
