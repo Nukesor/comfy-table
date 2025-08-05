@@ -4,11 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [7.2.0] - unreleased
+## [7.2.1] - unreleased
+
+### Fix
+
+## [7.2.0] - 2025-08-05
 
 ### Chore
 
 - Switch to Rust 2024 edition. This bumps the MSRV to `1.85` and thereby no longer supports the [`wasm32-wasi` target](https://blog.rust-lang.org/2024/04/09/updates-to-rusts-wasi-targets.html).
+
+### Fix
+
+- Also update the crossterm dependency to 0.29 for windows [!181](https://github.com/Nukesor/comfy-table/pull/181).
 
 ## [7.1.4] - 2025-02-07
 
