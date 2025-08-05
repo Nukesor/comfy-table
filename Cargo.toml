@@ -65,7 +65,7 @@ criterion = "0.7"
 pretty_assertions = "1"
 proptest = "1"
 rand = "0.9"
-rstest = "0.25"
+rstest = "0.26"
 
 # We don't need any of the default features for crossterm.
 # However, the windows build needs the windows feature enabled.
