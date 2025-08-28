@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fix
 
-## [7.2.0] - 2025-08-05
+## [7.2.0] - 2025-08-25
 
 ### Chore
 
