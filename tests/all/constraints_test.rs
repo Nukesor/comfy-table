@@ -107,7 +107,9 @@ fn fixed_max_min_constraints() {
 fn unnecessary_max_min_constraints() {
     let mut table = get_constraint_table();
 
-    table.set_constraints(vec![LowerBoundary(Fixed(1)), UpperBoundary(Fixed(30))]);
+    table
+        .set_width(80)
+        .set_constraints(vec![LowerBoundary(Fixed(1)), UpperBoundary(Fixed(30))]);
 
     println!("{table}");
     let expected = "
