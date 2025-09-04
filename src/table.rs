@@ -603,7 +603,7 @@ impl Table {
     }
 
     /// Iterator over all columns
-    pub fn column_iter(&self) -> Iter<Column> {
+    pub fn column_iter(&self) -> Iter<'_, Column> {
         self.columns.iter()
     }
 
@@ -631,7 +631,7 @@ impl Table {
     ///     column.set_constraint(*constraint);
     /// }
     /// ```
-    pub fn column_iter_mut(&mut self) -> IterMut<Column> {
+    pub fn column_iter_mut(&mut self) -> IterMut<'_, Column> {
         self.columns.iter_mut()
     }
 
@@ -653,7 +653,7 @@ impl Table {
     /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "Fifth");
     /// assert!(cell_iter.next().is_none());
     /// ```
-    pub fn column_cells_iter(&self, column_index: usize) -> ColumnCellIter {
+    pub fn column_cells_iter(&self, column_index: usize) -> ColumnCellIter<'_> {
         ColumnCellIter {
             rows: &self.rows,
             column_index,
@@ -682,7 +682,10 @@ impl Table {
     /// assert_eq!(cell_iter.next().unwrap().unwrap().content(), "Fifth");
     /// assert!(cell_iter.next().is_none());
     /// ```
-    pub fn column_cells_with_header_iter(&self, column_index: usize) -> ColumnCellsWithHeaderIter {
+    pub fn column_cells_with_header_iter(
+        &self,
+        column_index: usize,
+    ) -> ColumnCellsWithHeaderIter<'_> {
         ColumnCellsWithHeaderIter {
             header_checked: false,
             header: &self.header,
@@ -703,7 +706,7 @@ impl Table {
     }
 
     /// Iterator over all rows
-    pub fn row_iter(&self) -> Iter<Row> {
+    pub fn row_iter(&self) -> Iter<'_, Row> {
         self.rows.iter()
     }
 
@@ -720,7 +723,7 @@ impl Table {
     /// }
     /// assert!(table.row_iter_mut().len() == 1);
     /// ```
-    pub fn row_iter_mut(&mut self) -> IterMut<Row> {
+    pub fn row_iter_mut(&mut self) -> IterMut<'_, Row> {
         self.rows.iter_mut()
     }
 

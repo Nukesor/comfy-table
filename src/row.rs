@@ -77,7 +77,7 @@ impl Row {
     }
 
     /// Returns an iterator over all cells of this row
-    pub fn cell_iter(&self) -> Iter<Cell> {
+    pub fn cell_iter(&self) -> Iter<'_, Cell> {
         self.cells.iter()
     }
 }

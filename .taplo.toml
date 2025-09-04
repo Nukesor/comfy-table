@@ -1,3 +1,5 @@
+exclude = ["target"]
+
 [formatting]
 indent_string = "    "
 reorder_arrays = true
