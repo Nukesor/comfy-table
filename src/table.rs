@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::fmt;
 use std::iter::IntoIterator;
 use std::slice::{Iter, IterMut};
+#[cfg(feature = "tty")]
+use std::sync::OnceLock;
 
 #[cfg(feature = "tty")]
 use crossterm::terminal;
@@ -31,6 +33,8 @@ pub struct Table {
     pub(crate) truncation_indicator: String,
     #[cfg(feature = "tty")]
     no_tty: bool,
+    #[cfg(feature = "tty")]
+    is_tty_cache: OnceLock<bool>,
     #[cfg(feature = "tty")]
     use_stderr: bool,
     width: Option<u16>,
@@ -66,6 +70,8 @@ impl Table {
             truncation_indicator: "...".to_string(),
             #[cfg(feature = "tty")]
             no_tty: false,
+            #[cfg(feature = "tty")]
+            is_tty_cache: OnceLock::new(),
             #[cfg(feature = "tty")]
             use_stderr: false,
             width: None,
@@ -362,11 +368,13 @@ impl Table {
             return false;
         }
 
-        if self.use_stderr {
-            ::std::io::stderr().is_tty()
-        } else {
-            ::std::io::stdout().is_tty()
-        }
+        *self.is_tty_cache.get_or_init(|| {
+            if self.use_stderr {
+                ::std::io::stderr().is_tty()
+            } else {
+                ::std::io::stdout().is_tty()
+            }
+        })
     }
 
     /// Enforce terminal styling.
