@@ -5,11 +5,6 @@ use std::slice::{Iter, IterMut};
 #[cfg(feature = "tty")]
 use std::sync::OnceLock;
 
-#[cfg(feature = "tty")]
-use crossterm::terminal;
-#[cfg(feature = "tty")]
-use crossterm::tty::IsTty;
-
 use crate::cell::Cell;
 use crate::column::Column;
 use crate::row::Row;
@@ -277,7 +272,7 @@ impl Table {
         if let Some(width) = self.width {
             Some(width)
         } else if self.is_tty() {
-            if let Ok((width, _)) = terminal::size() {
+            if let Ok((width, _)) = crossterm::terminal::size() {
                 Some(width)
             } else {
                 None
@@ -364,15 +359,17 @@ impl Table {
     /// This behavior can be changed via [Table::force_no_tty] and [Table::use_stderr].
     #[cfg(feature = "tty")]
     pub fn is_tty(&self) -> bool {
+        use std::io::IsTerminal;
+
         if self.no_tty {
             return false;
         }
 
         *self.is_tty_cache.get_or_init(|| {
             if self.use_stderr {
-                ::std::io::stderr().is_tty()
+                std::io::stderr().is_terminal()
             } else {
-                ::std::io::stdout().is_tty()
+                std::io::stdout().is_terminal()
             }
         })
     }
