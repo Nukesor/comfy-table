@@ -2,11 +2,8 @@ use std::collections::HashMap;
 use std::fmt;
 use std::iter::IntoIterator;
 use std::slice::{Iter, IterMut};
-
 #[cfg(feature = "tty")]
-use crossterm::terminal;
-#[cfg(feature = "tty")]
-use crossterm::tty::IsTty;
+use std::sync::OnceLock;
 
 use crate::cell::Cell;
 use crate::column::Column;
@@ -31,6 +28,8 @@ pub struct Table {
     pub(crate) truncation_indicator: String,
     #[cfg(feature = "tty")]
     no_tty: bool,
+    #[cfg(feature = "tty")]
+    is_tty_cache: OnceLock<bool>,
     #[cfg(feature = "tty")]
     use_stderr: bool,
     width: Option<u16>,
@@ -66,6 +65,8 @@ impl Table {
             truncation_indicator: "...".to_string(),
             #[cfg(feature = "tty")]
             no_tty: false,
+            #[cfg(feature = "tty")]
+            is_tty_cache: OnceLock::new(),
             #[cfg(feature = "tty")]
             use_stderr: false,
             width: None,
@@ -271,7 +272,7 @@ impl Table {
         if let Some(width) = self.width {
             Some(width)
         } else if self.is_tty() {
-            if let Ok((width, _)) = terminal::size() {
+            if let Ok((width, _)) = crossterm::terminal::size() {
                 Some(width)
             } else {
                 None
@@ -358,15 +359,19 @@ impl Table {
     /// This behavior can be changed via [Table::force_no_tty] and [Table::use_stderr].
     #[cfg(feature = "tty")]
     pub fn is_tty(&self) -> bool {
+        use std::io::IsTerminal;
+
         if self.no_tty {
             return false;
         }
 
-        if self.use_stderr {
-            ::std::io::stderr().is_tty()
-        } else {
-            ::std::io::stdout().is_tty()
-        }
+        *self.is_tty_cache.get_or_init(|| {
+            if self.use_stderr {
+                std::io::stderr().is_terminal()
+            } else {
+                std::io::stdout().is_terminal()
+            }
+        })
     }
 
     /// Enforce terminal styling.
