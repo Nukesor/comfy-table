@@ -13,7 +13,7 @@ pub enum ContentArrangement {
     /// Constraints on columns are still respected.
     Disabled,
     /// Dynamically determine the width of columns in regard to terminal width and content length.\
-    /// With this mode, the content in cells will wrap dynamically to get the  the best column layout
+    /// With this mode, the content in cells will wrap dynamically to get the best column layout
     /// for the given content.\
     /// Constraints on columns are still respected.
     ///

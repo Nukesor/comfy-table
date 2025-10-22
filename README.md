@@ -40,7 +40,7 @@ As far as I'm aware, there're no lingering bugs and the project has a lot of tes
 - Styling Presets and preset modifiers to get you started.
 - Pretty much every part of the table is customizable (borders, lines, padding, alignment).
 - Constraints on columns that allow some additional control over how to arrange content.
-- Cross plattform (Linux, macOS, Windows).
+- Cross platform (Linux, macOS, Windows).
 - It's fast enough.
   - Benchmarks show that a pretty big table with complex constraints is build in `470μs` or `~0.5ms`.
   - The table seen at the top of the readme takes `~30μs`.
@@ -125,7 +125,7 @@ fn main() {
 
 Create a table with UTF8 styling, and apply a modifier that gives the table round corners.\
 Additionally, the content will dynamically wrap to maintain a given table width.\
-If the table width isn't explicitely set and the program runs in a terminal, the terminal size will be used.
+If the table width isn't explicitly set and the program runs in a terminal, the terminal size will be used.
 
 On top of this, we set the default alignment for the right column to `Right` and the alignment of the left top cell to `Center`.
 
@@ -250,7 +250,7 @@ As it's a "simple" formatting library it also shouldn't be needed in the future.
 If one disables the `tty` feature flag, this is also true for all of its dependencies.
 
 However, when enabling `tty`, Comfy-table uses one unsafe function call in its dependencies. \
-It can be circumvented by explicitely calling [Table::force_no_tty](https://docs.rs/comfy-table/latest/comfy_table/struct.Table.html#method.force_no_tty).
+It can be circumvented by explicitly calling [Table::force_no_tty](https://docs.rs/comfy-table/latest/comfy_table/struct.Table.html#method.force_no_tty).
 
 1. `crossterm::terminal::size`. This function is necessary to detect the current terminal width if we're on a tty.
    This is only called if no explicit width is provided via `Table::set_width`.
