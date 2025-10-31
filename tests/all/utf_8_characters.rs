@@ -194,3 +194,26 @@ fn polish_chars() {
         println!("{table}");
     }
 }
+
+/// Test Japanese characters with special symbols and varying widths.
+/// This is a regression test for UTF-8 character handling with Japanese text.
+#[test]
+fn japanese_chars() {
+    for width in 0..400 {
+        let mut table = Table::new();
+        table
+            .set_width(width)
+            .set_content_arrangement(ContentArrangement::DynamicFullWidth)
+            .load_preset(presets::ASCII_MARKDOWN)
+            .set_header(vec!["ID", "FLAGS", "SUBJECT", "FROM", "DATE"])
+            .add_row(vec![
+                "106443",
+                "*",
+                "【九州温泉特集】5,200円～！心と身体に安らぎを",
+                "さくらトラベル",
+                "2025-01-17 17:19+09:00",
+            ]);
+
+        println!("{table}");
+    }
+}
