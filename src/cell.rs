@@ -26,7 +26,11 @@ impl Cell {
     /// Create a new Cell
     #[allow(clippy::needless_pass_by_value)]
     pub fn new<T: ToString>(content: T) -> Self {
-        let content = content.to_string();
+        Self::new_owned(content.to_string())
+    }
+
+    /// Create a new Cell from an owned String
+    pub fn new_owned(content: String) -> Self {
         #[cfg_attr(not(feature = "custom_styling"), allow(unused_mut))]
         let mut split_content: Vec<String> = content.split('\n').map(ToString::to_string).collect();
 
