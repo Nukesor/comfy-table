@@ -20,6 +20,10 @@ pub struct Cell {
     pub(crate) bg: Option<Color>,
     #[cfg(feature = "tty")]
     pub(crate) attributes: Vec<Attribute>,
+    /// Number of columns this cell spans (default: 1)
+    pub(crate) colspan: Option<u16>,
+    /// Number of rows this cell spans (default: 1)
+    pub(crate) rowspan: Option<u16>,
 }
 
 impl Cell {
@@ -48,6 +52,8 @@ impl Cell {
             bg: None,
             #[cfg(feature = "tty")]
             attributes: Vec::new(),
+            colspan: None,
+            rowspan: None,
         }
     }
 
@@ -146,6 +152,145 @@ impl Cell {
         self.attributes.append(&mut attribute);
 
         self
+    }
+
+    /// Set the number of columns this cell spans.
+    ///
+    /// By default, a cell spans 1 column. Setting a colspan greater than 1
+    /// makes the cell occupy multiple columns. The cell's content will be
+    /// rendered across all spanned columns, and borders between the spanned
+    /// columns will be omitted.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use comfy_table::{Cell, Table};
+    ///
+    /// let mut table = Table::new();
+    /// table
+    ///     .set_header(vec![
+    ///         Cell::new("Header1").set_colspan(2),
+    ///         Cell::new("Header3"),
+    ///     ])
+    ///     .add_row(vec![
+    ///         Cell::new("Spans 2 columns").set_colspan(2),
+    ///         Cell::new("Normal cell"),
+    ///     ]);
+    /// ```
+    ///
+    /// # Notes
+    ///
+    /// - When using colspan, you should add fewer cells to the row than the
+    ///   number of columns. The spanned cell counts as multiple columns.
+    /// - Colspan works with all table features including styling, alignment,
+    ///   and dynamic width arrangement.
+    /// - Hidden columns are automatically excluded from colspan calculations.
+    #[must_use]
+    pub fn set_colspan(mut self, cols: u16) -> Self {
+        self.colspan = Some(cols);
+        self
+    }
+
+    /// Set the number of rows this cell spans.
+    ///
+    /// By default, a cell spans 1 row. Setting a rowspan greater than 1
+    /// makes the cell occupy multiple rows. The cell's content will appear
+    /// only in the first row of the span, and subsequent rows will have
+    /// empty space where the rowspan cell is located.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use comfy_table::{Cell, Table};
+    ///
+    /// let mut table = Table::new();
+    /// table
+    ///     .set_header(vec!["Header1", "Header2", "Header3"])
+    ///     .add_row(vec![
+    ///         Cell::new("Spans 2 rows").set_rowspan(2),
+    ///         Cell::new("Cell 2"),
+    ///         Cell::new("Cell 3"),
+    ///     ])
+    ///     .add_row(vec![
+    ///         // First position is occupied by rowspan above, so only add 2 cells
+    ///         Cell::new("Cell 2 (row 2)"),
+    ///         Cell::new("Cell 3 (row 2)"),
+    ///     ]);
+    /// ```
+    ///
+    /// # Notes
+    ///
+    /// - When using rowspan, subsequent rows should have fewer cells than
+    ///   the number of columns, as the rowspan cell occupies space in those rows.
+    /// - Rowspan content appears only in the starting row of the span.
+    /// - Rowspan works with all table features including styling, alignment,
+    ///   and multi-line content.
+    /// - You can combine rowspan with colspan to create cells that span
+    ///   both multiple rows and columns.
+    #[must_use]
+    pub fn set_rowspan(mut self, rows: u16) -> Self {
+        self.rowspan = Some(rows);
+        self
+    }
+
+    /// Get the number of columns this cell spans.
+    ///
+    /// Returns 1 if no colspan is set (default behavior).
+    ///
+    /// ```
+    /// use comfy_table::Cell;
+    ///
+    /// let cell = Cell::new("Content");
+    /// assert_eq!(cell.colspan(), 1);
+    ///
+    /// let cell = Cell::new("Content").set_colspan(3);
+    /// assert_eq!(cell.colspan(), 3);
+    /// ```
+    pub fn colspan(&self) -> u16 {
+        self.colspan.unwrap_or(1)
+    }
+
+    /// Get the number of rows this cell spans.
+    ///
+    /// Returns 1 if no rowspan is set (default behavior).
+    ///
+    /// ```
+    /// use comfy_table::Cell;
+    ///
+    /// let cell = Cell::new("Content");
+    /// assert_eq!(cell.rowspan(), 1);
+    ///
+    /// let cell = Cell::new("Content").set_rowspan(2);
+    /// assert_eq!(cell.rowspan(), 2);
+    /// ```
+    pub fn rowspan(&self) -> u16 {
+        self.rowspan.unwrap_or(1)
+    }
+
+    /// Alias for [set_colspan](Cell::set_colspan).
+    ///
+    /// ```
+    /// use comfy_table::Cell;
+    ///
+    /// let cell = Cell::new("Spans 2 columns")
+    ///     .span_columns(2);
+    /// ```
+    #[must_use]
+    pub fn span_columns(self, cols: u16) -> Self {
+        self.set_colspan(cols)
+    }
+
+    /// Alias for [set_rowspan](Cell::set_rowspan).
+    ///
+    /// ```
+    /// use comfy_table::Cell;
+    ///
+    /// let cell = Cell::new("Spans 2 rows")
+    ///     .span_rows(2);
+    /// ```
+    #[must_use]
+    pub fn span_rows(self, rows: u16) -> Self {
+        self.set_rowspan(rows)
     }
 }
 

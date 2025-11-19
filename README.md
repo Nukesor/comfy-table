@@ -40,6 +40,7 @@ As far as I'm aware, there're no lingering bugs and the project has a lot of tes
 - Styling Presets and preset modifiers to get you started.
 - Pretty much every part of the table is customizable (borders, lines, padding, alignment).
 - Constraints on columns that allow some additional control over how to arrange content.
+- Cell spanning (colspan and rowspan) for complex table layouts.
 - Cross platform (Linux, macOS, Windows).
 - It's fast enough.
   - Benchmarks show that a pretty big table with complex constraints is build in `470μs` or `~0.5ms`.
@@ -183,6 +184,113 @@ fn main() {
 
 This code generates the table that can be seen at the top of this document.
 
+### Cell Spanning
+
+Comfy-table supports cell spanning, allowing cells to span multiple columns (colspan) and/or rows (rowspan). This enables more complex table layouts.
+
+#### Basic Colspan Example
+
+```rust
+use comfy_table::{Cell, Table};
+
+fn main() {
+    let mut table = Table::new();
+    table
+        .set_header(vec![
+            Cell::new("Header1").set_colspan(2),
+            Cell::new("Header3"),
+        ])
+        .add_row(vec![
+            Cell::new("Spans 2 cols").set_colspan(2),
+            Cell::new("Normal cell"),
+        ]);
+
+    println!("{table}");
+}
+```
+
+```text,ignore
++----------+----------+-------------+
+| Header1             | Header3     |
++===================================+
+| Spans 2 cols        | Normal cell |
++----------+----------+-------------+
+```
+
+#### Basic Rowspan Example
+
+```rust
+use comfy_table::{Cell, Table};
+
+fn main() {
+    let mut table = Table::new();
+    table
+        .set_header(vec!["Header1", "Header2", "Header3"])
+        .add_row(vec![
+            Cell::new("Spans 2 rows").set_rowspan(2),
+            Cell::new("Cell 2"),
+            Cell::new("Cell 3"),
+        ])
+        .add_row(vec![
+            // First position is occupied by rowspan above, so only add 2 cells
+            Cell::new("Cell 2 (row 2)"),
+            Cell::new("Cell 3 (row 2)"),
+        ]);
+
+    println!("{table}");
+}
+```
+
+```text,ignore
++--------------+----------------+----------------+
+| Header1      | Header2        | Header3        |
++================================================+
+| Spans 2 rows | Cell 2         | Cell 3         |
+|              +----------------+----------------|
+|              | Cell 2 (row 2) | Cell 3 (row 2) |
++--------------+----------------+----------------+
+```
+
+#### Combined Colspan and Rowspan Example
+
+```rust
+use comfy_table::{Cell, Table};
+
+fn main() {
+    let mut table = Table::new();
+    table
+        .set_header(vec!["Header1", "Header2", "Header3", "Header4"])
+        .add_row(vec![
+            Cell::new("Spans 2x2").set_colspan(2).set_rowspan(2),
+            Cell::new("Cell 3"),
+            Cell::new("Cell 4"),
+        ])
+        .add_row(vec![
+            // First 2 positions are occupied by rowspan above
+            Cell::new("Cell 3 (row 2)"),
+            Cell::new("Cell 4 (row 2)"),
+        ]);
+
+    println!("{table}");
+}
+```
+
+```text,ignore
++---------+---------+----------------+----------------+
+| Header1 | Header2 | Header3        | Header4        |
++=====================================================+
+| Spans 2x2         | Cell 3         | Cell 4         |
+|                   +----------------+----------------|
+|                   | Cell 3 (row 2) | Cell 4 (row 2) |
++---------+---------+----------------+----------------+
+```
+
+**Notes:**
+- When using `colspan`, add fewer cells to the row than the number of columns. The spanned cell counts as multiple columns.
+- When using `rowspan`, subsequent rows should have fewer cells, as the rowspan cell occupies space in those rows.
+- You can combine `colspan` and `rowspan` to create cells that span both multiple rows and columns.
+- Cell spanning works with all table features including styling, alignment, and dynamic width arrangement.
+
 ### Code Examples
 
 A few examples can be found in the `example` folder.
@@ -229,6 +337,7 @@ Comfy-table's main focus is on being minimalistic and reliable.
 A fixed set of features that just work for "normal" use-cases:
 
 - Normal tables (columns, rows, one cell per column/row).
+- Cell spanning (colspan and rowspan) for complex layouts.
 - Dynamic arrangement of content to a given width.
 - Some kind of manual intervention in the arrangement process.
 
@@ -239,7 +348,6 @@ Some things however will most likely not be added to the project since they dras
 Such features are:
 
 - Nested tables
-- Cells that span over multiple columns/rows
 - CSV to table conversion and vice versa
 
 ## Unsafe

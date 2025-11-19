@@ -13,6 +13,7 @@ use crate::style::CellAlignment;
 use crate::style::{map_attribute, map_color};
 use crate::table::Table;
 use crate::utils::ColumnDisplayInfo;
+use crate::utils::spanning::SpanTracker;
 
 pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
     // Determine, which delimiter should be used
@@ -46,55 +47,121 @@ pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
 pub fn format_content(table: &Table, display_info: &[ColumnDisplayInfo]) -> Vec<Vec<Vec<String>>> {
     // The content of the whole table
     let mut table_content = Vec::with_capacity(table.rows.len() + 1);
+    let mut span_tracker = SpanTracker::new();
 
     // Format table header if it exists
     if let Some(header) = table.header() {
-        table_content.push(format_row(header, display_info, table));
+        table_content.push(format_row(
+            header,
+            display_info,
+            table,
+            0,
+            &mut span_tracker,
+        ));
+        span_tracker.advance_row(1);
     }
 
-    for row in table.rows.iter() {
-        table_content.push(format_row(row, display_info, table));
+    for (row_index, row) in table.rows.iter().enumerate() {
+        let actual_row_index = if table.header.is_some() {
+            row_index + 1
+        } else {
+            row_index
+        };
+        table_content.push(format_row(
+            row,
+            display_info,
+            table,
+            actual_row_index,
+            &mut span_tracker,
+        ));
+        // Advance row AFTER processing, so rowspan content is available for the next row
+        span_tracker.advance_row(actual_row_index + 1);
     }
     table_content
 }
 
-pub fn format_row(
+pub(crate) fn format_row(
     row: &Row,
     display_infos: &[ColumnDisplayInfo],
     table: &Table,
+    row_index: usize,
+    span_tracker: &mut SpanTracker,
 ) -> Vec<Vec<String>> {
     // The content of this specific row
-    let mut temp_row_content = Vec::with_capacity(display_infos.len());
+    // We'll build a vector where each element represents a column position
+    // For colspan cells, we'll store the formatted content once and mark the spanned positions
+    let mut temp_row_content: Vec<Option<Vec<String>>> = vec![None; display_infos.len()];
+    // Track which columns are part of a colspan (maps col_index -> colspan)
+    let mut colspan_map: Vec<Option<usize>> = vec![None; display_infos.len()];
+    let mut col_index = 0;
 
-    let mut cell_iter = row.cells.iter();
-    // Now iterate over all cells and handle them according to their alignment
-    for info in display_infos.iter() {
-        if info.is_hidden {
-            cell_iter.next();
+    // Process each cell in the row
+    for cell in &row.cells {
+        // Skip column positions that are occupied by rowspan from above
+        while col_index < display_infos.len()
+            && span_tracker.is_col_occupied_by_rowspan(row_index, col_index)
+        {
+            // This position is occupied by a rowspan, mark it as such
+            temp_row_content[col_index] = Some(vec!["".to_string()]);
+            col_index += 1;
+        }
+
+        if col_index >= display_infos.len() {
+            break;
+        }
+
+        let colspan = cell.colspan() as usize;
+        let rowspan = cell.rowspan();
+
+        // Get the spanned column infos
+        let spanned_infos: Vec<&ColumnDisplayInfo> = display_infos
+            .iter()
+            .skip(col_index)
+            .take(colspan)
+            .filter(|info| !info.is_hidden)
+            .collect();
+
+        if spanned_infos.is_empty() {
+            col_index += colspan;
             continue;
         }
-        // Each cell is divided into several lines divided by newline
-        // Every line that's too long will be split into multiple lines
-        let mut cell_lines = Vec::new();
 
-        // Check if the row has as many cells as the table has columns.
-        // If that's not the case, create a new cell with empty spaces.
-        let cell = if let Some(cell) = cell_iter.next() {
-            cell
-        } else {
-            cell_lines.push(" ".repeat(info.width().into()));
-            temp_row_content.push(cell_lines);
-            continue;
+        // Calculate combined width for colspan cells
+        // Sum the content widths, PLUS add 3 chars per span for the missing borders " | " between columns
+        // If there were 2 separate cells, they'd have " | " (3 chars) between them
+        // Use the number of visible columns, not the logical colspan (hidden columns don't need border compensation)
+        let visible_colspan_count = spanned_infos.len();
+        let borders_between = (visible_colspan_count.saturating_sub(1)) as u16 * 3;
+        let combined_content_width: u16 = spanned_infos
+            .iter()
+            .map(|info| info.content_width)
+            .sum::<u16>()
+            + borders_between;
+        let combined_padding_left: u16 = spanned_infos
+            .first()
+            .map(|info| info.padding.0)
+            .unwrap_or(0);
+        let combined_padding_right: u16 =
+            spanned_infos.last().map(|info| info.padding.1).unwrap_or(0);
+
+        // Create a temporary ColumnDisplayInfo for the spanned cell
+        let spanned_info = ColumnDisplayInfo {
+            padding: (combined_padding_left, combined_padding_right),
+            delimiter: spanned_infos[0].delimiter,
+            content_width: combined_content_width,
+            cell_alignment: cell.alignment.or(spanned_infos[0].cell_alignment),
+            is_hidden: false,
         };
 
-        // The delimiter is configurable, determine which one should be used for this cell.
-        let delimiter = delimiter(cell, info, table);
+        // Format the cell content
+        let mut cell_lines = Vec::new();
+        let cell_delimiter = delimiter(cell, &spanned_info, table);
 
         // Iterate over each line and split it into multiple lines if necessary.
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
-            if measure_text_width(line) > info.content_width.into() {
-                let mut parts = split_line(line, info, delimiter);
+            if measure_text_width(line) > combined_content_width.into() {
+                let mut parts = split_line(line, &spanned_info, cell_delimiter);
                 cell_lines.append(&mut parts);
             } else {
                 cell_lines.push(line.into());
@@ -123,7 +190,7 @@ pub fn format_row(
                     *last_line = stripped;
                 }
 
-                let max_width: usize = info.content_width.into();
+                let max_width: usize = combined_content_width.into();
                 let indicator_width = table.truncation_indicator.width();
 
                 let mut truncate_at = 0;
@@ -216,50 +283,176 @@ pub fn format_row(
         }
 
         // Iterate over all generated lines of this cell and align them
-        let cell_lines = cell_lines
+        let aligned_cell_lines: Vec<String> = cell_lines
             .iter()
-            .map(|line| align_line(table, info, cell, line.to_string()));
+            .map(|line| align_line(table, &spanned_info, cell, line.to_string()))
+            .collect();
 
-        temp_row_content.push(cell_lines.collect());
-    }
-
-    // Right now, we have a different structure than desired.
-    // The content is organized by `row->cell->line`.
-    // We want to remove the cell from our datastructure, since this makes the next step a lot easier.
-    // In the end it should look like this: `row->lines->column`.
-    // To achieve this, we calculate the max amount of lines for the current row.
-    // Afterwards, we iterate over each cell and convert the current structure to the desired one.
-    // This step basically transforms this:
-    //  tc[0][0][0]     tc[0][1][0]
-    //  tc[0][0][1]     tc[0][1][1]
-    //  tc[0][0][2]     This part of the line is missing
-    //
-    // to this:
-    //  tc[0][0][0]     tc[0][0][1]
-    //  tc[0][1][0]     tc[0][1][1]
-    //  tc[0][2][0]     tc[0][2][1] <- Now filled with placeholder (spaces)
-    let max_lines = temp_row_content.iter().map(Vec::len).max().unwrap_or(0);
-    let mut row_content = Vec::with_capacity(max_lines * display_infos.len());
-
-    // Each column should have `max_lines` for this row.
-    // Cells content with fewer lines will simply be topped up with empty strings.
-    for index in 0..max_lines {
-        let mut line = Vec::with_capacity(display_infos.len());
-        let mut cell_iter = temp_row_content.iter();
-
-        for info in display_infos.iter() {
-            if info.is_hidden {
-                continue;
-            }
-            let cell = cell_iter.next().unwrap();
-            match cell.get(index) {
-                // The current cell has content for this line. Append it
-                Some(content) => line.push(content.clone()),
-                // The current cell doesn't have content for this line.
-                // Fill with a placeholder (empty spaces)
-                None => line.push(" ".repeat(info.width().into())),
+        // Store the formatted cell content in the first column position
+        // For colspan > 1, mark all spanned columns
+        // Clone for rowspan registration if needed
+        let content_for_storage = aligned_cell_lines.clone();
+        temp_row_content[col_index] = Some(aligned_cell_lines);
+        for i in 0..colspan {
+            if col_index + i < colspan_map.len() {
+                if i == 0 {
+                    colspan_map[col_index + i] = Some(colspan);
+                } else {
+                    colspan_map[col_index + i] = Some(0); // Mark as spanned (0 means part of colspan)
+                }
             }
         }
+
+        // Register rowspan if needed, caching the formatted content
+        if rowspan > 1 {
+            span_tracker.register_rowspan(
+                row_index,
+                col_index,
+                rowspan,
+                colspan as u16,
+                Some(content_for_storage),
+            );
+        }
+
+        // Advance column index by colspan
+        col_index += colspan;
+    }
+
+    // Fill in any remaining positions that weren't covered (shouldn't happen in valid tables)
+    for i in col_index..display_infos.len() {
+        if temp_row_content[i].is_none() && !span_tracker.is_col_occupied_by_rowspan(row_index, i) {
+            if display_infos[i].is_hidden {
+                continue;
+            }
+            temp_row_content[i] = Some(vec![" ".repeat(display_infos[i].width().into())]);
+        }
+    }
+
+    // Now convert from column-based to line-based structure
+    // Find the maximum number of lines across all cells
+    let max_lines = temp_row_content
+        .iter()
+        .filter_map(|cell| cell.as_ref().map(|lines| lines.len()))
+        .max()
+        .unwrap_or(0);
+
+    let mut row_content = Vec::with_capacity(max_lines);
+
+    // Build the row content line by line
+    for line_index in 0..max_lines {
+        let mut line = Vec::with_capacity(display_infos.len());
+        let mut current_col = 0;
+
+        while current_col < display_infos.len() {
+            if display_infos[current_col].is_hidden {
+                current_col += 1;
+                continue;
+            }
+
+            // Check if this position is occupied by a rowspan from above
+            // Rowspan content should ONLY appear in the FIRST row where it starts
+            // Subsequent rows should have empty space where the rowspan is
+            if let Some((start_row, start_col, colspan)) =
+                span_tracker.get_rowspan_start(row_index, current_col)
+            {
+                // This is a rowspan position from a previous row
+                // Only show content if this IS the starting row, otherwise show empty space
+                if start_row == row_index {
+                    // This is the starting row, get the cached formatted content
+                    if let Some(cached_content) =
+                        span_tracker.get_rowspan_content(row_index, start_col)
+                    {
+                        // Use the cached formatted content
+                        if let Some(content) = cached_content.get(line_index) {
+                            line.push(content.clone());
+                        } else {
+                            // Empty line for rowspan - calculate combined width
+                            let spanned_infos: Vec<&ColumnDisplayInfo> = display_infos
+                                .iter()
+                                .skip(start_col)
+                                .take(colspan as usize)
+                                .filter(|info| !info.is_hidden)
+                                .collect();
+                            let width_sum: usize =
+                                spanned_infos.iter().map(|info| info.width() as usize).sum();
+                            let combined_width = width_sum + (colspan as usize - 1); // Add separator compensation
+                            line.push(" ".repeat(combined_width));
+                        }
+                    } else {
+                        // Fallback: empty string if content not found
+                        line.push("".to_string());
+                    }
+                } else {
+                    // This is NOT the starting row - show empty space
+                    let spanned_infos: Vec<&ColumnDisplayInfo> = display_infos
+                        .iter()
+                        .skip(start_col)
+                        .take(colspan as usize)
+                        .filter(|info| !info.is_hidden)
+                        .collect();
+                    let width_sum: usize =
+                        spanned_infos.iter().map(|info| info.width() as usize).sum();
+                    let combined_width = width_sum + (colspan as usize - 1); // Add separator compensation
+                    line.push(" ".repeat(combined_width));
+                }
+                // Advance by colspan to skip all columns in the rowspan
+                current_col += colspan as usize;
+                continue;
+            }
+
+            // Check if this column has content
+            if let Some(cell_lines) = &temp_row_content[current_col] {
+                // Check if this cell spans multiple columns
+                let colspan = colspan_map[current_col].unwrap_or(1);
+
+                if colspan == 1 {
+                    // Normal cell
+                    if let Some(content) = cell_lines.get(line_index) {
+                        line.push(content.clone());
+                    } else {
+                        line.push(" ".repeat(display_infos[current_col].width().into()));
+                    }
+                    current_col += 1;
+                } else {
+                    // Colspan cell - the content is already formatted to the combined width
+                    if let Some(content) = cell_lines.get(line_index) {
+                        line.push(content.clone());
+                    } else {
+                        // Calculate combined width for empty line (only visible columns)
+                        let visible_cols: Vec<&ColumnDisplayInfo> = display_infos
+                            [current_col..current_col + colspan]
+                            .iter()
+                            .filter(|info| !info.is_hidden)
+                            .collect();
+                        let width_sum: usize =
+                            visible_cols.iter().map(|info| info.width() as usize).sum();
+                        let visible_colspan_count = visible_cols.len();
+                        let combined_width = width_sum + (visible_colspan_count.saturating_sub(1)); // Add separator compensation
+                        line.push(" ".repeat(combined_width));
+                    }
+                    // Skip the spanned columns - they're already included in the content above
+                    // We need to advance through colspan-1 more logical columns
+                    // For visible columns, add empty strings (borders will be drawn correctly)
+                    let mut logical_cols_skipped = 0;
+                    while logical_cols_skipped < colspan - 1
+                        && current_col + 1 < display_infos.len()
+                    {
+                        current_col += 1;
+                        logical_cols_skipped += 1;
+                        // Only add empty string for visible columns (hidden ones are skipped by outer loop)
+                        if !display_infos[current_col].is_hidden {
+                            line.push("".to_string());
+                        }
+                    }
+                    current_col += 1;
+                }
+            } else {
+                // No content for this column, fill with spaces
+                line.push(" ".repeat(display_infos[current_col].width().into()));
+                current_col += 1;
+            }
+        }
+
         row_content.push(line);
     }
 

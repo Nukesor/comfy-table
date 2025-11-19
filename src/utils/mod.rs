@@ -1,5 +1,6 @@
 pub mod arrangement;
 pub mod formatting;
+pub mod spanning;
 
 use crate::style::{CellAlignment, ColumnConstraint};
 use crate::{Column, Table};

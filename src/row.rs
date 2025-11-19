@@ -76,6 +76,14 @@ impl Row {
         self.cells.len()
     }
 
+    /// Get the effective column count for this row, accounting for colspan.
+    ///
+    /// This sums up the colspan of all cells in the row to determine
+    /// how many column positions the row actually occupies.
+    pub(crate) fn effective_column_count(&self) -> usize {
+        self.cells.iter().map(|cell| cell.colspan() as usize).sum()
+    }
+
     /// Returns an iterator over all cells of this row
     pub fn cell_iter(&self) -> Iter<'_, Cell> {
         self.cells.iter()

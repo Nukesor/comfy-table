@@ -735,31 +735,273 @@ impl Table {
     /// Return a vector representing the maximum amount of characters in any line of this column.\
     ///
     /// **Attention** This scans the whole current content of the table.
+    /// Accounts for colspan and rowspan when calculating column widths.
     pub fn column_max_content_widths(&self) -> Vec<u16> {
-        fn set_max_content_widths(max_widths: &mut [u16], row: &Row) {
-            // Get the max width for each cell of the row
-            let row_max_widths = row.max_content_widths();
-            for (index, width) in row_max_widths.iter().enumerate() {
-                let mut width = (*width).try_into().unwrap_or(u16::MAX);
-                // A column's content is at least 1 char wide.
-                width = std::cmp::max(1, width);
-
-                // Set a new max, if the current cell is the longest for that column.
-                let current_max = max_widths[index];
-                if current_max < width {
-                    max_widths[index] = width;
-                }
-            }
-        }
         // The vector that'll contain the max widths per column.
         let mut max_widths = vec![0; self.columns.len()];
 
-        if let Some(header) = &self.header {
-            set_max_content_widths(&mut max_widths, header);
+        // Track active rowspans: (start_row, start_col) -> (remaining_rows, colspan)
+        use std::collections::HashMap;
+        let mut active_rowspans: HashMap<(usize, usize), (u16, u16)> = HashMap::new();
+
+        // Helper function to check if a column is occupied by a rowspan
+        fn is_col_occupied_by_rowspan(
+            active_rowspans: &HashMap<(usize, usize), (u16, u16)>,
+            row_index: usize,
+            col_index: usize,
+        ) -> bool {
+            for ((start_row, start_col), (remaining_rows, colspan)) in active_rowspans.iter() {
+                if *start_row < row_index
+                    && *remaining_rows > 0
+                    && *start_col <= col_index
+                    && col_index < *start_col + *colspan as usize
+                {
+                    return true;
+                }
+            }
+            false
         }
-        // Iterate through all rows of the table.
-        for row in self.rows.iter() {
-            set_max_content_widths(&mut max_widths, row);
+
+        // Helper function to update max widths for a row, accounting for colspan and rowspan
+        fn set_max_content_widths(
+            max_widths: &mut [u16],
+            row: &Row,
+            row_index: usize,
+            active_rowspans: &mut HashMap<(usize, usize), (u16, u16)>,
+        ) {
+            // Get the max width for each cell of the row
+            let row_max_widths = row.max_content_widths();
+            let mut col_index = 0;
+
+            for (cell_index, width) in row_max_widths.iter().enumerate() {
+                // Skip column positions that are occupied by rowspan from above
+                while col_index < max_widths.len()
+                    && is_col_occupied_by_rowspan(active_rowspans, row_index, col_index)
+                {
+                    col_index += 1;
+                }
+
+                if col_index >= max_widths.len() {
+                    break;
+                }
+
+                let cell = &row.cells[cell_index];
+                let colspan = cell.colspan() as usize;
+                let rowspan = cell.rowspan();
+                let mut cell_width = (*width).try_into().unwrap_or(u16::MAX);
+                // A column's content is at least 1 char wide.
+                cell_width = std::cmp::max(1, cell_width);
+
+                if colspan == 1 {
+                    // Simple case: no colspan, just update the column directly
+                    // For rowspan cells, the full width applies to the column
+                    let current_max = max_widths[col_index];
+                    if current_max < cell_width {
+                        max_widths[col_index] = cell_width;
+                    }
+                    col_index += 1;
+                } else {
+                    // Colspan case: ensure the sum of the spanned columns can accommodate the cell
+                    // The border/content formatting code sums content_widths and adds padding once
+                    // So we need content_widths to sum to (cell_width + 2) to get the right total width
+                    // But we also need to ensure the columns are wide enough for other cells
+                    // So we calculate the minimum needed, then check if we need to increase it
+                    let total_content_needed = cell_width + 2;
+                    let min_width_per_col = total_content_needed / colspan as u16;
+                    let remainder = total_content_needed % colspan as u16;
+
+                    // First, set minimum widths
+                    for i in 0..colspan {
+                        if col_index + i >= max_widths.len() {
+                            break;
+                        }
+                        let width_for_col = if i < remainder as usize {
+                            min_width_per_col + 1
+                        } else {
+                            min_width_per_col
+                        };
+                        let current_max = max_widths[col_index + i];
+                        if current_max < width_for_col {
+                            max_widths[col_index + i] = width_for_col;
+                        }
+                    }
+
+                    // Then, check if the sum is sufficient (the largest accumulation counts)
+                    // If other cells in these columns need more space, they'll increase the widths
+                    // and we'll need to ensure the colspan cell still fits
+                    let current_sum: u16 = (0..colspan)
+                        .map(|i| {
+                            if col_index + i < max_widths.len() {
+                                max_widths[col_index + i]
+                            } else {
+                                0
+                            }
+                        })
+                        .sum();
+
+                    // If current sum is less than needed, increase columns proportionally
+                    if current_sum < total_content_needed {
+                        let diff = total_content_needed - current_sum;
+                        let per_col_inc = diff / colspan as u16;
+                        let remainder_inc = diff % colspan as u16;
+                        for i in 0..colspan {
+                            if col_index + i < max_widths.len() {
+                                let inc = if i < remainder_inc as usize {
+                                    per_col_inc + 1
+                                } else {
+                                    per_col_inc
+                                };
+                                max_widths[col_index + i] += inc;
+                            }
+                        }
+                    }
+
+                    col_index += colspan;
+                }
+
+                // Register rowspan if needed
+                if rowspan > 1 {
+                    active_rowspans.insert(
+                        (row_index, col_index - colspan),
+                        (rowspan - 1, colspan as u16),
+                    );
+                }
+            }
+        }
+
+        // Process header if it exists
+        if let Some(header) = &self.header {
+            set_max_content_widths(&mut max_widths, header, 0, &mut active_rowspans);
+        }
+
+        // Iterate through all rows of the table
+        for (row_idx, row) in self.rows.iter().enumerate() {
+            let actual_row_index = if self.header.is_some() {
+                row_idx + 1
+            } else {
+                row_idx
+            };
+            set_max_content_widths(&mut max_widths, row, actual_row_index, &mut active_rowspans);
+            // Advance rowspans after processing this row
+            // First decrement remaining_rows for all active spans that have been displayed
+            for ((start_row, _), (remaining_rows, _)) in active_rowspans.iter_mut() {
+                if *start_row < actual_row_index && *remaining_rows > 0 {
+                    *remaining_rows -= 1;
+                }
+            }
+            // Then remove expired spans (remaining_rows == 0 means it was just displayed in its last row)
+            active_rowspans.retain(|_, (remaining_rows, _)| *remaining_rows > 0);
+        }
+
+        // Second pass: ensure colspan cells have enough space (the largest accumulation counts)
+        // After all cells have been processed, check if any colspan cell needs more space
+        // We compare total widths (content + padding), not just content widths
+        active_rowspans.clear();
+        if let Some(header) = &self.header {
+            let row_max_widths = header.max_content_widths();
+            let mut col_index = 0;
+            for (cell_index, width) in row_max_widths.iter().enumerate() {
+                let cell = &header.cells[cell_index];
+                let colspan = cell.colspan() as usize;
+                let cell_width = (*width).try_into().unwrap_or(u16::MAX);
+                let cell_width = std::cmp::max(1, cell_width);
+
+                if colspan > 1 {
+                    // Colspan cell needs: content + padding (2 total, added once for the cell)
+                    // The border space " | " (3 chars) is added in content formatting, not here
+                    let colspan_cell_need = cell_width + 2;
+
+                    // Just add up the total widths of the spanned columns: (content_width + 2) for each
+                    let column_widths_sum: u16 = (0..colspan)
+                        .map(|i| {
+                            if col_index + i < max_widths.len() {
+                                max_widths[col_index + i] + 2 // content_width + padding = total width
+                            } else {
+                                0
+                            }
+                        })
+                        .sum();
+
+                    // The largest accumulation: use max of colspan_cell_need (with border compensation) and column widths sum
+                    let target_total = std::cmp::max(colspan_cell_need, column_widths_sum);
+
+                    // For the colspan cell, content_widths sum + 2 padding = target_total
+                    // So content_widths should sum to target_total - 2
+                    let target_content_sum = target_total.saturating_sub(2);
+                    let current_content_sum: u16 = (0..colspan)
+                        .map(|i| {
+                            if col_index + i < max_widths.len() {
+                                max_widths[col_index + i]
+                            } else {
+                                0
+                            }
+                        })
+                        .sum();
+
+                    if current_content_sum < target_content_sum {
+                        let diff = target_content_sum - current_content_sum;
+                        let per_col_inc = diff / colspan as u16;
+                        let remainder_inc = diff % colspan as u16;
+                        for i in 0..colspan {
+                            if col_index + i < max_widths.len() {
+                                let inc = if i < remainder_inc as usize {
+                                    per_col_inc + 1
+                                } else {
+                                    per_col_inc
+                                };
+                                max_widths[col_index + i] += inc;
+                            }
+                        }
+                    }
+                }
+                col_index += colspan;
+            }
+        }
+
+        for row in &self.rows {
+            let row_max_widths = row.max_content_widths();
+            let mut col_index = 0;
+            for (cell_index, width) in row_max_widths.iter().enumerate() {
+                let cell = &row.cells[cell_index];
+                let colspan = cell.colspan() as usize;
+                let cell_width = (*width).try_into().unwrap_or(u16::MAX);
+                let cell_width = std::cmp::max(1, cell_width);
+
+                if colspan > 1 {
+                    // The largest accumulation counts: use max of colspan cell need and current column sum
+                    let colspan_cell_need = cell_width + 2;
+                    let current_sum: u16 = (0..colspan)
+                        .map(|i| {
+                            if col_index + i < max_widths.len() {
+                                max_widths[col_index + i]
+                            } else {
+                                0
+                            }
+                        })
+                        .sum();
+
+                    // Use the maximum: if columns already sum to more than the cell needs, keep that
+                    // Otherwise, increase to meet the cell's need
+                    let target_sum = std::cmp::max(current_sum, colspan_cell_need);
+
+                    if current_sum < target_sum {
+                        let diff = target_sum - current_sum;
+                        let per_col_inc = diff / colspan as u16;
+                        let remainder_inc = diff % colspan as u16;
+                        for i in 0..colspan {
+                            if col_index + i < max_widths.len() {
+                                let inc = if i < remainder_inc as usize {
+                                    per_col_inc + 1
+                                } else {
+                                    per_col_inc
+                                };
+                                max_widths[col_index + i] += inc;
+                            }
+                        }
+                    }
+                }
+                col_index += colspan;
+            }
         }
 
         max_widths
@@ -777,9 +1019,11 @@ impl Table {
     }
 
     /// Autogenerate new columns, if a row is added with more cells than existing columns.
+    /// Accounts for colspan when determining the required number of columns.
     fn autogenerate_columns(&mut self, row: &Row) {
-        if row.cell_count() > self.columns.len() {
-            for index in self.columns.len()..row.cell_count() {
+        let effective_cols = row.effective_column_count();
+        if effective_cols > self.columns.len() {
+            for index in self.columns.len()..effective_cols {
                 self.columns.push(Column::new(index));
             }
         }
@@ -794,10 +1038,24 @@ impl Table {
     ///
     /// To make sure everything works as expected, just call this function if you're adding cells
     /// to rows that're already added to the table.
+    ///
+    /// Accounts for colspan when determining the required number of columns.
     pub fn discover_columns(&mut self) {
+        // Check header if it exists
+        if let Some(header) = &self.header {
+            let effective_cols = header.effective_column_count();
+            if effective_cols > self.columns.len() {
+                for index in self.columns.len()..effective_cols {
+                    self.columns.push(Column::new(index));
+                }
+            }
+        }
+
+        // Check all rows
         for row in self.rows.iter() {
-            if row.cell_count() > self.columns.len() {
-                for index in self.columns.len()..row.cell_count() {
+            let effective_cols = row.effective_column_count();
+            if effective_cols > self.columns.len() {
+                for index in self.columns.len()..effective_cols {
                     self.columns.push(Column::new(index));
                 }
             }
