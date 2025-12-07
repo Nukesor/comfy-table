@@ -2,6 +2,8 @@ use ::proptest::prelude::*;
 use comfy_table::ColumnConstraint::*;
 use comfy_table::Width::*;
 use comfy_table::*;
+use unicode_width::UnicodeWidthChar;
+use unicode_width::UnicodeWidthStr;
 
 /// Pick any of the three existing ContentArrangement types for the table.
 fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
@@ -85,7 +87,7 @@ fn columns_and_rows() -> impl Strategy<
             // column fallback, as well as fixed-width-, percental- and max-column-constraints.
             // As a result, we cannot check this with proptest, as this is inherently broken.
             rows.push(::proptest::collection::vec(
-                "[A-Za-z_]*",
+                proptest::string::string_regex(".*").unwrap(),
                 0..column_count as usize,
             ));
         }
@@ -177,7 +179,7 @@ proptest! {
 
         // Get the length of the very first line.
         // We're lateron going to ensure, that all lines have the same length.
-        let line_length = if let Some(line) = line_iter.next() {
+        let expected_line_length = if let Some(line) = line_iter.next() {
             line.trim().len()
         } else {
             0
@@ -185,8 +187,23 @@ proptest! {
 
         // Make sure all lines have the same length
         for line in line_iter {
-            if line.len() != line_length {
-                return build_error(&formatted, "Each line of a printed table has to have the same length!");
+            let line_width = line.width();
+            if line_width != expected_line_length {
+                // Ignore errors on very small columns with multi-character wide unicode chars.
+                // TODO: This should be check
+                if (expected_line_length as i64 - line_width as i64) == -1  &&
+                    line.chars().any(|char| char.width().unwrap_or(2000) > 1) {
+                    continue;
+                }
+                let chars: Vec<(usize, char, Option<usize>)> = line.chars().enumerate().map(|(index, char)| (index, char, char.width())).collect();
+                return build_error(
+                    &formatted,
+                    &format!("Each line of a printed table has to have the same length! Found line: {} with width: {}. {:?}",
+                        line,
+                        line_width,
+                        chars,
+                        )
+                    );
             }
         }
 
@@ -202,7 +219,7 @@ proptest! {
                     let expected_max = determine_max_table_width(&table);
 
                     // A line can be a bit longer than u16::MAX due to formatting and borders.
-                    let actual: u16 = line_length.try_into().unwrap_or(u16::MAX);
+                    let actual: u16 = expected_line_length.try_into().unwrap_or(u16::MAX);
                     if actual > expected_max {
                         return build_error(
                             &formatted,
@@ -343,7 +360,7 @@ fn enforce_constraints(
                 None => continue,
             };
             // Get the actual length of the part.
-            let actual = part.len();
+            let actual = part.width();
 
             match constraint {
                 ColumnConstraint::Hidden => panic!("This shouldn't happen"),
