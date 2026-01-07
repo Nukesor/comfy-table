@@ -122,7 +122,7 @@ pub fn arrange(
         remaining_width = remaining_columns;
     }
 
-    distribute_remaining_space(&table.columns, infos, remaining_width, remaining_columns);
+    distribute_remaining_space(table, infos, remaining_width, remaining_columns);
 
     #[cfg(feature = "_debug")]
     println!("dynamic::arrange: After distribute: {infos:#?}");
@@ -178,7 +178,7 @@ fn available_content_width(
 /// The algorithm is a while loop with a nested for loop.
 /// 1. We iterate over all columns and check if there are columns that take less space.
 /// 2. If we find one or more such columns, we fix their width and add the surplus space to the
-///    emaining space. Due to this step, the average space per column increased. Now some other
+///    remaining space. Due to this step, the average space per column increased. Now some other
 ///    column might be fixed in width as well.
 /// 3. Do step 1 and 2, as long as there are columns left and as long as we find columns
 ///    that take up less space than the current remaining average.
@@ -530,20 +530,35 @@ fn use_full_width(infos: &mut DisplayInfos, remaining_width: usize) {
 /// given width.
 ///
 /// This function now equally distributes the remaining width between the remaining columns.
+/// It also respects LowerBoundary constraints if they apply.
 fn distribute_remaining_space(
-    columns: &[Column],
+    table: &Table,
     infos: &mut DisplayInfos,
-    remaining_width: usize,
-    remaining_columns: usize,
+    mut remaining_width: usize,
+    mut remaining_columns: usize,
 ) {
-    // Calculate the amount of average remaining space per column.
-    // Since we do integer division, there is most likely a little bit of non equally-divisible space.
-    // We then try to distribute it as fair as possible (from left to right).
+    let visible_columns = count_visible_columns(&table.columns);
+
+    // First, enforce lower boundary constraints for columns that need more than the average space.
+    // This can happen when columns with lower boundaries were wrapped in optimize_space_after_split()
+    // and reach here unfixed.
+    (remaining_width, remaining_columns) = enforce_lower_boundary_constraints(
+        table,
+        infos,
+        remaining_width,
+        remaining_columns,
+        visible_columns,
+    );
+
+    if remaining_columns == 0 {
+        return;
+    }
+
+    // Then distribute remaining space equally among unfixed columns
     let average_space = remaining_width / remaining_columns;
     let mut excess = remaining_width - (average_space * remaining_columns);
 
-    for column in columns.iter() {
-        // Ignore hidden columns
+    for column in table.columns.iter() {
         if infos.contains_key(&column.index) {
             continue;
         }

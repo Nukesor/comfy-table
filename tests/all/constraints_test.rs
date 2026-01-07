@@ -357,3 +357,31 @@ fn empty_table(#[case] arrangement: ContentArrangement) {
     println!("{expected}");
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
+
+#[test]
+/// Test that LowerBoundary constraints are respected in distribute_remaining_space().
+fn lower_boundary_in_distribute_remaining_space() {
+    let mut table = Table::new();
+    table
+        .add_row(vec!["abc", "def", "a__A", "AaAa_A___aa_A"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(33);
+
+    table
+        .column_mut(2)
+        .unwrap()
+        .set_constraint(LowerBoundary(Fixed(5)));
+
+    table
+        .column_mut(3)
+        .unwrap()
+        .set_constraint(LowerBoundary(Fixed(14)));
+
+    let expected = "
++-----+----+-----+--------------+
+| abc | de | a__ | AaAa_A___aa_ |
+|     | f  | A   | A            |
++-----+----+-----+--------------+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
