@@ -374,3 +374,28 @@ fn lower_fixed_boundary() {
     println!("{expected}");
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
+
+/// Test that `LowerBoundary` constraints are respected, even if a split would result in
+/// a smaller size.
+#[test]
+fn lower_fixed_boundary_with_split() {
+    let mut table = Table::new();
+    table
+        .add_row(vec!["123", "123", "123 343"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(5);
+
+    table
+        .column_mut(2)
+        .unwrap()
+        .set_constraint(LowerBoundary(Fixed(6)));
+
+    let expected = "
++---+---+------+
+| 1 | 1 | 123  |
+| 2 | 2 | 343  |
+| 3 | 3 |      |
++---+---+------+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
