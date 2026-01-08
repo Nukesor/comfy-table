@@ -18,8 +18,11 @@ pub mod utils;
 #[cfg(not(feature = "_integration_test"))]
 mod utils;
 
-pub use crate::cell::{Cell, Cells};
-pub use crate::column::Column;
-pub use crate::row::Row;
-pub use crate::table::{ColumnCellIter, Table};
 pub use style::*;
+
+pub use crate::{
+    cell::{Cell, Cells},
+    column::Column,
+    row::Row,
+    table::{ColumnCellIter, Table},
+};

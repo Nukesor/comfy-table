@@ -1,6 +1,4 @@
-use comfy_table::ColumnConstraint::*;
-use comfy_table::Width::*;
-use comfy_table::*;
+use comfy_table::{ColumnConstraint::*, Width::*, *};
 use pretty_assertions::assert_eq;
 
 use super::assert_table_line_width;
@@ -23,8 +21,8 @@ fn get_constraint_table() -> Table {
     table
 }
 
-#[test]
 /// Ensure max-, min- and fixed-width constraints are respected
+#[test]
 fn fixed_max_min_constraints() {
     let mut table = get_constraint_table();
 
@@ -101,32 +99,18 @@ fn fixed_max_min_constraints() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
-#[test]
-/// Max and Min constraints won't be considered, if they are unnecessary
+/// Max and Min constraints won't be considered, if they are unnecessary.
 /// This is true for normal and dynamic arrangement tables.
-fn unnecessary_max_min_constraints() {
+#[rstest::rstest]
+#[case(ContentArrangement::Dynamic)]
+#[case(ContentArrangement::Disabled)]
+fn unnecessary_max_min_constraints(#[case] arrangement: ContentArrangement) {
     let mut table = get_constraint_table();
 
     table
         .set_width(80)
-        .set_constraints(vec![LowerBoundary(Fixed(1)), UpperBoundary(Fixed(30))]);
-
-    println!("{table}");
-    let expected = "
-+------+----------------------+------------------------+
-| smol | Header2              | Header3                |
-+======================================================+
-| smol | This is another text | This is the third text |
-|------+----------------------+------------------------|
-| smol | Now                  | This is awesome        |
-|      | add some             |                        |
-|      | multi line stuff     |                        |
-+------+----------------------+------------------------+";
-    println!("{expected}");
-    assert_eq!(expected, "\n".to_string() + &table.to_string());
-
-    // Now test for dynamic content arrangement
-    table.set_content_arrangement(ContentArrangement::Dynamic);
+        .set_constraints(vec![LowerBoundary(Fixed(1)), UpperBoundary(Fixed(30))])
+        .set_content_arrangement(arrangement);
     println!("{table}");
     let expected = "
 +------+----------------------+------------------------+
@@ -142,10 +126,10 @@ fn unnecessary_max_min_constraints() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
-#[test]
 /// The user can specify constraints that result in bigger width than actually provided
 /// This is allowed, but results in a wider table than actually aimed for.
 /// Anyway we still try to fit everything as good as possible, which of course breaks stuff.
+#[test]
 fn constraints_bigger_than_table_width() {
     let mut table = get_constraint_table();
 
@@ -180,9 +164,9 @@ fn constraints_bigger_than_table_width() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
-#[test]
 /// Test correct usage of the Percentage constraint.
 /// Percentage allows to set a fixed width.
+#[test]
 fn percentage() {
     let mut table = get_constraint_table();
 
@@ -210,8 +194,8 @@ fn percentage() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
-#[test]
 /// A single percentage constraint should be 100% at most.
+#[test]
 fn max_100_percentage() {
     let mut table = Table::new();
     table
@@ -299,8 +283,8 @@ fn max_percentage() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
-#[test]
 /// Ensure that both min and max in [Boundaries] is respected
+#[test]
 fn min_max_boundary() {
     let mut table = get_constraint_table();
 
@@ -338,10 +322,10 @@ fn min_max_boundary() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
+/// Empty table with zero width constraint.
 #[rstest::rstest]
 #[case(ContentArrangement::Dynamic)]
 #[case(ContentArrangement::Disabled)]
-/// Empty table with zero width constraint.
 fn empty_table(#[case] arrangement: ContentArrangement) {
     let mut table = Table::new();
     table
@@ -354,6 +338,64 @@ fn empty_table(#[case] arrangement: ContentArrangement) {
 +---+
 |   |
 +---+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+/// Test that successive `Fixed` `LowerBoundary` constraints are respected.
+///
+/// This covers the edge-case that a later column enforces a lower-boundary
+/// constraint, resulting in the average space for the remaining columns to shrink significantly.
+/// This should then result in the other columns to be fixed as well.
+#[test]
+fn lower_fixed_boundary() {
+    let mut table = Table::new();
+    table
+        .add_row(vec!["123", "123", "1234", "1234567891234"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(33);
+
+    table
+        .column_mut(2)
+        .unwrap()
+        .set_constraint(LowerBoundary(Fixed(5)));
+
+    table
+        .column_mut(3)
+        .unwrap()
+        .set_constraint(LowerBoundary(Fixed(14)));
+
+    let expected = "
++-----+----+-----+--------------+
+| 123 | 12 | 123 | 123456789123 |
+|     | 3  | 4   | 4            |
++-----+----+-----+--------------+";
+
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+/// Test that `LowerBoundary` constraints are respected, even if a split would result in
+/// a smaller size.
+#[test]
+fn lower_fixed_boundary_with_split() {
+    let mut table = Table::new();
+    table
+        .add_row(vec!["123", "123", "123 343"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(5);
+
+    table
+        .column_mut(2)
+        .unwrap()
+        .set_constraint(LowerBoundary(Fixed(6)));
+
+    let expected = "
++---+---+------+
+| 1 | 1 | 123  |
+| 2 | 2 | 343  |
+| 3 | 3 |      |
++---+---+------+";
     println!("{expected}");
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

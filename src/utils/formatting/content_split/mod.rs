@@ -44,7 +44,8 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
         if !current_line.is_empty() {
             added_length += 1;
         }
-        // The remaining width for this column. If we are on a non-empty line, subtract 1 for the delimiter.
+        // The remaining width for this column. If we are on a non-empty line, subtract 1 for the
+        // delimiter.
         let mut remaining_width = content_width - current_length;
         if !current_line.is_empty() {
             remaining_width = remaining_width.saturating_sub(1);
@@ -80,11 +81,11 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
         // Ok. There's still enough space to fit something in (more than MIN_FREE_CHARS characters)
         // There are two scenarios:
         //
-        // 1. The word is too long for a single line.
-        //    In this case, we have to split the element anyway. Let's fill the remaining space on
-        //    the current line with, start a new line and push the remaining part on the stack.
-        // 2. The word is short enough to fit as a whole into a line
-        //    In that case we simply push the current line and start a new one with the current element
+        // 1. The word is too long for a single line. In this case, we have to split the element
+        //    anyway. Let's fill the remaining space on the current line with, start a new line and
+        //    push the remaining part on the stack.
+        // 2. The word is short enough to fit as a whole into a line In that case we simply push the
+        //    current line and start a new one with the current element
 
         // Case 1
         // The element is longer than the specified content_width
@@ -161,8 +162,9 @@ fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: St
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use unicode_width::UnicodeWidthStr;
+
+    use super::*;
 
     #[test]
     fn test_split_long_word() {

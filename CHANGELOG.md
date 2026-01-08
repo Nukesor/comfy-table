@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fix
 
+- Minor performance improvements
+- Fixed an edge-case, where multiple LowerBoundary constraints weren't uphold.
+
 ## [7.2.1] - 2025-09-11
 
 ### Misc

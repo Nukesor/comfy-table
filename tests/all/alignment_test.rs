@@ -1,10 +1,9 @@
+use comfy_table::*;
 use pretty_assertions::assert_eq;
 
-use comfy_table::*;
-
-#[test]
 /// Cell alignment can be specified on Columns and Cells
 /// Alignment settings on Cells overwrite the settings of Columns
+#[test]
 fn cell_alignment() {
     let mut table = Table::new();
     table

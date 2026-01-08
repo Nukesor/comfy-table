@@ -1,16 +1,19 @@
-use std::collections::HashMap;
-use std::fmt;
-use std::iter::IntoIterator;
-use std::slice::{Iter, IterMut};
 #[cfg(feature = "tty")]
 use std::sync::OnceLock;
+use std::{
+    collections::HashMap,
+    fmt,
+    iter::IntoIterator,
+    slice::{Iter, IterMut},
+};
 
-use crate::cell::Cell;
-use crate::column::Column;
-use crate::row::Row;
-use crate::style::presets::ASCII_FULL;
-use crate::style::{ColumnConstraint, ContentArrangement, TableComponent};
-use crate::utils::build_table;
+use crate::{
+    cell::Cell,
+    column::Column,
+    row::Row,
+    style::{ColumnConstraint, ContentArrangement, TableComponent, presets::ASCII_FULL},
+    utils::build_table,
+};
 
 /// This is the main interface for building a table.
 /// Each table consists of [Rows](Row), which in turn contain [Cells](crate::cell::Cell).
@@ -101,7 +104,7 @@ impl Table {
     /// There'll be no header unless you explicitly set it with this function.
     ///
     /// ```
-    /// use comfy_table::{Table, Row};
+    /// use comfy_table::{Row, Table};
     ///
     /// let mut table = Table::new();
     /// let header = Row::from(vec!["Header One", "Header Two"]);
@@ -137,7 +140,7 @@ impl Table {
     /// Add a new row to the table.
     ///
     /// ```
-    /// use comfy_table::{Table, Row};
+    /// use comfy_table::{Row, Table};
     ///
     /// let mut table = Table::new();
     /// table.add_row(vec!["One", "Two"]);
@@ -154,7 +157,7 @@ impl Table {
     /// Add a new row to the table if the predicate evaluates to `true`.
     ///
     /// ```
-    /// use comfy_table::{Table, Row};
+    /// use comfy_table::{Row, Table};
     ///
     /// let mut table = Table::new();
     /// table.add_row_if(|index, row| true, vec!["One", "Two"]);
@@ -174,13 +177,10 @@ impl Table {
     /// Add multiple rows to the table.
     ///
     /// ```
-    /// use comfy_table::{Table, Row};
+    /// use comfy_table::{Row, Table};
     ///
     /// let mut table = Table::new();
-    /// let rows = vec![
-    ///     vec!["One", "Two"],
-    ///     vec!["Three", "Four"]
-    /// ];
+    /// let rows = vec![vec!["One", "Two"], vec!["Three", "Four"]];
     /// table.add_rows(rows);
     /// ```
     pub fn add_rows<I>(&mut self, rows: I) -> &mut Self
@@ -201,13 +201,10 @@ impl Table {
     /// Add multiple rows to the table if the predicate evaluates to `true`.
     ///
     /// ```
-    /// use comfy_table::{Table, Row};
+    /// use comfy_table::{Row, Table};
     ///
     /// let mut table = Table::new();
-    /// let rows = vec![
-    ///     vec!["One", "Two"],
-    ///     vec!["Three", "Four"]
-    /// ];
+    /// let rows = vec![vec!["One", "Two"], vec!["Three", "Four"]];
     /// table.add_rows_if(|index, rows| true, rows);
     /// ```
     pub fn add_rows_if<P, I>(&mut self, predicate: P, rows: I) -> &mut Self
@@ -252,9 +249,9 @@ impl Table {
         self.rows.is_empty()
     }
 
-    /// Enforce a max width that should be used in combination with [dynamic content arrangement](ContentArrangement::Dynamic).\
-    /// This is usually not necessary, if you plan to output your table to a tty,
-    /// since the terminal width can be automatically determined.
+    /// Enforce a max width that should be used in combination with [dynamic content
+    /// arrangement](ContentArrangement::Dynamic).\ This is usually not necessary, if you plan
+    /// to output your table to a tty, since the terminal width can be automatically determined.
     pub fn set_width(&mut self, width: u16) -> &mut Self {
         self.width = Some(width);
 
@@ -263,10 +260,12 @@ impl Table {
 
     /// Get the expected width of the table.
     ///
-    /// This will be `Some(width)`, if the terminal width can be detected or if the table width is set via [set_width](Table::set_width).
+    /// This will be `Some(width)`, if the terminal width can be detected or if the table width is
+    /// set via [set_width](Table::set_width).
     ///
     /// If neither is not possible, `None` will be returned.\
-    /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the [Percentage](crate::style::Width::Percentage) constraint won't work.
+    /// This implies that both the [Dynamic](ContentArrangement::Dynamic) mode and the
+    /// [Percentage](crate::style::Width::Percentage) constraint won't work.
     #[cfg(feature = "tty")]
     pub fn width(&self) -> Option<u16> {
         if let Some(width) = self.width {
@@ -290,7 +289,7 @@ impl Table {
     /// Specify how Comfy Table should arrange the content in your table.
     ///
     /// ```
-    /// use comfy_table::{Table, ContentArrangement};
+    /// use comfy_table::{ContentArrangement, Table};
     ///
     /// let mut table = Table::new();
     /// table.set_content_arrangement(ContentArrangement::Dynamic);
@@ -382,8 +381,7 @@ impl Table {
     /// use comfy_table::Table;
     ///
     /// let mut table = Table::new();
-    /// table.force_no_tty()
-    ///     .enforce_styling();
+    /// table.force_no_tty().enforce_styling();
     /// ```
     #[cfg(feature = "tty")]
     pub fn enforce_styling(&mut self) -> &mut Self {
@@ -415,20 +413,18 @@ impl Table {
     /// Check out their docs for more information.
     ///
     /// **Attention:**
-    /// This function should be called after at least one row (or the headers) has been added to the table.
-    /// Before that, the columns won't initialized.
+    /// This function should be called after at least one row (or the headers) has been added to the
+    /// table. Before that, the columns won't initialized.
     ///
-    /// If more constraints are passed than there are columns, any superfluous constraints will be ignored.
-    /// ```
-    /// use comfy_table::{Width::*, CellAlignment, ColumnConstraint::*, ContentArrangement, Table};
+    /// If more constraints are passed than there are columns, any superfluous constraints will be
+    /// ignored. ```
+    /// use comfy_table::{CellAlignment, ColumnConstraint::*, ContentArrangement, Table, Width::*};
     ///
     /// let mut table = Table::new();
-    /// table.add_row(&vec!["one", "two", "three"])
+    /// table
+    ///     .add_row(&vec!["one", "two", "three"])
     ///     .set_content_arrangement(ContentArrangement::Dynamic)
-    ///     .set_constraints(vec![
-    ///         UpperBoundary(Fixed(15)),
-    ///         LowerBoundary(Fixed(20)),
-    /// ]);
+    ///     .set_constraints(vec![UpperBoundary(Fixed(15)), LowerBoundary(Fixed(20))]);
     /// ```
     pub fn set_constraints<T: IntoIterator<Item = ColumnConstraint>>(
         &mut self,
@@ -452,9 +448,11 @@ impl Table {
     /// You can also write your own preset strings and use them with this function.
     /// There's the convenience method [Table::current_style_as_preset], which prints you a preset
     /// string from your current style configuration. \
-    /// The function expects the to-be-drawn characters to be in the same order as in the [TableComponent] enum.
+    /// The function expects the to-be-drawn characters to be in the same order as in the
+    /// [TableComponent] enum.
     ///
-    /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all remaining components.
+    /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all
+    /// remaining components.
     ///
     /// If the string is too long, remaining charaacters will be simply ignored.
     pub fn load_preset(&mut self, preset: &str) -> &mut Self {
@@ -484,8 +482,7 @@ impl Table {
     /// A pure convenience method, so you're not force to fiddle with those preset strings yourself.
     ///
     /// ```
-    /// use comfy_table::Table;
-    /// use comfy_table::presets::UTF8_FULL;
+    /// use comfy_table::{Table, presets::UTF8_FULL};
     ///
     /// let mut table = Table::new();
     /// table.load_preset(UTF8_FULL);
@@ -508,12 +505,11 @@ impl Table {
 
     /// Modify a preset with a modifier string from [modifiers](crate::style::modifiers).
     ///
-    /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies all corners to be round UTF8 box corners.
+    /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies
+    /// all corners to be round UTF8 box corners.
     ///
     /// ```
-    /// use comfy_table::Table;
-    /// use comfy_table::presets::UTF8_FULL;
-    /// use comfy_table::modifiers::UTF8_ROUND_CORNERS;
+    /// use comfy_table::{Table, modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL};
     ///
     /// let mut table = Table::new();
     /// table.load_preset(UTF8_FULL);
@@ -556,9 +552,7 @@ impl Table {
     /// the first line wouldn't be displayed at all.
     ///
     /// ```
-    /// use comfy_table::Table;
-    /// use comfy_table::presets::UTF8_FULL;
-    /// use comfy_table::TableComponent::*;
+    /// use comfy_table::{Table, TableComponent::*, presets::UTF8_FULL};
     ///
     /// let mut table = Table::new();
     /// // Load the UTF8_FULL preset
@@ -578,8 +572,7 @@ impl Table {
 
     /// Get a copy of the char that's currently used for drawing this component.
     /// ```
-    /// use comfy_table::Table;
-    /// use comfy_table::TableComponent::*;
+    /// use comfy_table::{Table, TableComponent::*};
     ///
     /// let mut table = Table::new();
     /// assert_eq!(table.style(TopLeftCorner), Some('+'));
@@ -590,7 +583,8 @@ impl Table {
 
     /// Remove the style for a specific component of the table.\
     /// By default, a space will be used as a placeholder instead.\
-    /// Though, if for instance all components of the left border are removed, the left border won't be displayed.
+    /// Though, if for instance all components of the left border are removed, the left border won't
+    /// be displayed.
     pub fn remove_style(&mut self, component: TableComponent) -> &mut Self {
         self.style.remove(&component);
 
@@ -615,7 +609,7 @@ impl Table {
     /// Get a mutable iterator over all columns.
     ///
     /// ```
-    /// use comfy_table::{Width::*, ColumnConstraint::*, Table};
+    /// use comfy_table::{ColumnConstraint::*, Table, Width::*};
     ///
     /// let mut table = Table::new();
     /// table.add_row(&vec!["First", "Second", "Third"]);

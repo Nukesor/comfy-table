@@ -1,12 +1,13 @@
 pub mod arrangement;
 pub mod formatting;
 
-use crate::style::{CellAlignment, ColumnConstraint};
-use crate::{Column, Table};
-
 use arrangement::arrange_content;
-use formatting::borders::draw_borders;
-use formatting::content_format::format_content;
+use formatting::{borders::draw_borders, content_format::format_content};
+
+use crate::{
+    Column, Table,
+    style::{CellAlignment, ColumnConstraint},
+};
 
 /// This struct is ONLY used when table.to_string() is called.
 /// It's purpose is to store intermediate results, information on how to

@@ -1,12 +1,11 @@
+use comfy_table::*;
 use pretty_assertions::assert_eq;
 
-use comfy_table::*;
-
-#[test]
 /// Create a table with a custom delimiter on Table, Column and Cell level.
 /// The first column should be split with the table's delimiter.
 /// The first cell of the second column should be split with the custom column delimiter
 /// The second cell of the second column should be split with the custom cell delimiter
+#[test]
 fn full_custom_delimiters() {
     let mut table = Table::new();
 

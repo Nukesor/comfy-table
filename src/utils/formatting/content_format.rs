@@ -3,16 +3,10 @@ use crossterm::style::{Stylize, style};
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
-use super::content_split::measure_text_width;
-use super::content_split::split_line;
-
-use crate::cell::Cell;
-use crate::row::Row;
-use crate::style::CellAlignment;
+use super::content_split::{measure_text_width, split_line};
 #[cfg(feature = "tty")]
 use crate::style::{map_attribute, map_color};
-use crate::table::Table;
-use crate::utils::ColumnDisplayInfo;
+use crate::{cell::Cell, row::Row, style::CellAlignment, table::Table, utils::ColumnDisplayInfo};
 
 pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
     // Determine, which delimiter should be used
@@ -73,15 +67,14 @@ pub fn format_row(
             cell_iter.next();
             continue;
         }
+
         // Each cell is divided into several lines divided by newline
         // Every line that's too long will be split into multiple lines
         let mut cell_lines = Vec::new();
 
         // Check if the row has as many cells as the table has columns.
         // If that's not the case, create a new cell with empty spaces.
-        let cell = if let Some(cell) = cell_iter.next() {
-            cell
-        } else {
+        let Some(cell) = cell_iter.next() else {
             cell_lines.push(" ".repeat(info.width().into()));
             temp_row_content.push(cell_lines);
             continue;
@@ -225,8 +218,8 @@ pub fn format_row(
 
     // Right now, we have a different structure than desired.
     // The content is organized by `row->cell->line`.
-    // We want to remove the cell from our datastructure, since this makes the next step a lot easier.
-    // In the end it should look like this: `row->lines->column`.
+    // We want to remove the cell from our datastructure, since this makes the next step a lot
+    // easier. In the end it should look like this: `row->lines->column`.
     // To achieve this, we calculate the max amount of lines for the current row.
     // Afterwards, we iterate over each cell and convert the current structure to the desired one.
     // This step basically transforms this:
@@ -251,6 +244,7 @@ pub fn format_row(
             if info.is_hidden {
                 continue;
             }
+
             let cell = cell_iter.next().unwrap();
             match cell.get(index) {
                 // The current cell has content for this line. Append it

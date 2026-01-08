@@ -1,8 +1,5 @@
+use comfy_table::{ColumnConstraint::*, ContentArrangement, Row, Table, Width::*};
 use pretty_assertions::assert_eq;
-
-use comfy_table::ColumnConstraint::*;
-use comfy_table::Width::*;
-use comfy_table::{ContentArrangement, Row, Table};
 
 use crate::all::assert_table_line_width;
 

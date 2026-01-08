@@ -41,9 +41,11 @@ pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<String> {
     lines
 }
 
-/// Splits a long word at a given character width. Inserting the needed ansi codes to preserve style.
+/// Splits a long word at a given character width. Inserting the needed ansi codes to preserve
+/// style.
 pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
-    // A buffer for the first half of the split str, which will take up at most `allowed_len` characters when printed to the terminal.
+    // A buffer for the first half of the split str, which will take up at most `allowed_len`
+    // characters when printed to the terminal.
     let mut head = String::with_capacity(word.len());
     // A buffer for the second half of the split str
     let mut tail = String::with_capacity(word.len());
@@ -56,9 +58,11 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     // A buffer for the escape codes that exist in the str before the split.
     let mut escapes = Vec::new();
 
-    // Iterate over segments of the input string, each segment is either a singe escape code or block of text containing no escape codes.
-    // Add text and escape codes to the head buffer, keeping track of printable length and what ansi codes are active, until there is no more room in allowed_width.
-    // If the str was split at a point with active escape-codes, add the ansi reset code to the end of head, and the list of active escape codes to the beginning of tail.
+    // Iterate over segments of the input string, each segment is either a singe escape code or
+    // block of text containing no escape codes. Add text and escape codes to the head buffer,
+    // keeping track of printable length and what ansi codes are active, until there is no more room
+    // in allowed_width. If the str was split at a point with active escape-codes, add the ansi
+    // reset code to the end of head, and the list of active escape codes to the beginning of tail.
     let mut iter = console::AnsiCodeIterator::new(word);
     for (str_slice, is_esc) in iter.by_ref() {
         if is_esc {
@@ -122,7 +126,8 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
 
 /// Fixes ansi escape codes in a split string
 /// 1. Adds reset code to the end of each substring if needed.
-/// 2. Keeps track of previous substring's escape codes and inserts them in later substrings to continue style
+/// 2. Keeps track of previous substring's escape codes and inserts them in later substrings to
+///    continue style
 pub fn fix_style_in_split_str(words: &mut [String]) {
     let mut escapes: Vec<String> = Vec::new();
 
@@ -182,8 +187,9 @@ mod test {
     #[test]
     #[cfg(not(feature = "custom_styling"))]
     fn measure_text_width_osc8_test() {
-        use super::measure_text_width;
         use unicode_width::UnicodeWidthStr;
+
+        use super::measure_text_width;
 
         let text = "\x1b]8;;https://github.com\x1b\\This is a link\x1b]8;;\x1b";
         let width = measure_text_width(text);

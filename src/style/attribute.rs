@@ -4,8 +4,7 @@
 ///
 /// * Only UNIX and Windows 10 terminals do support text attributes.
 /// * Keep in mind that not all terminals support all attributes.
-/// * Crossterm implements almost all attributes listed in the
-///   [SGR parameters](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters).
+/// * Crossterm implements almost all attributes listed in the [SGR parameters](https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters).
 ///
 /// | Attribute | Windows | UNIX | Notes |
 /// | :-- | :--: | :--: | :-- |

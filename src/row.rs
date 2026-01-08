@@ -29,7 +29,7 @@ impl Row {
     /// [crate::Table::discover_columns].
     ///
     /// ```rust
-    /// use comfy_table::{Row, Cell};
+    /// use comfy_table::{Cell, Row};
     ///
     /// let mut row = Row::new();
     /// row.add_cell(Cell::new("One"));
@@ -43,7 +43,7 @@ impl Row {
     /// Truncate content of cells which occupies more than X lines of space.
     ///
     /// ```
-    /// use comfy_table::{Row, Cell};
+    /// use comfy_table::{Cell, Row};
     ///
     /// let mut row = Row::new();
     /// row.max_height(5);
@@ -88,14 +88,10 @@ impl Row {
 /// Check the [From] implementations on [Cell] for more information.
 ///
 /// ```rust
-/// use comfy_table::{Row, Cell};
+/// use comfy_table::{Cell, Row};
 ///
-/// let row = Row::from(vec!["One", "Two", "Three",]);
-/// let row = Row::from(vec![
-///    Cell::new("One"),
-///    Cell::new("Two"),
-///    Cell::new("Three"),
-/// ]);
+/// let row = Row::from(vec!["One", "Two", "Three"]);
+/// let row = Row::from(vec![Cell::new("One"), Cell::new("Two"), Cell::new("Three")]);
 /// let row = Row::from(vec![1, 2, 3, 4]);
 /// ```
 impl<T: Into<Cells>> From<T> for Row {
