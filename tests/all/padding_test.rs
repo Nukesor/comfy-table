@@ -2,9 +2,9 @@ use pretty_assertions::assert_eq;
 
 use comfy_table::*;
 
-#[test]
 /// Columns can set a custom padding.
 /// Ensure these settings are working.
+#[test]
 fn custom_padding() {
     let mut table = Table::new();
     table
