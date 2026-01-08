@@ -73,15 +73,14 @@ pub fn format_row(
             cell_iter.next();
             continue;
         }
+
         // Each cell is divided into several lines divided by newline
         // Every line that's too long will be split into multiple lines
         let mut cell_lines = Vec::new();
 
         // Check if the row has as many cells as the table has columns.
         // If that's not the case, create a new cell with empty spaces.
-        let cell = if let Some(cell) = cell_iter.next() {
-            cell
-        } else {
+        let Some(cell) = cell_iter.next() else {
             cell_lines.push(" ".repeat(info.width().into()));
             temp_row_content.push(cell_lines);
             continue;
@@ -251,6 +250,7 @@ pub fn format_row(
             if info.is_hidden {
                 continue;
             }
+
             let cell = cell_iter.next().unwrap();
             match cell.get(index) {
                 // The current cell has content for this line. Append it
