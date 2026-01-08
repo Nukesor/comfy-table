@@ -1,8 +1,10 @@
 use super::DisplayInfos;
-use crate::utils::formatting::borders::{
-    should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
+use crate::{
+    Cell, Column, Table,
+    utils::formatting::borders::{
+        should_draw_left_border, should_draw_right_border, should_draw_vertical_lines,
+    },
 };
-use crate::{Cell, Column, Table};
 
 /// The ColumnDisplayInfo works with a fixed value for content width.
 /// However, if a column is supposed to get a absolute width, we have to make sure that
@@ -28,8 +30,8 @@ pub fn count_visible_columns(columns: &[Column]) -> usize {
 
 /// Return the amount of visible columns that haven't been checked yet.
 ///
-/// - `column_count` is the total amount of columns that are visible, calculated
-///   with [count_visible_columns].
+/// - `column_count` is the total amount of columns that are visible, calculated with
+///   [count_visible_columns].
 /// - `infos` are all columns that have already been fixed in size or are hidden.
 pub fn count_remaining_columns(column_count: usize, infos: &DisplayInfos) -> usize {
     column_count - infos.iter().filter(|(_, info)| !info.is_hidden).count()

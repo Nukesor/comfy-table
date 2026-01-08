@@ -5,7 +5,8 @@
 ///
 /// # Platform-specific Notes
 ///
-/// The following list of 16 base colors are available for almost all terminals (Windows 7 and 8 included).
+/// The following list of 16 base colors are available for almost all terminals (Windows 7 and 8
+/// included).
 ///
 /// | Light      | Dark          |
 /// | :--------- | :------------ |

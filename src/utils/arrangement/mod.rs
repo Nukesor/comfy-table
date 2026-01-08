@@ -1,8 +1,7 @@
 use std::collections::BTreeMap;
 
 use super::ColumnDisplayInfo;
-use crate::style::ContentArrangement;
-use crate::table::Table;
+use crate::{style::ContentArrangement, table::Table};
 
 pub mod constraint;
 mod disabled;

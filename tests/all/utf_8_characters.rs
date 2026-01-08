@@ -1,6 +1,5 @@
-use pretty_assertions::assert_eq;
-
 use comfy_table::*;
+use pretty_assertions::assert_eq;
 
 #[test]
 /// UTF-8 symbols that are longer than a single character are properly handled.

@@ -1,7 +1,8 @@
-use super::helper::*;
-use super::{ColumnDisplayInfo, DisplayInfos};
-use crate::style::{ColumnConstraint, ColumnConstraint::*, Width};
-use crate::{Column, Table};
+use super::{ColumnDisplayInfo, DisplayInfos, helper::*};
+use crate::{
+    Column, Table,
+    style::{ColumnConstraint, ColumnConstraint::*, Width},
+};
 
 /// Look at given constraints of a column and check if some of them can be resolved at the very
 /// beginning.

@@ -3,16 +3,10 @@ use crossterm::style::{Stylize, style};
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
-use super::content_split::measure_text_width;
-use super::content_split::split_line;
-
-use crate::cell::Cell;
-use crate::row::Row;
-use crate::style::CellAlignment;
+use super::content_split::{measure_text_width, split_line};
 #[cfg(feature = "tty")]
 use crate::style::{map_attribute, map_color};
-use crate::table::Table;
-use crate::utils::ColumnDisplayInfo;
+use crate::{cell::Cell, row::Row, style::CellAlignment, table::Table, utils::ColumnDisplayInfo};
 
 pub fn delimiter(cell: &Cell, info: &ColumnDisplayInfo, table: &Table) -> char {
     // Determine, which delimiter should be used
@@ -224,8 +218,8 @@ pub fn format_row(
 
     // Right now, we have a different structure than desired.
     // The content is organized by `row->cell->line`.
-    // We want to remove the cell from our datastructure, since this makes the next step a lot easier.
-    // In the end it should look like this: `row->lines->column`.
+    // We want to remove the cell from our datastructure, since this makes the next step a lot
+    // easier. In the end it should look like this: `row->lines->column`.
     // To achieve this, we calculate the max amount of lines for the current row.
     // Afterwards, we iterate over each cell and convert the current structure to the desired one.
     // This step basically transforms this:

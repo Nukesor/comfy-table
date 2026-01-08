@@ -1,30 +1,27 @@
 use unicode_width::UnicodeWidthStr;
 
-use super::constraint;
-use super::helper::*;
-use super::{ColumnDisplayInfo, DisplayInfos};
-use crate::style::*;
-use crate::utils::formatting::content_split::split_line;
-use crate::{Column, Table};
+use super::{ColumnDisplayInfo, DisplayInfos, constraint, helper::*};
+use crate::{Column, Table, style::*, utils::formatting::content_split::split_line};
 
 /// Try to find the best fit for a given content and table_width
 ///
 /// 1. Determine the amount of available space after applying fixed columns, padding, and borders.
 /// 2. Now that we know how much space we have to work with, we have to check again for
-///    LowerBoundary constraints. If there are any columns that have a higher LowerBoundary,
-///    we have to fix that column to this size.
-/// 3. Check if there are any columns that require less space than the average
-///    remaining space for the remaining columns. (This includes the MaxWidth constraint).
+///    LowerBoundary constraints. If there are any columns that have a higher LowerBoundary, we have
+///    to fix that column to this size.
+/// 3. Check if there are any columns that require less space than the average remaining space for
+///    the remaining columns. (This includes the MaxWidth constraint).
 /// 4. Take those columns, fix their size and add the surplus in space to the remaining space.
 /// 5. Repeat step 2-3 until no columns with smaller size than average remaining space are left.
-/// 6. At this point, the remaining spaces is equally distributed between all columns.
-///    It get's a little tricky now. Check the documentation of [optimize_space_after_split]
-///    for more information.
+/// 6. At this point, the remaining spaces is equally distributed between all columns. It get's a
+///    little tricky now. Check the documentation of [optimize_space_after_split] for more
+///    information.
 /// 7. Divide the remaining space in relatively equal chunks.
 ///
 /// This breaks when:
 ///
-/// 1. A user assigns fixed sizes to a few columns, which are larger than the terminal when combined.
+/// 1. A user assigns fixed sizes to a few columns, which are larger than the terminal when
+///    combined.
 /// 2. A user provides more than 100% column width across a few columns.
 pub fn arrange(
     table: &Table,
@@ -177,15 +174,15 @@ fn available_content_width(
 /// 2. If we find one or more such columns, we fix their width and add the surplus space to the
 ///    emaining space. Due to this step, the average space per column increased. Now some other
 ///    column might be fixed in width as well.
-/// 3. Do step 1 and 2, as long as there are columns left and as long as we find columns
-///    that take up less space than the current remaining average.
+/// 3. Do step 1 and 2, as long as there are columns left and as long as we find columns that take
+///    up less space than the current remaining average.
 ///
 /// Parameters:
 /// - `table_width`: The absolute amount of available space.
-/// - `remaining_width`: This is the amount of space that isn't yet reserved by any other column.
-///   We need this to determine the average space each column has left.
-///   Any columns that needs less than this average receives a fixed width.
-///   The leftover space can then be used for the other columns.
+/// - `remaining_width`: This is the amount of space that isn't yet reserved by any other column. We
+///   need this to determine the average space each column has left. Any columns that needs less
+///   than this average receives a fixed width. The leftover space can then be used for the other
+///   columns.
 /// - `visible_columns`: All visible columns that should be displayed.
 ///
 /// Returns:
@@ -410,8 +407,8 @@ fn optimize_space_after_split(
                 column.index, longest_line
             );
 
-            // If there's a considerable amount of space left after splitting, we freeze the column and
-            // set its content width to the calculated post-split width.
+            // If there's a considerable amount of space left after splitting, we freeze the column
+            // and set its content width to the calculated post-split width.
             let remaining_space = average_space.saturating_sub(longest_line);
             if remaining_space >= 3 {
                 let info =
@@ -499,8 +496,8 @@ fn use_full_width(infos: &mut DisplayInfos, remaining_width: usize) {
     }
 
     // Calculate the amount of average remaining space per column.
-    // Since we do integer division, there is most likely a little bit of non equally-divisible space.
-    // We then try to distribute it as fair as possible (from left to right).
+    // Since we do integer division, there is most likely a little bit of non equally-divisible
+    // space. We then try to distribute it as fair as possible (from left to right).
     let average_space = remaining_width / visible_columns;
     let mut excess = remaining_width - (average_space * visible_columns);
 
@@ -535,8 +532,8 @@ fn distribute_remaining_space(
     remaining_columns: usize,
 ) {
     // Calculate the amount of average remaining space per column.
-    // Since we do integer division, there is most likely a little bit of non equally-divisible space.
-    // We then try to distribute it as fair as possible (from left to right).
+    // Since we do integer division, there is most likely a little bit of non equally-divisible
+    // space. We then try to distribute it as fair as possible (from left to right).
     let average_space = remaining_width / remaining_columns;
     let mut excess = remaining_width - (average_space * remaining_columns);
 

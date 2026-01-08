@@ -1,6 +1,4 @@
-use super::constraint;
-use super::helper::*;
-use super::{ColumnDisplayInfo, DisplayInfos};
+use super::{ColumnDisplayInfo, DisplayInfos, constraint, helper::*};
 use crate::Table;
 
 /// Dynamic arrangement is disabled.

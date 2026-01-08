@@ -1,5 +1,4 @@
-use comfy_table::presets::UTF8_FULL;
-use comfy_table::*;
+use comfy_table::{presets::UTF8_FULL, *};
 use pretty_assertions::assert_eq;
 
 fn get_preset_table() -> Table {

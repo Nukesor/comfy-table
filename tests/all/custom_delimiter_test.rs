@@ -1,6 +1,5 @@
-use pretty_assertions::assert_eq;
-
 use comfy_table::*;
+use pretty_assertions::assert_eq;
 
 /// Create a table with a custom delimiter on Table, Column and Cell level.
 /// The first column should be split with the table's delimiter.

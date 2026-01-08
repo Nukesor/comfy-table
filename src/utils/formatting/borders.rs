@@ -1,6 +1,4 @@
-use crate::style::TableComponent;
-use crate::table::Table;
-use crate::utils::ColumnDisplayInfo;
+use crate::{style::TableComponent, table::Table, utils::ColumnDisplayInfo};
 
 pub(crate) fn draw_borders(
     table: &Table,

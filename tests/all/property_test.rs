@@ -1,7 +1,5 @@
 use ::proptest::prelude::*;
-use comfy_table::ColumnConstraint::*;
-use comfy_table::Width::*;
-use comfy_table::*;
+use comfy_table::{ColumnConstraint::*, Width::*, *};
 
 /// Pick any of the three existing ContentArrangement types for the table.
 fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
@@ -80,10 +78,11 @@ fn columns_and_rows() -> impl Strategy<
             }
             // Add a strategy that creates random cell content with a length of 0 to column_count
             //
-            // UTF-8 characters completely break table alignment in edge-case situations (e.g. 1 space columns).
-            // UTF-8 characters can be multiple characters wide, which conflicts with the 1 space
-            // column fallback, as well as fixed-width-, percental- and max-column-constraints.
-            // As a result, we cannot check this with proptest, as this is inherently broken.
+            // UTF-8 characters completely break table alignment in edge-case situations (e.g. 1
+            // space columns). UTF-8 characters can be multiple characters wide, which
+            // conflicts with the 1 space column fallback, as well as fixed-width-,
+            // percental- and max-column-constraints. As a result, we cannot check this
+            // with proptest, as this is inherently broken.
             rows.push(::proptest::collection::vec(
                 "[A-Za-z_]*",
                 0..column_count as usize,
