@@ -437,16 +437,12 @@ fn optimize_space_after_split(
 ///
 /// A lot of this logic is duplicated from the [utils::format::format_row] function.
 fn longest_line_after_split(average_space: usize, column: &Column, table: &Table) -> usize {
-    // Collect all resulting lines of the column in a single vector.
-    // That way we can easily determine the longest line afterwards.
-    let mut column_lines = Vec::new();
+    // Runtime variable that holds the longest found line length.
+    let mut longest = 0;
 
     for cell in table.column_cells_with_header_iter(column.index) {
         // Only look at rows that actually contain this cell.
-        let cell = match cell {
-            Some(cell) => cell,
-            None => continue,
-        };
+        let Some(cell) = cell else { continue };
 
         let delimiter = delimiter(table, column, cell);
 
@@ -458,7 +454,7 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
         // Newlines added by the user will be preserved.
         for line in cell.content.iter() {
             if line.width() > average_space {
-                let mut parts = split_line(line, &info, delimiter);
+                let parts = split_line(line, &info, delimiter);
 
                 #[cfg(feature = "_debug")]
                 println!(
@@ -468,19 +464,16 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
                     parts
                 );
 
-                column_lines.append(&mut parts);
+                parts
+                    .iter()
+                    .for_each(|part| longest = longest.max(part.len()));
             } else {
-                column_lines.push(line.into());
+                longest = longest.max(line.len())
             }
         }
     }
 
-    // Get the longest line, default to length 0 if no lines exist.
-    column_lines
-        .iter()
-        .map(|line| line.width())
-        .max()
-        .unwrap_or(0)
+    longest
 }
 
 /// Step 6 - First branch
