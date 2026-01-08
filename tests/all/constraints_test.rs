@@ -1,6 +1,4 @@
-use comfy_table::ColumnConstraint::*;
-use comfy_table::Width::*;
-use comfy_table::*;
+use comfy_table::{ColumnConstraint::*, Width::*, *};
 use pretty_assertions::assert_eq;
 
 use super::assert_table_line_width;
@@ -340,6 +338,39 @@ fn empty_table(#[case] arrangement: ContentArrangement) {
 +---+
 |   |
 +---+";
+    println!("{expected}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+/// Test that successive `Fixed` `LowerBoundary` constraints are respected.
+///
+/// This covers the edge-case that a later column enforces a lower-boundary
+/// constraint, resulting in the average space for the remaining columns to shrink significantly.
+/// This should then result in the other columns to be fixed as well.
+#[test]
+fn lower_fixed_boundary() {
+    let mut table = Table::new();
+    table
+        .add_row(vec!["123", "123", "1234", "1234567891234"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(33);
+
+    table
+        .column_mut(2)
+        .unwrap()
+        .set_constraint(LowerBoundary(Fixed(5)));
+
+    table
+        .column_mut(3)
+        .unwrap()
+        .set_constraint(LowerBoundary(Fixed(14)));
+
+    let expected = "
++-----+----+-----+--------------+
+| 123 | 12 | 123 | 123456789123 |
+|     | 3  | 4   | 4            |
++-----+----+-----+--------------+";
+
     println!("{expected}");
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }

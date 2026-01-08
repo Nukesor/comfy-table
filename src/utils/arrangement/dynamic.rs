@@ -307,44 +307,53 @@ fn enforce_lower_boundary_constraints(
     visible_columns: usize,
 ) -> (usize, usize) {
     let mut average_space = remaining_width / remaining_columns;
-    for column in table.columns.iter() {
-        // Ignore hidden columns
-        // We already checked this column, skip it
-        if infos.contains_key(&column.index) {
-            continue;
+
+    // We loop this as long as we found a lower boundary that fixed a column in place.
+    // Due to enforced lower boundaries, the `average_space` can shrink, which can result in
+    // further lower boundaries being triggered.
+    let mut try_again = true;
+    while try_again {
+        try_again = false;
+        for column in table.columns.iter() {
+            // Ignore hidden columns
+            // We already checked this column, skip it
+            if infos.contains_key(&column.index) {
+                continue;
+            }
+
+            // Check whether the column has a LowerBoundary constraint.
+            let Some(min_width) = constraint::min(table, &column.constraint, visible_columns)
+            else {
+                continue;
+            };
+
+            // Only proceed if the average spaces is smaller than the specified lower boundary.
+            if average_space >= min_width.into() {
+                continue;
+            }
+
+            // This column would get smaller than the specified lower boundary.
+            // Fix its width!!!
+            let width = absolute_width_with_padding(column, min_width);
+            let info = ColumnDisplayInfo::new(column, width);
+            infos.insert(column.index, info);
+
+            #[cfg(feature = "_debug")]
+            println!(
+                "dynamic::enforce_lower_boundary_constraints: Fixed column {} to min constraint width {}",
+                column.index, width
+            );
+
+            // Continue with new recalculated width
+            remaining_width = remaining_width.saturating_sub(width.into());
+            remaining_columns -= 1;
+            if remaining_columns == 0 {
+                break;
+            }
+
+            average_space = remaining_width / remaining_columns;
+            try_again = true;
         }
-
-        // Check whether the column has a LowerBoundary constraint.
-        let Some(min_width) = constraint::min(table, &column.constraint, visible_columns) else {
-            continue;
-        };
-
-        // Only proceed if the average spaces is smaller than the specified lower boundary.
-        if average_space >= min_width.into() {
-            continue;
-        }
-
-        // This column would get smaller than the specified lower boundary.
-        // Fix its width!!!
-        let width = absolute_width_with_padding(column, min_width);
-        let info = ColumnDisplayInfo::new(column, width);
-        infos.insert(column.index, info);
-
-        #[cfg(feature = "_debug")]
-        println!(
-            "dynamic::enforce_lower_boundary_constraints: Fixed column {} to min constraint width {}",
-            column.index, width
-        );
-
-        // Continue with new recalculated width
-        remaining_width = remaining_width.saturating_sub(width.into());
-        remaining_columns -= 1;
-        if remaining_columns == 0 {
-            break;
-        }
-
-        average_space = remaining_width / remaining_columns;
-        continue;
     }
 
     (remaining_width, remaining_columns)
