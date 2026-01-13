@@ -105,10 +105,10 @@ fn embed_line(line_parts: &[String], table: &Table) -> String {
     let mut part_iter = line_parts.iter().peekable();
     while let Some(part) = part_iter.next() {
         line += part;
-        if should_draw_vertical_lines(table) && part_iter.peek().is_some() {
-            line += &vertical_lines;
-        } else if should_draw_right_border(table) && part_iter.peek().is_none() {
+        if part_iter.peek().is_none() && should_draw_right_border(table) {
             line += &right_border;
+        } else if part_iter.peek().is_some() && should_draw_vertical_lines(table) {
+            line += &vertical_lines;
         }
     }
 
@@ -144,13 +144,15 @@ fn draw_horizontal_lines(
         line += &left_intersection;
     }
 
+    let draw_vertical_lines = should_draw_vertical_lines(table);
+
     // Append the middle lines depending on the columns' widths.
     // Also add the middle intersections.
     let mut first = true;
     for info in display_info.iter() {
         // Only add something, if the column isn't hidden
         if !info.is_hidden {
-            if !first {
+            if !first && draw_vertical_lines {
                 line += &middle_intersection;
             }
             line += &horizontal_lines.repeat(info.width().into());
