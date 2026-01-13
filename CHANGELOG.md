@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Minor performance improvements
 - Fixed an edge-case, where multiple LowerBoundary constraints weren't uphold.
+- Fixed an issue where tables were misformatted when no vertical border styling was specified. [#198](https://github.com/Nukesor/comfy-table/pull/198)
 
 ## [7.2.1] - 2025-09-11
 
