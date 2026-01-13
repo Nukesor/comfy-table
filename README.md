@@ -30,8 +30,10 @@ As far as I'm aware, there're no lingering bugs and the project has a lot of tes
 "Finished" means:
 
 - Comfy-table still receives regular version bumps for its few dependencies.
-- Pull requests for wished for and approved features will be reviewed and eventually merged.
-- New releases are pushed when new features are added or when requested.
+- Any lingering bugs are fixed.
+- New releases are pushed when requested or once bug fixes are merged.
+
+There's a [search for a new maintainer](https://github.com/Nukesor/comfy-table/issues/202), until then the project is in a feature freeze.
 
 ## Features
 
