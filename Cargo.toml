@@ -63,7 +63,7 @@ console = { version = "0.16", optional = true }
 criterion = "0.8"
 pretty_assertions = "1"
 proptest = "1"
-rand = "0.9"
+rand = "0.10"
 rstest = "0.26"
 
 # We don't need any of the default features for crossterm.
