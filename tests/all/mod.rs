@@ -18,6 +18,7 @@ mod padding_test;
 mod presets_test;
 mod property_test;
 mod simple_test;
+mod smart_padding;
 #[cfg(feature = "tty")]
 mod styling_test;
 mod truncation;
