@@ -44,7 +44,7 @@ There's a [search for a new maintainer](https://github.com/Nukesor/comfy-table/i
 - Constraints on columns that allow some additional control over how to arrange content.
 - Cross platform (Linux, macOS, Windows).
 - It's fast enough.
-  - Benchmarks show that a pretty big table with complex constraints is build in `470μs` or `~0.5ms`.
+  - Benchmarks show that a pretty big table with complex constraints is built in `470μs` or `~0.5ms`.
   - The table seen at the top of the readme takes `~30μs`.
   - These numbers are from a overclocked `i7-8700K` with a max single-core performance of 4.9GHz.
   - To run the benchmarks yourselves, install criterion via `cargo install cargo-criterion` and run `cargo criterion` afterwards.
