@@ -1,6 +1,6 @@
 use comfy_table::{presets::UTF8_FULL, *};
 use criterion::{Criterion, criterion_group, criterion_main};
-use rand::{Rng, distr::Alphanumeric};
+use rand::{RngExt, distr::Alphanumeric};
 
 /// Create a dynamic 10x500 Table with width 300 and unevenly distributed content.
 /// There are no constraint, the content simply has to be formatted to fit as good as possible into
