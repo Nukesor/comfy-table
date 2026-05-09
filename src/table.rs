@@ -42,6 +42,10 @@ pub struct Table {
     /// or whether only the text should be styled.
     #[cfg(feature = "tty")]
     pub(crate) style_text_only: bool,
+    // Padding between texts in adjacent cells (not including border).
+    // Unlike static padding, it considers whitespace in cell contents,
+    // and only applied when there is space.
+    smart_padding_width: u16,
 }
 
 impl fmt::Display for Table {
@@ -78,6 +82,7 @@ impl Table {
             enforce_styling: false,
             #[cfg(feature = "tty")]
             style_text_only: false,
+            smart_padding_width: 0,
         };
 
         table.load_preset(ASCII_FULL);
@@ -406,6 +411,17 @@ impl Table {
     #[cfg(feature = "tty")]
     pub fn style_text_only(&mut self) {
         self.style_text_only = true;
+    }
+
+    /// Enable smart padding for the table.
+    pub fn set_smart_padding_width(&mut self, width: u16) -> &mut Self {
+        self.smart_padding_width = width;
+        self
+    }
+
+    /// Returns smart padding count for the table.
+    pub fn smart_padding_width(&self) -> u16 {
+        self.smart_padding_width
     }
 
     /// Convenience method to set a [ColumnConstraint] for all columns at once.
