@@ -36,12 +36,14 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
     println!("After initial constraints: {infos:#?}");
 
     // Fallback to `ContentArrangement::Disabled`, if we don't have any information
-    // on how wide the table should be.
-    let table_width = if let Some(table_width) = table_width {
-        table_width
-    } else {
-        disabled::arrange(table, &mut infos, visible_columns, &max_content_widths);
-        return infos.into_values().collect();
+    // on how wide the table should be, or if the detected width is zero
+    // ("Hollow Terminal": a tty exists but reports no dimensions).
+    let table_width = match table_width {
+        Some(0) | None => {
+            disabled::arrange(table, &mut infos, visible_columns, &max_content_widths);
+            return infos.into_values().collect();
+        }
+        Some(width) => width,
     };
 
     match &table.arrangement {

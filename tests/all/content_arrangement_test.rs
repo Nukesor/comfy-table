@@ -289,3 +289,25 @@ fn polar_python_test_tbl_width_chars() {
     assert_table_line_width(table, 72);
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
+
+/// Regression test for zero-width "Hollow Terminal" (e.g. Nix sandbox pts).
+#[test]
+fn hollow_terminal_zero_width_falls_back_to_disabled() {
+    let mut table = Table::new();
+    table
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(0)
+        .set_header(vec!["head1", "head2"])
+        .add_row(vec!["one", "two"]);
+
+    println!("{table}");
+    let expected = "
++-------+-------+
+| head1 | head2 |
++===============+
+| one   | two   |
++-------+-------+";
+    println!("{expected}");
+    assert_table_line_width(&table, 17);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}

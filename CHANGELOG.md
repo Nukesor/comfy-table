@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fix
 
+- Fixed broken column layout in zero-width terminal environments (e.g. Nix build sandbox). [#210](https://github.com/Nukesor/comfy-table/pull/210)
+
 ## [7.2.2] - 2026-01-13
 
 ### Fix
