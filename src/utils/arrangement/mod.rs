@@ -49,7 +49,13 @@ pub fn arrange_content(table: &Table) -> Vec<ColumnDisplayInfo> {
             disabled::arrange(table, &mut infos, visible_columns, &max_content_widths)
         }
         ContentArrangement::Dynamic | ContentArrangement::DynamicFullWidth => {
-            dynamic::arrange(table, &mut infos, table_width, &max_content_widths);
+            dynamic::arrange(
+                table,
+                &mut infos,
+                visible_columns,
+                table_width,
+                &max_content_widths,
+            );
         }
     }
 
