@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fix
 
+- Fixed a non-critical bug that resulted in less-than optimal layouting when UTF-8 characters were involved.
+
 ## [7.2.2] - 2026-01-13
 
 ### Fix

@@ -468,9 +468,9 @@ fn longest_line_after_split(average_space: usize, column: &Column, table: &Table
 
                 parts
                     .iter()
-                    .for_each(|part| longest = longest.max(part.len()));
+                    .for_each(|part| longest = longest.max(part.width()));
             } else {
-                longest = longest.max(line.len())
+                longest = longest.max(line.width())
             }
         }
     }
