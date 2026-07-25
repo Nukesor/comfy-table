@@ -130,11 +130,6 @@ prop_compose! {
         (header, rows, constraints, cell_alignments, column_alignments) in columns_and_rows()) -> Table {
 
         let mut table = Table::new();
-        if let Some(height) = max_height {
-            for row in table.row_iter_mut() {
-                row.max_height(height);
-            }
-        }
 
         // Set an optional header row.
         if let Some(header) = header {
@@ -155,6 +150,14 @@ prop_compose! {
 
             // Add the row to the table
             table.add_row(row);
+        }
+
+        // Set the max_height on all rows.
+        // This has to happen after the rows have been added to the table.
+        if let Some(height) = max_height {
+            for row in table.row_iter_mut() {
+                row.max_height(height);
+            }
         }
 
         for (column_index, column) in table.column_iter_mut().enumerate() {
