@@ -42,6 +42,9 @@ impl Row {
 
     /// Truncate content of cells which occupies more than X lines of space.
     ///
+    /// At least one line of content is always shown, hence a value of `0` is
+    /// implicitly treated as `1`.
+    ///
     /// ```
     /// use comfy_table::{Cell, Row};
     ///
@@ -49,7 +52,7 @@ impl Row {
     /// row.max_height(5);
     /// ```
     pub fn max_height(&mut self, lines: usize) -> &mut Self {
-        self.max_height = Some(lines);
+        self.max_height = Some(lines.max(1));
 
         self
     }

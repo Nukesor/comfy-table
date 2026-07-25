@@ -105,6 +105,7 @@ pub fn format_row(
             let _ = cell_lines.split_off(lines);
 
             // Directly access the last line.
+            // `max_height` is guaranteed to be `>= 1`, so this cannot underflow.
             let last_line = cell_lines
                 .get_mut(lines - 1)
                 .expect("We know it's this long.");

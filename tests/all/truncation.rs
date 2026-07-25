@@ -114,6 +114,32 @@ fn table_with_truncate_indicator() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
+/// A `max_height` of `0` is implicitly treated as `1`, since at least one line of content is
+/// always shown. This used to panic with an integer underflow.
+#[test]
+fn table_with_max_height_zero() {
+    let mut table = Table::new();
+    let mut row: Row = Row::from(vec!["some multiline\ncontent", "single line"]);
+    row.max_height(0);
+
+    table
+        .set_header(vec!["Header1", "Header2"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(40)
+        .add_row(row);
+
+    println!("{table}");
+    let expected = "
++----------------+-------------+
+| Header1        | Header2     |
++==============================+
+| some multil... | single line |
++----------------+-------------+";
+    println!("{expected}");
+    assert_table_line_width(&table, 32);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
 #[test]
 fn table_with_composite_utf8_strings() {
     let mut table = Table::new();
