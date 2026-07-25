@@ -119,7 +119,15 @@ pub fn format_row(
             }
 
             let max_width: usize = info.content_width.into();
-            let indicator_width = table.truncation_indicator.width();
+
+            // The indicator itself might be wider than the column, in which case we opt to simply
+            // not show it. Otherwise, we would overflow the column and break the table layout.
+            let indicator = if table.truncation_indicator.width() > max_width {
+                ""
+            } else {
+                table.truncation_indicator.as_str()
+            };
+            let indicator_width = indicator.width();
 
             let mut truncate_at = 0;
             // Start the accumulated_width with the indicator_width, which is the minimum width
@@ -206,7 +214,7 @@ pub fn format_row(
             }
 
             // Push the truncation indicator.
-            last_line.push_str(&table.truncation_indicator);
+            last_line.push_str(indicator);
         }
 
         // Iterate over all generated lines of this cell and align them

@@ -220,3 +220,32 @@ fn table_with_composite_utf8_emojis() {
     assert_table_line_width(&table, 15);
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
+
+/// The truncation indicator isn't printed if it's wider than the column.
+#[test]
+fn table_with_indicator_wider_than_column() {
+    let mut table = Table::new();
+    let mut row: Row = Row::from(vec!["multi\nline", "some longer content"]);
+    row.max_height(1);
+
+    table
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_width(30)
+        .add_row(row);
+
+    // Fix the first column to a content width of 1 (3 minus 2 padding).
+    // The default indicator "..." doesn't fit, so it's not printed at all.
+    table
+        .column_mut(0)
+        .unwrap()
+        .set_constraint(Absolute(Fixed(3)));
+
+    println!("{table}");
+    let expected = "
++---+---------------------+
+| m | some longer content |
++---+---------------------+";
+    println!("{expected}");
+    assert_table_line_width(&table, 27);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
