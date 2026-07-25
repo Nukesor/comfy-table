@@ -56,13 +56,15 @@ prop_compose! {
 }
 
 /// Returns all data needed to build the final table.
-/// 1. A matrix of cells Row[Column[Cell]].
-/// 2. Constraints for all columns.
-/// 3. The alignment for each cell.
-/// 3. The alignment for each column.
+/// 1. An optional header row.
+/// 2. A matrix of cells Row[Column[Cell]].
+/// 3. Constraints for all columns.
+/// 4. The alignment for each cell.
+/// 5. The alignment for each column.
 #[allow(clippy::type_complexity)]
 fn columns_and_rows() -> impl Strategy<
     Value = (
+        Option<Vec<String>>,
         Vec<Vec<String>>,
         Vec<Option<ColumnConstraint>>,
         Vec<Option<CellAlignment>>,
@@ -77,7 +79,7 @@ fn columns_and_rows() -> impl Strategy<
             for _j in 0..column_count {
                 cell_alignments.push(cell_alignment());
             }
-            // Add a strategy that creates random cell content with a length of 0 to column_count
+            // Add a strategy that creates random cell content for 0 to column_count cells.
             //
             // UTF-8 characters completely break table alignment in edge-case situations (e.g. 1
             // space columns). UTF-8 characters can be multiple characters wide, which
@@ -90,9 +92,13 @@ fn columns_and_rows() -> impl Strategy<
             // acceptable that a table might be wider in case of wider utf-8 chars.
             rows.push(::proptest::collection::vec(
                 "[A-Za-z_]*",
-                0..column_count as usize,
+                0..=column_count as usize,
             ));
         }
+        let header = ::proptest::option::of(::proptest::collection::vec(
+            "[A-Za-z_]*",
+            0..=column_count as usize,
+        ));
         let mut constraints = Vec::new();
         let mut column_alignments = Vec::new();
         for _i in 0..column_count {
@@ -100,7 +106,13 @@ fn columns_and_rows() -> impl Strategy<
             column_alignments.push(cell_alignment());
         }
 
-        (rows, constraints, cell_alignments, column_alignments)
+        (
+            header,
+            rows,
+            constraints,
+            cell_alignments,
+            column_alignments,
+        )
     })
 }
 
@@ -115,13 +127,18 @@ prop_compose! {
     fn table()
         (arrangement in content_arrangement(),
         max_height in max_height(),
-        (rows, constraints, cell_alignments, column_alignments) in columns_and_rows()) -> Table {
+        (header, rows, constraints, cell_alignments, column_alignments) in columns_and_rows()) -> Table {
 
         let mut table = Table::new();
         if let Some(height) = max_height {
             for row in table.row_iter_mut() {
                 row.max_height(height);
             }
+        }
+
+        // Set an optional header row.
+        if let Some(header) = header {
+            table.set_header(header);
         }
 
         let mut cell_alignments = cell_alignments.iter();
