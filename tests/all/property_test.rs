@@ -33,6 +33,18 @@ fn column_constraint() -> impl Strategy<Value = Option<ColumnConstraint>> {
         (0u16..200u16).prop_map(|percentage| { Some(Absolute(Percentage(percentage))) }),
         (0u16..200u16).prop_map(|percentage| { Some(LowerBoundary(Percentage(percentage))) }),
         (0u16..200u16).prop_map(|percentage| { Some(UpperBoundary(Percentage(percentage))) }),
+        (any::<u16>(), any::<u16>()).prop_map(|(a, b)| {
+            Some(Boundaries {
+                lower: Fixed(a.min(b)),
+                upper: Fixed(a.max(b)),
+            })
+        }),
+        (0u16..200u16, 0u16..200u16).prop_map(|(a, b)| {
+            Some(Boundaries {
+                lower: Percentage(a.min(b)),
+                upper: Percentage(a.max(b)),
+            })
+        }),
     ]
 }
 
@@ -182,7 +194,11 @@ prop_compose! {
 
 proptest! {
     #![proptest_config({
-        let mut config = ProptestConfig::with_cases(512);
+        // Allow overrule of testcases to run via PROPTEST_CASES environment variable.
+        let mut config = ProptestConfig::default();
+        if std::env::var("PROPTEST_CASES").is_err() {
+            config.cases = 512;
+        }
         config.max_shrink_iters = 5000;
         config
     })]
