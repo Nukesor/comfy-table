@@ -1,5 +1,6 @@
 use ::proptest::prelude::*;
 use comfy_table::{ColumnConstraint::*, Width::*, *};
+use unicode_width::UnicodeWidthStr;
 
 /// Pick any of the three existing ContentArrangement types for the table.
 fn content_arrangement() -> impl Strategy<Value = ContentArrangement> {
@@ -83,6 +84,10 @@ fn columns_and_rows() -> impl Strategy<
             // conflicts with the 1 space column fallback, as well as fixed-width-,
             // percental- and max-column-constraints. As a result, we cannot check this
             // with proptest, as this is inherently broken.
+            //
+            // TODO Figure out a way to include utf-8 text, while not breaking tables with 1 width
+            // **and** verifying that the table is correct afterwards. I.e. in 1-width tables, it's
+            // acceptable that a table might be wider in case of wider utf-8 chars.
             rows.push(::proptest::collection::vec(
                 "[A-Za-z_]*",
                 0..column_count as usize,
@@ -99,7 +104,7 @@ fn columns_and_rows() -> impl Strategy<
     })
 }
 
-/// We test the Row::max_height with a few values.
+/// The overall table width in the range of 0 to 1000.
 fn table_width() -> impl Strategy<Value = u16> {
     0..1000u16
 }
@@ -174,18 +179,18 @@ proptest! {
 
         // ----- Table width check ------
 
-        // Get the length of the very first line.
-        // We're lateron going to ensure, that all lines have the same length.
+        // Get the display width of the very first line.
+        // We're lateron going to ensure, that all lines have the same width.
         let line_length = if let Some(line) = line_iter.next() {
-            line.trim().len()
+            line.width()
         } else {
             0
         };
 
-        // Make sure all lines have the same length
+        // Make sure all lines have the same width
         for line in line_iter {
-            if line.len() != line_length {
-                return build_error(&formatted, "Each line of a printed table has to have the same length!");
+            if line.width() != line_length {
+                return build_error(&formatted, "Each line of a printed table has to have the same width!");
             }
         }
 
@@ -274,7 +279,7 @@ fn determine_max_table_width(table: &Table) -> u16 {
                         .saturating_add(column.padding_width());
                 }
                 ColumnConstraint::Hidden => {}
-                _ => {
+                ColumnConstraint::UpperBoundary(_) => {
                     // Add the padding and the min-width of `1` for this column
                     constraint_min_width = constraint_min_width
                         .saturating_add(column.padding_width())
@@ -308,12 +313,13 @@ fn enforce_constraints(
         _ => return Ok(()),
     }
 
-    // Extract the constraints for each table
-    // Also remove hidden columns
-    let constraints: Vec<Option<ColumnConstraint>> = table
+    // Extract the constraints for each table, along with the original column index.
+    // Hidden columns aren't rendered, so they're removed.
+    let constraints: Vec<(usize, Option<ColumnConstraint>)> = table
         .column_iter()
-        .map(|col| col.constraint().cloned())
-        .filter(|constraint| !matches!(constraint, Some(ColumnConstraint::Hidden)))
+        .enumerate()
+        .map(|(index, col)| (index, col.constraint().cloned()))
+        .filter(|(_, constraint)| !matches!(constraint, Some(ColumnConstraint::Hidden)))
         .collect();
 
     let line_iter = lines.iter();
@@ -335,17 +341,19 @@ fn enforce_constraints(
             .filter(|part| !part.is_empty())
             .collect();
 
-        for (index, (part, constraint)) in line_parts.iter().zip(constraints.iter()).enumerate() {
+        for (part, (index, constraint)) in line_parts.iter().zip(constraints.iter()) {
             let constraint = match constraint {
                 Some(constraint) => constraint,
                 // No constraint, we're good to go.
                 None => continue,
             };
-            // Get the actual length of the part.
-            let actual = part.len();
+            // Get the actual display width of the part.
+            let actual = part.width();
 
             match constraint {
-                ColumnConstraint::Hidden => panic!("This shouldn't happen"),
+                ColumnConstraint::Hidden => {
+                    return build_error(&formatted, "Hidden columns shouldn't be rendered");
+                }
                 // No need to check, if the column can be as wide as the content.
                 ColumnConstraint::ContentWidth => continue,
                 // Absolute width is defined.
