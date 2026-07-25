@@ -65,7 +65,7 @@ impl Table {
             rows: Vec::new(),
             arrangement: ContentArrangement::Disabled,
             delimiter: None,
-            truncation_indicator: "...".to_string(),
+            truncation_indicator: "…".to_string(),
             #[cfg(feature = "tty")]
             no_tty: false,
             #[cfg(feature = "tty")]
@@ -318,7 +318,7 @@ impl Table {
 
     /// Set the truncation indicator for cells that are too long to be displayed.
     ///
-    /// Set it to "…" for example to use an ellipsis that only takes up one character.
+    /// Defaults to "…". Set it to "..." for example if you want to stick to ASCII.
     pub fn set_truncation_indicator(&mut self, indicator: &str) -> &mut Self {
         self.truncation_indicator = indicator.to_string();
 

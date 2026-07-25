@@ -30,61 +30,6 @@ fn table_with_truncate() {
         .add_row(second_row);
 
     // The first column will be wider than 6 chars.
-    // The second column's content is wider than 6 chars. There should be a '...'.
-    let second_column = table.column_mut(1).unwrap();
-    second_column.set_constraint(Absolute(Fixed(8)));
-
-    // The third column's content is less than 6 chars width. There shouldn't be a '...'.
-    let third_column = table.column_mut(2).unwrap();
-    third_column.set_constraint(Absolute(Fixed(7)));
-
-    println!("{table}");
-    let expected = "
-+----------------+--------+-------+
-| Header1        | Header | Head  |
-|                | 2      |       |
-+=================================+
-| This is a very | This   | smol  |
-| long line with | is ano |       |
-| a lot of text  | therve |       |
-|                | ryl... |       |
-|----------------+--------+-------|
-| Now let's      | This   | smol  |
-| add a really   | is ano |       |
-| long line in   | ther   |       |
-| the middle ... | text   |       |
-+----------------+--------+-------+";
-    println!("{expected}");
-    assert_table_line_width(&table, 35);
-    assert_eq!(expected, "\n".to_string() + &table.to_string());
-}
-
-#[test]
-fn table_with_truncate_indicator() {
-    let mut table = Table::new();
-    let mut first_row: Row = Row::from(vec![
-        "This is a very long line with a lot of text",
-        "This is anotherverylongtextwithlongwords text",
-        "smol",
-    ]);
-    first_row.max_height(4);
-
-    let mut second_row = Row::from(vec![
-        "Now let's\nadd a really long line in the middle of the cell \n and add more multi line stuff",
-        "This is another text",
-        "smol",
-    ]);
-    second_row.max_height(4);
-
-    table
-        .set_header(vec!["Header1", "Header2", "Head"])
-        .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_truncation_indicator("…")
-        .set_width(35)
-        .add_row(first_row)
-        .add_row(second_row);
-
-    // The first column will be wider than 6 chars.
     // The second column's content is wider than 6 chars. There should be a '…'.
     let second_column = table.column_mut(1).unwrap();
     second_column.set_constraint(Absolute(Fixed(8)));
@@ -114,6 +59,61 @@ fn table_with_truncate_indicator() {
     assert_eq!(expected, "\n".to_string() + &table.to_string());
 }
 
+#[test]
+fn table_with_truncate_indicator() {
+    let mut table = Table::new();
+    let mut first_row: Row = Row::from(vec![
+        "This is a very long line with a lot of text",
+        "This is anotherverylongtextwithlongwords text",
+        "smol",
+    ]);
+    first_row.max_height(4);
+
+    let mut second_row = Row::from(vec![
+        "Now let's\nadd a really long line in the middle of the cell \n and add more multi line stuff",
+        "This is another text",
+        "smol",
+    ]);
+    second_row.max_height(4);
+
+    table
+        .set_header(vec!["Header1", "Header2", "Head"])
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_truncation_indicator("...")
+        .set_width(35)
+        .add_row(first_row)
+        .add_row(second_row);
+
+    // The first column will be wider than 6 chars.
+    // The second column's content is wider than 6 chars. There should be a '...'.
+    let second_column = table.column_mut(1).unwrap();
+    second_column.set_constraint(Absolute(Fixed(8)));
+
+    // The third column's content is less than 6 chars width. There shouldn't be a '...'.
+    let third_column = table.column_mut(2).unwrap();
+    third_column.set_constraint(Absolute(Fixed(7)));
+
+    println!("{table}");
+    let expected = "
++----------------+--------+-------+
+| Header1        | Header | Head  |
+|                | 2      |       |
++=================================+
+| This is a very | This   | smol  |
+| long line with | is ano |       |
+| a lot of text  | therve |       |
+|                | ryl... |       |
+|----------------+--------+-------|
+| Now let's      | This   | smol  |
+| add a really   | is ano |       |
+| long line in   | ther   |       |
+| the middle ... | text   |       |
++----------------+--------+-------+";
+    println!("{expected}");
+    assert_table_line_width(&table, 35);
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
 /// A `max_height` of `0` is implicitly treated as `1`, since at least one line of content is
 /// always shown. This used to panic with an integer underflow.
 #[test]
@@ -133,7 +133,7 @@ fn table_with_max_height_zero() {
 +----------------+-------------+
 | Header1        | Header2     |
 +==============================+
-| some multil... | single line |
+| some multilin… | single line |
 +----------------+-------------+";
     println!("{expected}");
     assert_table_line_width(&table, 32);
@@ -159,7 +159,7 @@ fn table_with_composite_utf8_strings() {
 +------------------+
 | Header1          |
 +==================+
-| あいうえおか...  |
+| あいうえおかき…  |
 +------------------+";
     println!("{expected}");
     assert_table_line_width(&table, 20);
@@ -186,7 +186,7 @@ fn table_with_composite_utf8_strings_2_lines() {
 | Header1          |
 +==================+
 | あいうえおかきく |
-| けこさしすせ...  |
+| けこさしすせそ…  |
 +------------------+";
     println!("{expected}");
     assert_table_line_width(&table, 20);
@@ -214,7 +214,7 @@ fn table_with_composite_utf8_emojis() {
 +-------------+
 | Header1     |
 +=============+
-| 🙂‍↕️🙂‍↕️🙂‍↕️🙂‍↕️... |
+| 🙂‍↕️🙂‍↕️🙂‍↕️🙂‍↕️🙂‍↕️… |
 +-------------+";
     println!("{expected}");
     assert_table_line_width(&table, 15);
@@ -230,11 +230,12 @@ fn table_with_indicator_wider_than_column() {
 
     table
         .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_truncation_indicator("...")
         .set_width(30)
         .add_row(row);
 
     // Fix the first column to a content width of 1 (3 minus 2 padding).
-    // The default indicator "..." doesn't fit, so it's not printed at all.
+    // The "..." indicator doesn't fit, so it's not printed at all.
     table
         .column_mut(0)
         .unwrap()

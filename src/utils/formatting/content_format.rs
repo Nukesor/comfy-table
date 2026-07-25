@@ -96,7 +96,7 @@ pub fn format_row(
 
         // Remove all unneeded lines of this cell, if the row's height is capped to a certain
         // amount of lines and there're too many lines in this cell.
-        // This then truncates and inserts a '...' string at the end of the last line to indicate
+        // This then truncates and inserts a '…' string at the end of the last line to indicate
         // that the cell has been truncated.
         if let Some(lines) = row.max_height
             && cell_lines.len() > lines
