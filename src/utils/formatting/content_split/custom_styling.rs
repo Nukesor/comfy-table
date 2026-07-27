@@ -1,6 +1,6 @@
 use ansi_str::AnsiStr;
 use unicode_segmentation::UnicodeSegmentation;
-use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+use unicode_width::UnicodeWidthStr;
 
 const ANSI_RESET: &str = "\u{1b}[0m";
 

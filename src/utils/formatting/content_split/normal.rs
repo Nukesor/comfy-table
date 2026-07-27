@@ -1,8 +1,7 @@
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
-/// returns printed length of string
-/// if ansi feature enabled, takes into account escape codes
+/// Returns printed length of string
 #[inline(always)]
 pub fn measure_text_width(s: &str) -> usize {
     s.width()

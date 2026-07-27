@@ -32,9 +32,15 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
     // Reverse it, since we want to push/pop without reversing the text.
     elements.reverse();
 
+    // Get the length for the delimiter once.
+    // UTF-8 chars are 4-bytes at max, so this encode_utf8 cannot panic.
+    let delimiter_width = measure_text_width(delimiter.encode_utf8(&mut [0; 4]));
+
     let mut current_line = String::new();
+    // Keep track of the display width of current_line.
+    // We primarily do it this way so we don't have to re-measure the line over and over again.
+    let mut current_length = 0;
     while let Some(next) = elements.pop() {
-        let current_length = measure_text_width(&current_line);
         let next_length = measure_text_width(&next);
 
         // Some helper variables
@@ -56,11 +62,14 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             // Only add delimiter, if we're not on a fresh line
             if !current_line.is_empty() {
                 current_line.push(delimiter);
+                current_length += delimiter_width;
             }
             current_line += &next;
+            current_length += next_length;
 
             // Already complete the current line, if there isn't space for more than two chars
-            current_line = check_if_full(&mut lines, content_width, current_line);
+            (current_line, current_length) =
+                check_if_full(&mut lines, content_width, current_line, current_length);
             continue;
         }
 
@@ -74,6 +83,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             elements.push(next);
             lines.push(current_line);
             current_line = String::new();
+            current_length = 0;
 
             continue;
         }
@@ -121,6 +131,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             // Push the finished line, and start a new one
             lines.push(current_line);
             current_line = String::new();
+            current_length = 0;
 
             continue;
         }
@@ -130,7 +141,9 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
         // Push the current line and initialize the next line with the element.
         lines.push(current_line);
         current_line = next.to_string();
-        current_line = check_if_full(&mut lines, content_width, current_line);
+        current_length = next_length;
+        (current_line, current_length) =
+            check_if_full(&mut lines, content_width, current_line, current_length);
     }
 
     if !current_line.is_empty() {
@@ -150,14 +163,19 @@ const MIN_FREE_CHARS: usize = 2;
 /// Check if the current line is too long and whether we should start a new one
 /// If it's too long, we add the current line to the list of lines and return a new [String].
 /// Otherwise, we simply return the current line and basically don't do anything.
-fn check_if_full(lines: &mut Vec<String>, content_width: usize, current_line: String) -> String {
+fn check_if_full(
+    lines: &mut Vec<String>,
+    content_width: usize,
+    current_line: String,
+    current_length: usize,
+) -> (String, usize) {
     // Already complete the current line, if there isn't space for more than two chars
-    if measure_text_width(&current_line) > content_width.saturating_sub(MIN_FREE_CHARS) {
+    if current_length > content_width.saturating_sub(MIN_FREE_CHARS) {
         lines.push(current_line);
-        return String::new();
+        return (String::new(), 0);
     }
 
-    current_line
+    (current_line, current_length)
 }
 
 #[cfg(test)]
