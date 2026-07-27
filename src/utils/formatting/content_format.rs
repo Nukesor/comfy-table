@@ -1,3 +1,5 @@
+use std::iter::repeat_n;
+
 #[cfg(feature = "tty")]
 use crossterm::style::{Stylize, style};
 use unicode_segmentation::UnicodeSegmentation;
@@ -298,21 +300,24 @@ fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: St
     };
 
     // Apply left/right/both side padding depending on the alignment of the column
-    match alignment {
-        CellAlignment::Left => {
-            line += &" ".repeat(remaining);
-        }
-        CellAlignment::Right => {
-            line = " ".repeat(remaining) + &line;
-        }
-        CellAlignment::Center => {
-            let left_padding = (remaining as f32 / 2f32).ceil() as usize;
-            let right_padding = (remaining as f32 / 2f32).floor() as usize;
-            line = " ".repeat(left_padding) + &line + &" ".repeat(right_padding);
-        }
-    }
+    let (left_pad, right_pad) = match alignment {
+        CellAlignment::Left => (0, remaining),
+        CellAlignment::Right => (remaining, 0),
+        CellAlignment::Center => (remaining.div_ceil(2), remaining / 2),
+    };
 
-    line = pad_line(&line, info);
+    // Now that we got all the formatting info, build the final line with a
+    // single string allocation.
+    //
+    // `column padding + alignment spaces + content + alignment spaces + column padding`
+    let left_spaces = usize::from(info.padding.0) + left_pad;
+    let right_spaces = right_pad + usize::from(info.padding.1);
+    let mut padded_line = String::with_capacity(left_spaces + line.len() + right_spaces);
+
+    padded_line.extend(repeat_n(' ', left_spaces));
+    padded_line.push_str(&line);
+    padded_line.extend(repeat_n(' ', right_spaces));
+    line = padded_line;
 
     #[cfg(feature = "tty")]
     if table.should_style() && !table.style_text_only {
@@ -320,17 +325,6 @@ fn align_line(table: &Table, info: &ColumnDisplayInfo, cell: &Cell, mut line: St
     }
 
     line
-}
-
-/// Apply the column's padding to this line
-fn pad_line(line: &str, info: &ColumnDisplayInfo) -> String {
-    let mut padded_line = String::new();
-
-    padded_line += &" ".repeat(info.padding.0.into());
-    padded_line += line;
-    padded_line += &" ".repeat(info.padding.1.into());
-
-    padded_line
 }
 
 #[cfg(feature = "tty")]
