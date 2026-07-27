@@ -219,8 +219,8 @@ pub fn format_row(
 
         // Iterate over all generated lines of this cell and align them
         let cell_lines = cell_lines
-            .iter()
-            .map(|line| align_line(table, info, cell, line.to_string()));
+            .into_iter()
+            .map(|line| align_line(table, info, cell, line));
 
         temp_row_content.push(cell_lines.collect());
     }
@@ -245,9 +245,10 @@ pub fn format_row(
 
     // Each column should have `max_lines` for this row.
     // Cells content with fewer lines will simply be topped up with empty strings.
-    for index in 0..max_lines {
+    let mut cell_line_iters: Vec<_> = temp_row_content.into_iter().map(Vec::into_iter).collect();
+    for _ in 0..max_lines {
         let mut line = Vec::with_capacity(display_infos.len());
-        let mut cell_iter = temp_row_content.iter();
+        let mut cell_iter = cell_line_iters.iter_mut();
 
         for info in display_infos.iter() {
             if info.is_hidden {
@@ -255,9 +256,9 @@ pub fn format_row(
             }
 
             let cell = cell_iter.next().unwrap();
-            match cell.get(index) {
+            match cell.next() {
                 // The current cell has content for this line. Append it
-                Some(content) => line.push(content.clone()),
+                Some(content) => line.push(content),
                 // The current cell doesn't have content for this line.
                 // Fill with a placeholder (empty spaces)
                 None => line.push(" ".repeat(info.width().into())),
