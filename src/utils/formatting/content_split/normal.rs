@@ -20,6 +20,17 @@ pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<String> {
 /// When simply splitting at a certain char position, we might end up with a string that's has a
 /// wider display width than allowed.
 pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
+    // Most input is usually normal ASCII, which makes UTF-8 grapheme aware splitting
+    // unnecessary. Handling this fast path speeds up splitting significantly.
+    //
+    // We do a bit of extra checking on the `<0x20` part so that we don't skip control
+    // chars. Not sure what would happen if there was a `\r` is in there.
+    if word.bytes().all(|byte| (0x20..0x7f).contains(&byte)) {
+        let split_index = word.len().min(allowed_width);
+        let (parts, remaining) = word.split_at(split_index);
+        return (parts.to_string(), remaining.to_string());
+    }
+
     let mut current_width = 0;
     let mut split_index = word.len();
 
