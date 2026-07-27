@@ -21,12 +21,9 @@ pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<String> {
 /// wider display width than allowed.
 pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     let mut current_width = 0;
-    let mut parts = String::new();
-
-    let mut graphmes = word.graphemes(true).peekable();
+    let mut split_index = word.len();
 
     // Check if the string might be too long, one Unicode grapheme at a time.
-    // Peek into the next grapheme and check the exit condition.
     //
     // This code uses graphemes to handle both zero-width joiner[0] UTF-8 chars, which
     // combine multiple UTF-8 chars into a single grapheme, and variant selectors [1],
@@ -34,20 +31,16 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     //
     // [0]: https://en.wikipedia.org/wiki/Zero-width_joiner
     // [1]: https://en.wikipedia.org/wiki/Variation_Selectors_(Unicode_block)
-    while let Some(c) = graphmes.peek() {
-        if (current_width + c.width()) > allowed_width {
+    for (index, c) in word.grapheme_indices(true) {
+        let character_width = c.width();
+        if (current_width + character_width) > allowed_width {
+            split_index = index;
             break;
         }
 
-        // We can unwrap, as we just checked that a suitable grapheme is next in line.
-        let c = graphmes.next().unwrap();
-
-        let character_width = c.width();
         current_width += character_width;
-        parts.push_str(c);
     }
 
-    // Collect the remaining characters.
-    let remaining = graphmes.collect();
-    (parts, remaining)
+    let (parts, remaining) = word.split_at(split_index);
+    (parts.to_string(), remaining.to_string())
 }
