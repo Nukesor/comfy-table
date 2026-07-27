@@ -68,12 +68,34 @@ fn draw_rows(
     table: &Table,
     display_info: &[ColumnDisplayInfo],
 ) {
+    let vertical_lines = table.style_or_default(TableComponent::VerticalLines);
+    let left_border = table.style_or_default(TableComponent::LeftBorder);
+    let right_border = table.style_or_default(TableComponent::RightBorder);
+    let draw_left_border = should_draw_left_border(table);
+    let draw_right_border = should_draw_right_border(table);
+    let draw_vertical_lines = should_draw_vertical_lines(table);
+
     // Iterate over all rows
     let mut row_iter = rows.iter().enumerate().peekable();
     while let Some((row_index, row)) = row_iter.next() {
         // Concatenate the line parts and insert the vertical borders if needed
         for line_parts in row.iter() {
-            lines.push(embed_line(line_parts, table));
+            let mut line = String::new();
+            if draw_left_border {
+                line += &left_border;
+            }
+
+            let mut part_iter = line_parts.iter().peekable();
+            while let Some(part) = part_iter.next() {
+                line += part;
+                if part_iter.peek().is_none() && draw_right_border {
+                    line += &right_border;
+                } else if part_iter.peek().is_some() && draw_vertical_lines {
+                    line += &vertical_lines;
+                }
+            }
+
+            lines.push(line);
         }
 
         // Draw the horizontal header line if desired, otherwise continue to the next iteration
@@ -89,30 +111,6 @@ fn draw_rows(
             lines.push(draw_horizontal_lines(table, display_info, false));
         }
     }
-}
-
-// Takes the parts of a single line, surrounds them with borders and adds vertical lines.
-fn embed_line(line_parts: &[String], table: &Table) -> String {
-    let vertical_lines = table.style_or_default(TableComponent::VerticalLines);
-    let left_border = table.style_or_default(TableComponent::LeftBorder);
-    let right_border = table.style_or_default(TableComponent::RightBorder);
-
-    let mut line = String::new();
-    if should_draw_left_border(table) {
-        line += &left_border;
-    }
-
-    let mut part_iter = line_parts.iter().peekable();
-    while let Some(part) = part_iter.next() {
-        line += part;
-        if part_iter.peek().is_none() && should_draw_right_border(table) {
-            line += &right_border;
-        } else if part_iter.peek().is_some() && should_draw_vertical_lines(table) {
-            line += &vertical_lines;
-        }
-    }
-
-    line
 }
 
 // The horizontal line that separates between rows.

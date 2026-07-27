@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Change
 
 - The default truncation indicator is now `…` instead of `...`.
+- Various performance improvements that reduce table render time by about ~24% for "normal" tables.
+  This goes up to +74% for large tables with many entries.
+  Most of these improvements come from less string allocations and shortcuts when handling ASCII-only text, as grapheme handling can be skipped in those cases.
 
 ### Fix
 
