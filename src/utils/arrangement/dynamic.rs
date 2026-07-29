@@ -322,6 +322,8 @@ fn find_columns_that_fit_into_average(state: &mut ArrangementState) {
 ///
 /// I.e. if a column has to have at least 10 characters, but the average width left for a column is
 /// only 6, we fix the column to this 10 character minimum!
+///
+/// [LowerBoundary]: crate::ColumnConstraint::LowerBoundary
 fn enforce_lower_boundary_constraints(state: &mut ArrangementState) {
     // We loop this as long as we found a lower boundary that fixed a column in place.
     // Due to enforced lower boundaries, the `average_space` can shrink, which can result in
@@ -437,7 +439,10 @@ fn optimize_space_after_split(state: &mut ArrangementState) {
 /// This function simulates the split of a Column's content and returns the length of
 /// the longest existing line after the split.
 ///
-/// A lot of this logic is duplicated from the [utils::format::format_row] function.
+/// A lot of this logic is duplicated from the
+/// [format_row] function.
+///
+/// [format_row]: crate::utils::formatting::content_format::format_row
 fn longest_line_after_split(average_space: usize, column: &Column, table: &Table) -> usize {
     // Runtime variable that holds the longest found line length.
     let mut longest = 0;

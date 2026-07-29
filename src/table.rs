@@ -417,7 +417,9 @@ impl Table {
     /// table. Before that, the columns won't initialized.
     ///
     /// If more constraints are passed than there are columns, any superfluous constraints will be
-    /// ignored. ```
+    /// ignored.
+    ///
+    /// ```
     /// use comfy_table::{CellAlignment, ColumnConstraint::*, ContentArrangement, Table, Width::*};
     ///
     /// let mut table = Table::new();

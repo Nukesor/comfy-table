@@ -83,7 +83,7 @@ impl Cell {
 
     /// Set the foreground text color for this cell.
     ///
-    /// Look at [Color](crate::Color) for a list of all possible Colors.
+    /// Look at [Color] for a list of all possible Colors.
     /// ```
     /// use comfy_table::{Cell, Color};
     ///
@@ -99,7 +99,7 @@ impl Cell {
 
     /// Set the background color for this cell.
     ///
-    /// Look at [Color](crate::Color) for a list of all possible Colors.
+    /// Look at [Color] for a list of all possible Colors.
     /// ```
     /// use comfy_table::{Cell, Color};
     ///
@@ -116,7 +116,7 @@ impl Cell {
     /// Add a styling attribute to the content cell.\
     /// Those can be **bold**, _italic_, blinking and many more.
     ///
-    /// Look at [Attribute](crate::Attribute) for a list of all possible Colors.
+    /// Look at [Attribute] for a list of all possible Colors.
     /// ```
     /// use comfy_table::{Attribute, Cell};
     ///

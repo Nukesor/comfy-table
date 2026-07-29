@@ -1,4 +1,4 @@
-exclude = ["target"]
+exclude = ["target/**"]
 
 [formatting]
 indent_string = "    "
