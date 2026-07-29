@@ -9,14 +9,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Change
 
 - The default truncation indicator is now `…` instead of `...`.
-- Various performance improvements that reduce table render time by about ~24% for "normal" tables.
-  This goes up to +74% for large tables with many entries.
+    This should make it more obvious that there's more text and consumes less visual space.
+- Various performance improvements that reduce table formatting time quite a bit:
+  - ~36% for "normal" tables (The readme of the project). `17µs -> 11µs`
+  - ~34% for "larger" tables, which I would consider a reasonable usecase. `253µs -> 172µs`
+  - ~70% for **very** large tables, i.e. a 10x500 table. -> `20.8ms -> 6.15ms`
+
   Most of these improvements boil down to:
     - Less string allocations.
     - Special handling when handling ASCII-only text, as grapheme handling can be skipped in those cases.
     - Moving computational heavy stuff (such as UTF-8 width calculations) out of hot loops.
-
-### Fix
 
 - Fixed a non-critical bug that resulted in less-than optimal layouting when UTF-8 characters were involved.
 - No longer panic when rendering a `Table` that contains a row with `Row::max_height(0)`.

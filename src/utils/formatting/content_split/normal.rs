@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
@@ -8,17 +10,15 @@ pub fn measure_text_width(s: &str) -> usize {
 }
 
 /// Split a line into its individual parts along the given delimiter.
-pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<String> {
-    line.split(delimiter)
-        .map(ToString::to_string)
-        .collect::<Vec<String>>()
+pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<Cow<'_, str>> {
+    line.split(delimiter).map(Cow::Borrowed).collect()
 }
 
 /// Splits a long word at a given character width.
 /// This needs some special logic, as we have to take multi-character UTF-8 symbols into account.
 /// When simply splitting at a certain char position, we might end up with a string that's has a
 /// wider display width than allowed.
-pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
+pub fn split_long_word(allowed_width: usize, word: &str) -> (Cow<'_, str>, Cow<'_, str>) {
     // Most input is usually normal ASCII, which makes UTF-8 grapheme aware splitting
     // unnecessary. Handling this fast path speeds up splitting significantly.
     //
@@ -27,7 +27,7 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     if word.bytes().all(|byte| (0x20..0x7f).contains(&byte)) {
         let split_index = word.len().min(allowed_width);
         let (parts, remaining) = word.split_at(split_index);
-        return (parts.to_string(), remaining.to_string());
+        return (Cow::Borrowed(parts), Cow::Borrowed(remaining));
     }
 
     let mut current_width = 0;
@@ -52,5 +52,5 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     }
 
     let (parts, remaining) = word.split_at(split_index);
-    (parts.to_string(), remaining.to_string())
+    (Cow::Borrowed(parts), Cow::Borrowed(remaining))
 }

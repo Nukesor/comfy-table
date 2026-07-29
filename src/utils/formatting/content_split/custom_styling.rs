@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use ansi_str::AnsiStr;
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
@@ -11,7 +13,7 @@ pub fn measure_text_width(s: &str) -> usize {
 }
 
 /// Split the line by the given deliminator without breaking ansi codes that contain the delimiter
-pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<String> {
+pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<Cow<'_, str>> {
     let mut lines: Vec<String> = Vec::new();
     let mut current_line = String::default();
 
@@ -38,12 +40,12 @@ pub fn split_line_by_delimiter(line: &str, delimiter: char) -> Vec<String> {
     }
     lines.push(current_line);
     fix_style_in_split_str(lines.as_mut());
-    lines
+    lines.into_iter().map(Cow::Owned).collect()
 }
 
 /// Splits a long word at a given character width. Inserting the needed ansi codes to preserve
 /// style.
-pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
+pub fn split_long_word(allowed_width: usize, word: &str) -> (Cow<'_, str>, Cow<'_, str>) {
     // A buffer for the first half of the split str, which will take up at most `allowed_len`
     // characters when printed to the terminal.
     let mut head = String::with_capacity(word.len());
@@ -121,7 +123,7 @@ pub fn split_long_word(allowed_width: usize, word: &str) -> (String, String) {
     }
 
     iter.for_each(|s| tail.push_str(s.0));
-    (head, tail)
+    (Cow::Owned(head), Cow::Owned(tail))
 }
 
 /// Fixes ansi escape codes in a split string

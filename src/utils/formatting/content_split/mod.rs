@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::utils::ColumnDisplayInfo;
 
 #[cfg(feature = "custom_styling")]
@@ -25,8 +27,6 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
     let content_width = usize::from(info.content_width);
 
     // Split the line by the given deliminator and turn the content into a stack.
-    // Also clone it and convert it into a Vec<String>. Otherwise, we get some burrowing problems
-    // due to early drops of borrowed values that need to be inserted into `Vec<&str>`
     let mut elements = split_line_by_delimiter(line, delimiter);
 
     // Reverse it, since we want to push/pop without reversing the text.
@@ -64,7 +64,7 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
                 current_line.push(delimiter);
                 current_length += delimiter_width;
             }
-            current_line += &next;
+            current_line.push_str(&next);
             current_length += next_length;
 
             // Already complete the current line, if there isn't space for more than two chars
@@ -108,7 +108,16 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
                 current_line.push(delimiter);
             }
 
-            let (mut next, mut remaining) = split_long_word(remaining_width, &next);
+            // Split the word.
+            // Since we're handling Cows, we need to differentiate between borrowed and owned state.
+            // I.e. ANSII aware splitting uses owned slices, normal splitting uses borrows.
+            let (head, tail) = match next {
+                Cow::Borrowed(word) => split_long_word(remaining_width, word),
+                Cow::Owned(word) => {
+                    let (head, tail) = split_long_word(remaining_width, &word);
+                    (Cow::Owned(head.into_owned()), Cow::Owned(tail.into_owned()))
+                }
+            };
 
             // This is an ugly hack, but it's needed for now.
             //
@@ -119,14 +128,14 @@ pub fn split_line(line: &str, info: &ColumnDisplayInfo, delimiter: char) -> Vec<
             // this code would loop endlessly. (There's no legitimate way to split that character.)
             // Hence, we have to live with the fact, that this line will look broken, as we put a
             // two-character wide symbol into it, despite the line being formatted for 1 character.
-            if new_line && next.is_empty() {
-                let mut chars = remaining.chars();
-                next.push(chars.next().unwrap());
-                remaining = chars.collect();
+            if new_line && head.is_empty() {
+                let mut chars = tail.chars();
+                current_line.push(chars.next().unwrap());
+                elements.push(Cow::Owned(chars.collect()));
+            } else {
+                current_line.push_str(&head);
+                elements.push(tail);
             }
-
-            current_line += &next;
-            elements.push(remaining);
 
             // Push the finished line, and start a new one
             lines.push(current_line);
