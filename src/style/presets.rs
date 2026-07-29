@@ -1,3 +1,5 @@
+use super::{ContentLineStyle, LineStyle, TableStyle};
+
 /// The default style for tables.
 ///
 /// ```text
@@ -9,7 +11,13 @@
 /// | c     | d     |
 /// +-------+-------+
 /// ```
-pub const ASCII_FULL: &str = "||--+==+|-+||++++++";
+pub const ASCII_FULL: TableStyle = TableStyle::new()
+    .top_border(LineStyle::new('+', '-', '+', '+'))
+    .header_lines(ContentLineStyle::new('|', '|', '|'))
+    .header_separator(LineStyle::new('+', '=', '=', '+'))
+    .content_lines(ContentLineStyle::new('|', '|', '|'))
+    .row_separator(LineStyle::new('|', '-', '+', '|'))
+    .bottom_border(LineStyle::new('+', '-', '+', '+'));
 
 /// Just like ASCII_FULL, but without dividers between rows.
 ///
@@ -20,7 +28,12 @@ pub const ASCII_FULL: &str = "||--+==+|-+||++++++";
 /// | a     | b     |
 /// | c     | d     |
 /// +-------+-------+
-pub const ASCII_FULL_CONDENSED: &str = "||--+==+|    ++++++";
+pub const ASCII_FULL_CONDENSED: TableStyle = TableStyle::new()
+    .top_border(LineStyle::new('+', '-', '+', '+'))
+    .header_lines(ContentLineStyle::new('|', '|', '|'))
+    .header_separator(LineStyle::new('+', '=', '=', '+'))
+    .content_lines(ContentLineStyle::new('|', '|', '|'))
+    .bottom_border(LineStyle::new('+', '-', '+', '+'));
 
 /// Just like ASCII_FULL, but without any borders.
 ///
@@ -31,7 +44,11 @@ pub const ASCII_FULL_CONDENSED: &str = "||--+==+|    ++++++";
 /// -------+-------
 ///  c     | d
 /// ```
-pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
+pub const ASCII_NO_BORDERS: TableStyle = TableStyle::new()
+    .header_lines(ContentLineStyle::none().junction('|'))
+    .header_separator(LineStyle::none().fill('=').junction('='))
+    .content_lines(ContentLineStyle::none().junction('|'))
+    .row_separator(LineStyle::none().fill('-').junction('+'));
 
 /// Just like ASCII_FULL, but without vertical/horizontal middle lines.
 ///
@@ -44,7 +61,13 @@ pub const ASCII_NO_BORDERS: &str = "     == |-+        ";
 /// | c       d     |
 /// +---------------+
 /// ```
-pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
+pub const ASCII_BORDERS_ONLY: TableStyle = TableStyle::new()
+    .top_border(LineStyle::new('+', '-', '-', '+'))
+    .header_lines(ContentLineStyle::none().left('|').right('|'))
+    .header_separator(LineStyle::new('+', '=', '=', '+'))
+    .content_lines(ContentLineStyle::none().left('|').right('|'))
+    .row_separator(LineStyle::none().left('|').right('|'))
+    .bottom_border(LineStyle::new('+', '-', '-', '+'));
 
 /// Just like ASCII_BORDERS_ONLY, but without spacing between rows.
 ///
@@ -56,7 +79,12 @@ pub const ASCII_BORDERS_ONLY: &str = "||--+==+   ||--++++";
 /// | c       d     |
 /// +---------------+
 /// ```
-pub const ASCII_BORDERS_ONLY_CONDENSED: &str = "||--+==+     --++++";
+pub const ASCII_BORDERS_ONLY_CONDENSED: TableStyle = TableStyle::new()
+    .top_border(LineStyle::new('+', '-', '-', '+'))
+    .header_lines(ContentLineStyle::none().left('|').right('|'))
+    .header_separator(LineStyle::new('+', '=', '=', '+'))
+    .content_lines(ContentLineStyle::none().left('|').right('|'))
+    .bottom_border(LineStyle::new('+', '-', '-', '+'));
 
 /// Just like ASCII_FULL, but without vertical/horizontal middle lines and no side borders.
 ///
@@ -69,7 +97,11 @@ pub const ASCII_BORDERS_ONLY_CONDENSED: &str = "||--+==+     --++++";
 ///  c       d
 /// ---------------
 /// ```
-pub const ASCII_HORIZONTAL_ONLY: &str = "  -- ==  --  --    ";
+pub const ASCII_HORIZONTAL_ONLY: TableStyle = TableStyle::new()
+    .top_border(LineStyle::none().fill('-').junction('-'))
+    .header_separator(LineStyle::none().fill('=').junction('='))
+    .row_separator(LineStyle::none().fill('-').junction('-'))
+    .bottom_border(LineStyle::none().fill('-').junction('-'));
 
 /// Markdown like table styles.
 ///
@@ -79,7 +111,10 @@ pub const ASCII_HORIZONTAL_ONLY: &str = "  -- ==  --  --    ";
 /// | a     | b     |
 /// | c     | d     |
 /// ```
-pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
+pub const ASCII_MARKDOWN: TableStyle = TableStyle::new()
+    .header_lines(ContentLineStyle::new('|', '|', '|'))
+    .header_separator(LineStyle::new('|', '-', '|', '|'))
+    .content_lines(ContentLineStyle::new('|', '|', '|'));
 
 /// The UTF8 enabled version of the default style for tables.\
 /// Quite beautiful isn't it? It's drawn with UTF8's box drawing characters.
@@ -93,7 +128,13 @@ pub const ASCII_MARKDOWN: &str = "||  |-|||           ";
 /// │ c     ┆ d     │
 /// └───────┴───────┘
 /// ```
-pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐└┘";
+pub const UTF8_FULL: TableStyle = TableStyle::new()
+    .top_border(LineStyle::new('┌', '─', '┬', '┐'))
+    .header_lines(ContentLineStyle::new('│', '┆', '│'))
+    .header_separator(LineStyle::new('╞', '═', '╪', '╡'))
+    .content_lines(ContentLineStyle::new('│', '┆', '│'))
+    .row_separator(LineStyle::new('├', '╌', '┼', '┤'))
+    .bottom_border(LineStyle::new('└', '─', '┴', '┘'));
 
 /// Default UTF8 style, but without dividers between rows.
 ///
@@ -105,7 +146,12 @@ pub const UTF8_FULL: &str = "││──╞═╪╡┆╌┼├┤┬┴┌┐
 /// │ c     ┆ d     │
 /// └───────┴───────┘
 /// ```
-pub const UTF8_FULL_CONDENSED: &str = "││──╞═╪╡┆    ┬┴┌┐└┘";
+pub const UTF8_FULL_CONDENSED: TableStyle = TableStyle::new()
+    .top_border(LineStyle::new('┌', '─', '┬', '┐'))
+    .header_lines(ContentLineStyle::new('│', '┆', '│'))
+    .header_separator(LineStyle::new('╞', '═', '╪', '╡'))
+    .content_lines(ContentLineStyle::new('│', '┆', '│'))
+    .bottom_border(LineStyle::new('└', '─', '┴', '┘'));
 
 /// Default UTF8 style, but without any borders.
 ///
@@ -116,7 +162,11 @@ pub const UTF8_FULL_CONDENSED: &str = "││──╞═╪╡┆    ┬┴┌�
 /// ╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌
 ///  c     ┆ d
 /// ```
-pub const UTF8_NO_BORDERS: &str = "     ═╪ ┆╌┼        ";
+pub const UTF8_NO_BORDERS: TableStyle = TableStyle::new()
+    .header_lines(ContentLineStyle::none().junction('┆'))
+    .header_separator(LineStyle::none().fill('═').junction('╪'))
+    .content_lines(ContentLineStyle::none().junction('┆'))
+    .row_separator(LineStyle::none().fill('╌').junction('┼'));
 
 /// Just like the UTF8_FULL style, but without vertical/horizontal middle lines.
 ///
@@ -128,7 +178,12 @@ pub const UTF8_NO_BORDERS: &str = "     ═╪ ┆╌┼        ";
 /// │ c       d     │
 /// └───────────────┘
 /// ```
-pub const UTF8_BORDERS_ONLY: &str = "││──╞══╡     ──┌┐└┘";
+pub const UTF8_BORDERS_ONLY: TableStyle = TableStyle::new()
+    .top_border(LineStyle::new('┌', '─', '─', '┐'))
+    .header_lines(ContentLineStyle::none().left('│').right('│'))
+    .header_separator(LineStyle::new('╞', '═', '═', '╡'))
+    .content_lines(ContentLineStyle::none().left('│').right('│'))
+    .bottom_border(LineStyle::new('└', '─', '─', '┘'));
 
 /// Only display vertical lines.
 ///
@@ -141,7 +196,11 @@ pub const UTF8_BORDERS_ONLY: &str = "││──╞══╡     ──┌┐�
 ///  c       d
 /// ───────────────
 /// ```
-pub const UTF8_HORIZONTAL_ONLY: &str = "  ── ══  ──  ──    ";
+pub const UTF8_HORIZONTAL_ONLY: TableStyle = TableStyle::new()
+    .top_border(LineStyle::none().fill('─').junction('─'))
+    .header_separator(LineStyle::none().fill('═').junction('═'))
+    .row_separator(LineStyle::none().fill('─').junction('─'))
+    .bottom_border(LineStyle::none().fill('─').junction('─'));
 
 /// Don't draw any borders or other lines.
 /// Useful, if you want to simply organize some data without any cosmetics.
@@ -151,4 +210,4 @@ pub const UTF8_HORIZONTAL_ONLY: &str = "  ── ══  ──  ──    ";
 ///  a      b
 ///  c      d
 /// ```
-pub const NOTHING: &str = "                   ";
+pub const NOTHING: TableStyle = TableStyle::new();

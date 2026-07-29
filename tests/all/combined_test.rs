@@ -3,7 +3,7 @@ use pretty_assertions::assert_eq;
 
 fn get_preset_table() -> Table {
     let mut table = Table::new();
-    table.load_preset(UTF8_FULL)
+    table.load_style(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(80)
         .set_header(vec![

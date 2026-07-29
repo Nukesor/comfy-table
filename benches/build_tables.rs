@@ -5,7 +5,7 @@ use criterion::{Criterion, criterion_group, criterion_main};
 #[cfg(feature = "tty")]
 fn build_readme_table() {
     let mut table = Table::new();
-    table.load_preset(UTF8_FULL)
+    table.load_style(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(80)
         .set_header(vec![
@@ -37,7 +37,7 @@ fn build_readme_table() {
 #[cfg(not(feature = "tty"))]
 fn build_readme_table() {
     let mut table = Table::new();
-    table.load_preset(UTF8_FULL)
+    table.load_style(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(80)
         .set_header(vec![
@@ -65,7 +65,7 @@ fn build_readme_table() {
 fn build_big_table() {
     let mut table = Table::new();
     table
-        .load_preset(UTF8_FULL)
+        .load_style(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::DynamicFullWidth)
         .set_width(400)
         .set_header(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);

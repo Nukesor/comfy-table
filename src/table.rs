@@ -1,7 +1,6 @@
 #[cfg(feature = "tty")]
 use std::sync::OnceLock;
 use std::{
-    collections::HashMap,
     fmt,
     iter::IntoIterator,
     slice::{Iter, IterMut},
@@ -11,7 +10,7 @@ use crate::{
     cell::Cell,
     column::Column,
     row::Row,
-    style::{ColumnConstraint, ContentArrangement, TableComponent, presets::ASCII_FULL},
+    style::{ColumnConstraint, ContentArrangement, TableStyle, presets::ASCII_FULL},
     utils::build_table,
 };
 
@@ -23,7 +22,7 @@ use crate::{
 #[derive(Debug, Clone)]
 pub struct Table {
     pub(crate) columns: Vec<Column>,
-    style: HashMap<TableComponent, char>,
+    pub(crate) style: TableStyle,
     pub(crate) header: Option<Row>,
     pub(crate) rows: Vec<Row>,
     pub(crate) arrangement: ContentArrangement,
@@ -59,7 +58,7 @@ impl Default for Table {
 impl Table {
     /// Create a new table with default ASCII styling.
     pub fn new() -> Self {
-        let mut table = Self {
+        Self {
             columns: Vec::new(),
             header: None,
             rows: Vec::new(),
@@ -73,16 +72,12 @@ impl Table {
             #[cfg(feature = "tty")]
             use_stderr: false,
             width: None,
-            style: HashMap::new(),
+            style: ASCII_FULL,
             #[cfg(feature = "tty")]
             enforce_styling: false,
             #[cfg(feature = "tty")]
             style_text_only: false,
-        };
-
-        table.load_preset(ASCII_FULL);
-
-        table
+        }
     }
 
     /// This is an alternative `fmt` function, which simply removes any trailing whitespaces.
@@ -444,153 +439,55 @@ impl Table {
         self
     }
 
-    /// This function creates a TableStyle from a given preset string.\
-    /// Preset strings can be found in `styling::presets::*`.
+    /// Load a [TableStyle] for this table, replacing the current style. \
+    /// Preset styles can be found in the [presets](crate::style::presets) module.
     ///
-    /// You can also write your own preset strings and use them with this function.
-    /// There's the convenience method [Table::current_style_as_preset], which prints you a preset
-    /// string from your current style configuration. \
-    /// The function expects the to-be-drawn characters to be in the same order as in the
-    /// [TableComponent] enum.
-    ///
-    /// If the string isn't long enough, the default [ASCII_FULL] style will be used for all
-    /// remaining components.
-    ///
-    /// If the string is too long, remaining charaacters will be simply ignored.
-    pub fn load_preset(&mut self, preset: &str) -> &mut Self {
-        let mut components = TableComponent::iter();
-
-        for character in preset.chars() {
-            if let Some(component) = components.next() {
-                // White spaces mean "don't draw this" in presets
-                // If we want to override the default preset, we need to remove
-                // this component from the HashMap in case we find a whitespace.
-                if character == ' ' {
-                    self.remove_style(component);
-                    continue;
-                }
-
-                self.set_style(component, character);
-            } else {
-                break;
-            }
-        }
-
-        self
-    }
-
-    /// Returns the current style as a preset string.
-    ///
-    /// A pure convenience method, so you're not force to fiddle with those preset strings yourself.
+    /// You can also build your own styles by creating your own [TableStyle].
     ///
     /// ```
     /// use comfy_table::{Table, presets::UTF8_FULL};
     ///
     /// let mut table = Table::new();
-    /// table.load_preset(UTF8_FULL);
-    ///
-    /// assert_eq!(UTF8_FULL, table.current_style_as_preset())
+    /// table.load_style(UTF8_FULL.with_rounded_corners());
     /// ```
-    pub fn current_style_as_preset(&mut self) -> String {
-        let components = TableComponent::iter();
-        let mut preset_string = String::new();
-
-        for component in components {
-            match self.style(component) {
-                None => preset_string.push(' '),
-                Some(character) => preset_string.push(character),
-            }
-        }
-
-        preset_string
-    }
-
-    /// Modify a preset with a modifier string from [modifiers](crate::style::modifiers).
-    ///
-    /// For instance, the [UTF8_ROUND_CORNERS](crate::style::modifiers::UTF8_ROUND_CORNERS) modifies
-    /// all corners to be round UTF8 box corners.
-    ///
-    /// ```
-    /// use comfy_table::{Table, modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL};
-    ///
-    /// let mut table = Table::new();
-    /// table.load_preset(UTF8_FULL);
-    /// table.apply_modifier(UTF8_ROUND_CORNERS);
-    /// ```
-    pub fn apply_modifier(&mut self, modifier: &str) -> &mut Self {
-        let mut components = TableComponent::iter();
-
-        for character in modifier.chars() {
-            // Skip spaces while applying modifiers.
-            if character == ' ' {
-                components.next();
-                continue;
-            }
-            if let Some(component) = components.next() {
-                self.set_style(component, character);
-            } else {
-                break;
-            }
-        }
+    pub fn load_style(&mut self, style: TableStyle) -> &mut Self {
+        self.style = style;
 
         self
     }
 
-    /// Define the char that will be used to draw a specific component.\
-    /// Look at [TableComponent] to see all stylable components
-    ///
-    /// If `None` is supplied, the element won't be displayed.\
-    /// In case of a e.g. *BorderIntersection a whitespace will be used as placeholder,
-    /// unless related borders and and corners are set to `None` as well.
-    ///
-    /// For example, if `TopBorderIntersections` is `None` the first row would look like this:
-    ///
-    /// ```text
-    /// +------ ------+
-    /// | this | test |
-    /// ```
-    ///
-    /// If in addition `TopLeftCorner`,`TopBorder` and `TopRightCorner` would be `None` as well,
-    /// the first line wouldn't be displayed at all.
+    /// Returns a copy of the table's current [TableStyle].
     ///
     /// ```
-    /// use comfy_table::{Table, TableComponent::*, presets::UTF8_FULL};
+    /// use comfy_table::{Table, presets::UTF8_FULL};
     ///
     /// let mut table = Table::new();
-    /// // Load the UTF8_FULL preset
-    /// table.load_preset(UTF8_FULL);
+    /// table.load_style(UTF8_FULL);
+    ///
+    /// assert_eq!(UTF8_FULL, table.style())
+    /// ```
+    pub fn style(&self) -> TableStyle {
+        self.style
+    }
+
+    /// Get a mutable handle to the table's [TableStyle] to edit it in place.
+    ///
+    /// ```
+    /// use comfy_table::{Table, presets::UTF8_FULL};
+    ///
+    /// let mut table = Table::new();
+    /// // Load the UTF8_FULL style
+    /// table.load_style(UTF8_FULL);
     /// // Set all outer corners to round UTF8 corners
-    /// // This is basically the same as the UTF8_ROUND_CORNERS modifier
-    /// table.set_style(TopLeftCorner, '╭');
-    /// table.set_style(TopRightCorner, '╮');
-    /// table.set_style(BottomLeftCorner, '╰');
-    /// table.set_style(BottomRightCorner, '╯');
+    /// // This is basically the same as TableStyle::with_rounded_corners
+    /// let style = table.style_mut();
+    /// style.top_border.left = Some('╭');
+    /// style.top_border.right = Some('╮');
+    /// style.bottom_border.left = Some('╰');
+    /// style.bottom_border.right = Some('╯');
     /// ```
-    pub fn set_style(&mut self, component: TableComponent, character: char) -> &mut Self {
-        self.style.insert(component, character);
-
-        self
-    }
-
-    /// Get a copy of the char that's currently used for drawing this component.
-    /// ```
-    /// use comfy_table::{Table, TableComponent::*};
-    ///
-    /// let mut table = Table::new();
-    /// assert_eq!(table.style(TopLeftCorner), Some('+'));
-    /// ```
-    pub fn style(&mut self, component: TableComponent) -> Option<char> {
-        self.style.get(&component).copied()
-    }
-
-    /// Remove the style for a specific component of the table.\
-    /// By default, a space will be used as a placeholder instead.\
-    /// Though, if for instance all components of the left border are removed, the left border won't
-    /// be displayed.
-    pub fn remove_style(&mut self, component: TableComponent) -> &mut Self {
-        self.style.remove(&component);
-
-        self
+    pub fn style_mut(&mut self) -> &mut TableStyle {
+        &mut self.style
     }
 
     /// Get a reference to a specific column.
@@ -759,17 +656,6 @@ impl Table {
         }
 
         max_widths
-    }
-
-    pub(crate) fn style_or_default(&self, component: TableComponent) -> String {
-        match self.style.get(&component) {
-            None => " ".to_string(),
-            Some(character) => character.to_string(),
-        }
-    }
-
-    pub(crate) fn style_exists(&self, component: TableComponent) -> bool {
-        self.style.contains_key(&component)
     }
 
     /// Autogenerate new columns, if a row is added with more cells than existing columns.

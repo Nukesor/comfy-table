@@ -5,7 +5,7 @@ use comfy_table::{presets::UTF8_FULL, *};
 
 fn main() {
     let mut table = Table::new();
-    table.load_preset(UTF8_FULL)
+    table.load_style(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(80)
         .set_header(vec![

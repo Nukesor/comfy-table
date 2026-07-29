@@ -181,7 +181,7 @@ fn dynamic_exact_width() {
     for width in 25..40 {
         let mut table = Table::new();
         let table = table
-            .load_preset(comfy_table::presets::UTF8_FULL)
+            .load_style(comfy_table::presets::UTF8_FULL)
             .set_content_arrangement(ContentArrangement::Dynamic)
             .set_width(width);
 
@@ -219,7 +219,7 @@ fn dynamic_slightly_smaller() {
 
     let mut table = Table::new();
     let table = table
-        .load_preset(comfy_table::presets::UTF8_FULL)
+        .load_style(comfy_table::presets::UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(24);
 
@@ -261,7 +261,7 @@ fn polar_python_test_tbl_width_chars() {
 
     let mut table = Table::new();
     let table = table
-        .load_preset(comfy_table::presets::UTF8_FULL)
+        .load_style(comfy_table::presets::UTF8_FULL)
         .set_content_arrangement(ContentArrangement::Dynamic)
         .set_width(100)
         .set_header(header)

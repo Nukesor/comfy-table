@@ -1,4 +1,4 @@
-use comfy_table::{modifiers::*, presets::*, *};
+use comfy_table::{presets::*, *};
 use pretty_assertions::assert_eq;
 
 fn get_preset_table() -> Table {
@@ -14,9 +14,7 @@ fn get_preset_table() -> Table {
 #[test]
 fn utf8_round_corners() {
     let mut table = get_preset_table();
-    table
-        .load_preset(UTF8_FULL)
-        .apply_modifier(UTF8_ROUND_CORNERS);
+    table.load_style(UTF8_FULL.with_rounded_corners());
     let expected = "
 ╭─────────┬─────────┬───────────╮
 │ Header1 ┆ Header2 ┆ Header3   │
@@ -25,6 +23,23 @@ fn utf8_round_corners() {
 ├╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌┤
 │ One One ┆ One Two ┆ One Three │
 ╰─────────┴─────────┴───────────╯";
+
+    println!("{table}");
+    assert_eq!(expected, "\n".to_string() + &table.to_string());
+}
+
+#[test]
+fn utf8_solid_inner_borders() {
+    let mut table = get_preset_table();
+    table.load_style(UTF8_FULL.with_solid_inner_borders());
+    let expected = "
+┌─────────┬─────────┬───────────┐
+│ Header1 │ Header2 │ Header3   │
+╞═════════╪═════════╪═══════════╡
+│ One One │ One Two │ One Three │
+├─────────┼─────────┼───────────┤
+│ One One │ One Two │ One Three │
+└─────────┴─────────┴───────────┘";
 
     println!("{table}");
     assert_eq!(expected, "\n".to_string() + &table.to_string());

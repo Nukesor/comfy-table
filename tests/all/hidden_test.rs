@@ -4,7 +4,7 @@ use pretty_assertions::assert_eq;
 fn get_table() -> Table {
     let mut table = Table::new();
     table
-        .load_preset(presets::UTF8_FULL)
+        .load_style(presets::UTF8_FULL)
         .set_header(vec![
             "hidden_header",
             "smol",

@@ -4,12 +4,49 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [7.3.0] - unreleased
+## [8.0.0] - unreleased
 
-### Change
+### Breaking Changes
 
+- The following types and functions have been removed:
+  - `TableComponent` enum
+  - The `modifiers` module and `Table::apply_modifier` have been removed.
+  - `Table::current_style_as_preset`
+  - `Table::set_style`
+  - `Table::style`
+  - `Table::remove_style`
+  - `Table::load_preset`
+- The positional preset string format has been replaced with the new `TableStyle`, `LineStyle` and `ContentLineStyle` types.
+    The old approach of having "stringified" presets was too finicky and also implicitly bound to the order of variants in the old `TableComponent` enum.
+    It was just not a good design.
+
+    The new design, in comparison, has a nice and (hopefully) intuitive API to define a style.
+    On top of that, all functions on `TableStyle` are `const`, so custom styles can still be declared as constants:
+
+    ```rust
+    const MY_STYLE: TableStyle = TableStyle::new()
+        .top_border(LineStyle::new('┌', '─', '┬', '┐'))
+        .header_lines(ContentLineStyle::new('│', '┆', '│'))
+        .header_separator(LineStyle::new('╞', '═', '╪', '╡'))
+        .content_lines(ContentLineStyle::new('│', '┆', '│'))
+        .bottom_border(LineStyle::new('└', '─', '┴', '┘'));
+    ```
+
+    The new API looks as follows:
+    - Presets in `comfy_table::presets::*` are now `TableStyle` constants.
+    - `Table::load_style(style)` has been added to load a preset or custom style.
+    - `Table::style()` and `Table::style_mut()` to get a handle to the style used by the table.
+      The `mut` handle can be used to change the style.
+    - Instead of modifiers, there are now functions on TableStyle `TableStyle::with_rounded_corners`/`TableStyle::with_solid_inner_borders`.
+    - All fields of `TableStyle`, `LineStyle` and `ContentLineStyle` are public:
+      ```rust
+      table.style_mut().top_border.left = Some('╭');
+      ```
 - The default truncation indicator is now `…` instead of `...`.
     This should make it more obvious that there's more text and consumes less visual space.
+
+### Fix
+
 - Various performance improvements that reduce table formatting time quite a bit:
   - ~36% for "normal" tables (The readme of the project). `17µs -> 11µs`
   - ~34% for "larger" tables, which I would consider a reasonable usecase. `253µs -> 172µs`

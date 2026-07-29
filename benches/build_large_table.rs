@@ -8,7 +8,7 @@ use rand::{RngExt, distr::Alphanumeric};
 fn build_huge_table() {
     let mut table = Table::new();
     table
-        .load_preset(UTF8_FULL)
+        .load_style(UTF8_FULL)
         .set_content_arrangement(ContentArrangement::DynamicFullWidth)
         .set_width(300)
         .set_header(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);

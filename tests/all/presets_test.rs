@@ -14,7 +14,7 @@ fn get_preset_table() -> Table {
 #[test]
 fn test_ascii_full() {
     let mut table = get_preset_table();
-    table.load_preset(ASCII_FULL);
+    table.load_style(ASCII_FULL);
     println!("{table}");
     let expected = "
 +-------+-------+
@@ -31,7 +31,7 @@ fn test_ascii_full() {
 #[test]
 fn test_ascii_full_condensed() {
     let mut table = get_preset_table();
-    table.load_preset(ASCII_FULL_CONDENSED);
+    table.load_style(ASCII_FULL_CONDENSED);
     println!("{table}");
     let expected = "
 +-------+-------+
@@ -47,7 +47,7 @@ fn test_ascii_full_condensed() {
 #[test]
 fn test_ascii_no_borders() {
     let mut table = get_preset_table();
-    table.load_preset(ASCII_NO_BORDERS);
+    table.load_style(ASCII_NO_BORDERS);
     println!("{table}");
     let expected = "
  Hello | there
@@ -62,7 +62,7 @@ fn test_ascii_no_borders() {
 #[test]
 fn test_ascii_borders_only() {
     let mut table = get_preset_table();
-    table.load_preset(ASCII_BORDERS_ONLY);
+    table.load_style(ASCII_BORDERS_ONLY);
     println!("{table}");
     let expected = "
 +---------------+
@@ -79,7 +79,7 @@ fn test_ascii_borders_only() {
 #[test]
 fn test_ascii_borders_only_condensed() {
     let mut table = get_preset_table();
-    table.load_preset(ASCII_BORDERS_ONLY_CONDENSED);
+    table.load_style(ASCII_BORDERS_ONLY_CONDENSED);
     println!("{table}");
     let expected = "
 +---------------+
@@ -95,7 +95,7 @@ fn test_ascii_borders_only_condensed() {
 #[test]
 fn test_ascii_horizontal_only() {
     let mut table = get_preset_table();
-    table.load_preset(ASCII_HORIZONTAL_ONLY);
+    table.load_style(ASCII_HORIZONTAL_ONLY);
     println!("{table}");
     let expected = "
 ---------------
@@ -112,7 +112,7 @@ fn test_ascii_horizontal_only() {
 #[test]
 fn test_ascii_markdown() {
     let mut table = get_preset_table();
-    table.load_preset(ASCII_MARKDOWN);
+    table.load_style(ASCII_MARKDOWN);
     println!("{table}");
     let expected = "
 | Hello | there |
@@ -126,7 +126,7 @@ fn test_ascii_markdown() {
 #[test]
 fn test_utf8_full() {
     let mut table = get_preset_table();
-    table.load_preset(UTF8_FULL);
+    table.load_style(UTF8_FULL);
     println!("{table}");
     let expected = "
 ┌───────┬───────┐
@@ -143,7 +143,7 @@ fn test_utf8_full() {
 #[test]
 fn test_utf8_full_condensed() {
     let mut table = get_preset_table();
-    table.load_preset(UTF8_FULL_CONDENSED);
+    table.load_style(UTF8_FULL_CONDENSED);
     println!("{table}");
     let expected = "
 ┌───────┬───────┐
@@ -159,7 +159,7 @@ fn test_utf8_full_condensed() {
 #[test]
 fn test_utf8_no_borders() {
     let mut table = get_preset_table();
-    table.load_preset(UTF8_NO_BORDERS);
+    table.load_style(UTF8_NO_BORDERS);
     println!("{table}");
     let expected = "
  Hello ┆ there
@@ -174,7 +174,7 @@ fn test_utf8_no_borders() {
 #[test]
 fn test_utf8_horizontal_only() {
     let mut table = get_preset_table();
-    table.load_preset(UTF8_HORIZONTAL_ONLY);
+    table.load_style(UTF8_HORIZONTAL_ONLY);
     println!("{table}");
     let expected = "
 ───────────────
@@ -191,7 +191,7 @@ fn test_utf8_horizontal_only() {
 #[test]
 fn test_nothing() {
     let mut table = get_preset_table();
-    table.load_preset(NOTHING);
+    table.load_style(NOTHING);
     println!("{table}");
     let expected = "
  Hello  there
@@ -204,7 +204,7 @@ fn test_nothing() {
 #[test]
 fn test_nothing_without_padding() {
     let mut table = get_preset_table();
-    table.load_preset(NOTHING);
+    table.load_style(NOTHING);
     let column = table.column_iter_mut().next().unwrap();
     column.set_padding((0, 1));
     println!("{table}");
@@ -224,7 +224,12 @@ fn test_no_vertical_styling() {
         .add_row(vec!["a", "b", "something different"])
         .add_row(vec!["omfg why though", "d", "f"]);
 
-    table.load_preset("||   -              ");
+    table.load_style(
+        TableStyle::new()
+            .header_lines(ContentLineStyle::none().left('|').right('|'))
+            .header_separator(LineStyle::none().fill('-'))
+            .content_lines(ContentLineStyle::none().left('|').right('|')),
+    );
 
     println!("{table}");
     let expected = "

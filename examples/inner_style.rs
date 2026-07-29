@@ -2,7 +2,7 @@ use comfy_table::{Cell, ContentArrangement, Row, Table};
 
 fn main() {
     let mut table = Table::new();
-    //table.load_preset(comfy_table::presets::NOTHING);
+    //table.load_style(comfy_table::presets::NOTHING);
     table.set_content_arrangement(ContentArrangement::Dynamic);
     table.set_width(85);
 

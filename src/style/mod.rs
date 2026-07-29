@@ -4,14 +4,11 @@ mod cell;
 #[cfg(all(feature = "tty", not(feature = "reexport_crossterm")))]
 mod color;
 mod column;
-/// Contains modifiers, that can be used to alter certain parts of a preset.\
-/// For instance, the [UTF8_ROUND_CORNERS](modifiers::UTF8_ROUND_CORNERS) replaces all corners with
-/// round UTF8 box corners.
-pub mod modifiers;
 /// This module provides styling presets for tables.\
 /// Every preset has an example preview.
 pub mod presets;
 mod table;
+mod table_style;
 
 pub use cell::CellAlignment;
 pub use column::{ColumnConstraint, Width};
@@ -19,7 +16,8 @@ pub use column::{ColumnConstraint, Width};
 pub use styling_enums::{Attribute, Color};
 #[cfg(feature = "tty")]
 pub(crate) use styling_enums::{map_attribute, map_color};
-pub use table::{ContentArrangement, TableComponent};
+pub use table::ContentArrangement;
+pub use table_style::{ContentLineStyle, LineStyle, TableStyle};
 
 /// Convenience module to have cleaner and "identical" conditional re-exports for style enums.
 #[cfg(all(feature = "tty", not(feature = "reexport_crossterm")))]
