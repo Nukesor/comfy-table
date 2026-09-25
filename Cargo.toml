@@ -10,6 +10,7 @@ license = "MIT"
 keywords = ["table", "terminal", "unicode"]
 readme = "README.md"
 edition = "2024"
+rust-version = "1.88"
 
 [badges]
 maintenance = { status = "actively-developed" }
